@@ -2,6 +2,8 @@ import React, { Component } from "react";
 import HeaderBarClock from "./headerBarClock";
 import HeaderBarCard from "./headerBarCard";
 
+import "./../style/stylistHeaderBar.scss";
+
 class StylistHeaderBar extends Component {
   constructor(props) {
     super(props);
@@ -12,7 +14,7 @@ class StylistHeaderBar extends Component {
 
   render() {
     return (
-      <nav className="navbar navbar-inverse navbar-expand-lg navbar-dark bg-dark">
+      <nav className="navbar navbar-inverse navbar-expand-lg navbar-dark stylist-headerbar">
         <div
           style={{
             display: "inline-flex",
