@@ -13,7 +13,13 @@ class StylistHeaderBar extends Component {
   render() {
     return (
       <nav className="navbar navbar-inverse navbar-expand-lg navbar-dark bg-dark">
-        <div style={{ display: "inline-flex", alignItems: "center" }}>
+        <div
+          style={{
+            display: "inline-flex",
+            alignItems: "center",
+            flexWrap: "nowrap",
+          }}
+        >
           <div>
             <a className="navbar-brand" href="#">
               {this.state.title[this.props.currentView]}
@@ -28,6 +34,7 @@ class StylistHeaderBar extends Component {
               )}
             </a>{" "}
           </div>
+          {/* TODO: Figure out how to get card to not overflow into clock when resizing page. */}
           <div
             style={{
               marginRight: "auto",
@@ -43,6 +50,7 @@ class StylistHeaderBar extends Component {
           </div>
 
           {/* This code renders the divider for the clock */}
+          {/* TODO: Figure out how to be fixed to right of component, not page. */}
           <div
             style={{
               position: "fixed",
