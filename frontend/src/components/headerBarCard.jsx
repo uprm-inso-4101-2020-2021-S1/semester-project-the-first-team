@@ -1,17 +1,19 @@
 import React, { Component } from "react";
 
+import "./../style/card.scss";
 class HeaderBarCard extends Component {
   state = { profilePic: "./../logo.svg", username: "Miranda Wrightes" };
 
   render() {
     return (
-      <card className="card" style={{ display: "inline-block" }}>
-        <body className="card-body">
+      <card className=" header-card">
+        <body className="card-body header-card-body">
           <picture style={{ padding: 5 }}>
             <img src={this.state.profilePic}></img>
           </picture>
-          <username>{this.state.username}</username>
-          <a style={{ borderLeft: "5px solid black" }}>Testing part 2</a>
+          <a className="card-text">{this.state.username}</a>
+          <a className="card-div" />
+          <a className="card-text">Testing part 2</a>
         </body>
       </card>
     );

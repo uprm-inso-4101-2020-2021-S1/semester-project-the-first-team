@@ -1,0 +1,29 @@
+@import "styleVariables";
+
+.header-card {
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.4);
+  transition: 0.3s;
+
+  &:hover {
+    box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.7);
+  }
+
+  .header-card-body {
+    background-color: $cardGray;
+    display: inline-block;
+    border-radius: 10px;
+    flex-wrap: nowrap;
+    min-height: 40px;
+
+    .card-text {
+      color: white;
+      padding-right: 5px;
+    }
+
+    .card-div {
+      border-left: 3px solid white;
+      height: 20px;
+      padding-right: 5px;
+    }
+  }
+}
