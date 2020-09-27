@@ -10,7 +10,14 @@ function App() {
   ];
   return (
     <Router>
-      <div style={{ display: "flex", flexWrap: "nowrap" }}>
+      <div
+        style={{
+          display: "flex",
+          flexWrap: "nowrap",
+          height: "100%",
+          minHeight: "100%",
+        }}
+      >
         {/* TODO: fix CSS to get Sidebar element to display fully. */}
         {/* TODO: Figure out how router works to use that to detemrine current view instead of explicit props */}
         <div>

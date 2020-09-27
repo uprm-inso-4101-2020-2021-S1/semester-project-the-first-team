@@ -9,7 +9,7 @@ class Sidebar extends React.Component {
           <div className="sidebar-header">
             <h3>Express Cuts</h3>
           </div>
-          <div className="sidebar-items justify-content-center">
+          <div className="sidebar-items ">
             {this.props.items.map((item) => (
               <Nav.Item>
                 <Nav.Link href={item.link}>{item.name}</Nav.Link>

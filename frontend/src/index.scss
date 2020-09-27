@@ -4,15 +4,27 @@
   background: #434761;
   color: #fff;
   transition: all 0.3s;
+  position: -webkit-sticky;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  display: flex;
+  justify-content: flex-start;
+}
+
+.sidebar-column {
+  padding: 0;
 }
 
 #sidebar.active {
   margin-left: -250px;
 }
 
+html,
 body {
   font-family: "Quicksand", sans-serif;
-  background: #fafafa;
+  background: $bgGray;
+  height: 100%;
 }
 
 p {
@@ -34,11 +46,16 @@ a:focus {
 #sidebar .sidebar-header {
   padding: 20px;
   background: $sidebarGray;
+  max-height: 15%;
 }
 
 #sidebar .sidebar-items {
   padding: 20px 0;
   border-bottom: 1px solid #47748b;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  height: 85%;
 }
 
 #sidebar ul p {
