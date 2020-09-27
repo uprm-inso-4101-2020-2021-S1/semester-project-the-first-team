@@ -1,6 +1,8 @@
 import React from "react";
 import Sidebar from "./components/Sidebar";
 import StylistHeaderBar from "./components/stylistHeaderBar";
+import StylistViewBody from "./components/stylistViewBody";
+
 import { BrowserRouter as Router } from "react-router-dom";
 
 function App() {
@@ -23,8 +25,16 @@ function App() {
         <div>
           <Sidebar items={temp} />
         </div>
-        <div style={{ position: "relative", width: "100%" }}>
+        <div
+          style={{
+            position: "relative",
+            width: "100%",
+            display: "flex",
+            flexDirection: "column",
+          }}
+        >
           <StylistHeaderBar currentView="new-stylist-view" />
+          <StylistViewBody />
         </div>
       </div>
     </Router>

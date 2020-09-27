@@ -1,8 +1,9 @@
 @import "styleVariables";
 
-#stylist-view-body-container {
+.stylist-view-container {
   display: flex;
+  justify-content: center;
   height: 100%;
   width: 100%;
-  background-color: gray;
+  padding: 20px;
 }
