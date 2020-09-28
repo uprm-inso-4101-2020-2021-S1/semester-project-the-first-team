@@ -6,33 +6,27 @@ class StylistViewForm extends Component {
     return (
       <card className="stylist-body-card">
         <body className="card-body stylist-body-card-body">
-          <a className="card-header">New Stylist Form</a>
-          <form>
-            <label>
-              First Name:
+          <h2 className="card-header">New Stylist Form</h2>
+          <div className="card-header-div">
+            <form>
+              <label>First Name:</label>
               <input type="text" name="fname" />
-            </label>
-            <label>
-              Last Name:
+
+              <label>Last Name: </label>
               <input type="text" name="lname" />
-            </label>
 
-            <label>
-              E-mail:
+              <label>E-mail:</label>
               <input type="text" name="email" />
-            </label>
 
-            <label>
-              Password:
+              <label>Password:</label>
               <input type="password" name="pswd" />
-            </label>
 
-            <label>
-              Confirm Password:
+              <label>Confirm Password:</label>
               <input type="password" name="confirm-pswd" />
-            </label>
-            <input type="submit" value="Submit" />
-          </form>
+
+              <input className="submit-btn" type="submit" value="Submit" />
+            </form>
+          </div>
         </body>
       </card>
     );

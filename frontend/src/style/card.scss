@@ -31,6 +31,8 @@
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.4);
   transition: 0.3s;
   max-height: 85%;
+  min-width: 50%;
+  min-height: max-content;
 
   .stylist-body-card-body {
     border-radius: 10px;
@@ -38,12 +40,20 @@
     display: flex;
     flex-direction: column;
     flex-wrap: nowrap;
+    min-height: max-content;
 
     .card-header {
       color: white;
       padding: 5px;
-      font-size: large;
+      margin: 1rem;
+      align-self: center;
     }
+    .card-header-div {
+      border: black;
+      border-top-width: 50px;
+      padding: 5px;
+    }
+
     .card-text {
       color: white;
       padding: 5px;
@@ -53,11 +63,26 @@
       display: flex;
       flex-direction: column;
       flex-wrap: nowrap;
-      justify-content: right;
+      justify-content: center;
+
+      label {
+        margin-bottom: 0.3rem;
+      }
+
       input {
-        margin: 5px;
         border-radius: 10px;
         max-width: 100%;
+        margin-bottom: 1rem;
+        min-width: 20vw;
+      }
+      .submit-btn {
+        color: white;
+        font-size: x-large;
+        background-color: $deepPurple;
+        width: 50%;
+        min-width: 200px;
+        min-height: 4.5rem;
+        align-self: center;
       }
     }
   }
