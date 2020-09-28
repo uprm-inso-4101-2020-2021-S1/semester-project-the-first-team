@@ -23,6 +23,14 @@
     .card-div {
       border-left: 3px solid white;
       height: 20px;
+      padding-right: 5px;
+    }
+
+    picture img {
+      height: 50px;
+      width: 50px;
+      object-fit: cover;
+      border-radius: 50%;
     }
   }
 }
@@ -30,7 +38,6 @@
 .stylist-body-card {
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.4);
   transition: 0.3s;
-  max-height: 85%;
   min-width: 50%;
   min-height: max-content;
 
@@ -51,6 +58,7 @@
     .card-header-div {
       border: black;
       border-top-width: 50px;
+      height: 5px;
       padding: 5px;
     }
 
@@ -81,8 +89,9 @@
         background-color: $deepPurple;
         width: 50%;
         min-width: 200px;
-        min-height: 4.5rem;
+        min-height: 4rem;
         align-self: center;
+        margin-bottom: 0rem;
       }
     }
   }

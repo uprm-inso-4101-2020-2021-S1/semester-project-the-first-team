@@ -2,7 +2,12 @@ import React, { Component } from "react";
 
 import "./../style/card.scss";
 class HeaderBarCard extends Component {
-  state = { profilePic: "./../logo.svg", username: "Miranda Wrightes" };
+  state = {
+    // Temp Royalty free image to use as a profile picture.
+    profilePic:
+      "https://images.pexels.com/photos/2552130/pexels-photo-2552130.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+    username: "Miranda Wrightes",
+  };
 
   render() {
     return (
