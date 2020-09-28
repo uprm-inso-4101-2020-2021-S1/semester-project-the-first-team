@@ -83,15 +83,33 @@
         margin-bottom: 1rem;
         min-width: 20vw;
       }
-      .submit-btn {
-        color: white;
-        font-size: x-large;
-        background-color: $deepPurple;
-        width: 50%;
-        min-width: 200px;
-        min-height: 4rem;
-        align-self: center;
-        margin-bottom: 0rem;
+      .form-btns {
+        display: flex;
+        justify-content: center;
+
+        .submit-btn {
+          color: white;
+          font-size: x-large;
+          background-color: $deepPurple;
+          width: 50%;
+          min-width: 150px;
+          min-height: 4rem;
+          align-self: center;
+          margin-bottom: 0rem;
+          margin-right: 1rem;
+        }
+
+        .delete-btn {
+          color: white;
+          font-size: x-large;
+          background-color: red;
+          width: 50%;
+          min-width: 150px;
+          min-height: 4rem;
+          align-self: center;
+          margin-bottom: 0rem;
+          margin-left: 1rem;
+        }
       }
     }
   }
