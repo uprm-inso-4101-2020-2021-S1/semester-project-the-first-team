@@ -13,12 +13,21 @@ class HeaderBarCard extends Component {
     return (
       <card className=" header-card">
         <body className="card-body header-card-body">
-          <picture style={{ padding: 5 }}>
-            <img src={this.state.profilePic}></img>
-          </picture>
-          <a className="card-text">{this.state.username}</a>
-          <a className="card-div" />
-          <a className="card-text">Testing part 2</a>
+          <div>
+            <picture>
+              <img src={this.state.profilePic}></img>
+            </picture>
+          </div>
+          <div>
+            <a className="card-text">{this.state.username}</a>
+          </div>
+          <div>
+            <a className="card-div" />
+          </div>
+          <div>
+            {" "}
+            <a className="card-text">Testing part 2</a>
+          </div>{" "}
         </body>
       </card>
     );

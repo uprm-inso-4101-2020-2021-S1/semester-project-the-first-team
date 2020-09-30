@@ -1,5 +1,11 @@
 @import "styleVariables";
 
+%centered-flex-column {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
 .header-card {
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.4);
   transition: 0.3s;
@@ -10,9 +16,10 @@
 
   .header-card-body {
     background-color: $cardGray;
-    display: inline-block;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
     border-radius: 10px;
-
     min-height: 40px;
 
     .card-text {
@@ -20,15 +27,19 @@
       padding-right: 5px;
     }
 
+    div {
+      @extend %centered-flex-column;
+    }
+
     .card-div {
       border-left: 3px solid white;
-      height: 20px;
+      height: 75%;
       padding-right: 5px;
     }
 
     picture img {
-      height: 50px;
-      width: 50px;
+      height: 60px;
+      width: 60px;
       object-fit: cover;
       border-radius: 50%;
     }
