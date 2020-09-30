@@ -1,8 +1,12 @@
 import React, { Component } from "react";
 import "./../style/queue.scss";
 
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faClock } from "@fortawesome/free-solid-svg-icons";
+
 class stylistAppointmentQueue extends Component {
   // TODO: FIGURE OUT HOW TO SORT APPOINTMENTS BY TIME.
+
   state = {
     appoinmtents: [
       {
@@ -40,13 +44,16 @@ class stylistAppointmentQueue extends Component {
   render() {
     return (
       <div className="appointment-queue-container">
-        {/* Map queue entries for all elements */}
+        {/* Map queue entries for all elements */}{" "}
         {this.state.appoinmtents.map((appointment) => (
           <div className="appointment-container">
             <div className="appointment-time-container">
               <card className="card">
                 {/* Time of appointment */}
-                <a>{appointment.appTime}</a>
+                <div>
+                  <FontAwesomeIcon icon={faClock} />
+                  <a>{appointment.appTime}</a>
+                </div>
               </card>
             </div>
             <card className="appointment-card">

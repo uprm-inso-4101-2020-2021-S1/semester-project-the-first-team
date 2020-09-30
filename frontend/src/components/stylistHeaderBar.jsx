@@ -8,7 +8,10 @@ class StylistHeaderBar extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      title: { "new-stylist-view": "Add New Stylist:" },
+      title: {
+        "new-stylist-view": "Add New Stylist:",
+        queue: "Next Appointment:",
+      },
     };
   }
 

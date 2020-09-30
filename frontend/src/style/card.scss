@@ -43,6 +43,25 @@
       object-fit: cover;
       border-radius: 50%;
     }
+
+    .header-card-rightmost-section {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: nowrap;
+      justify-content: space-evenly;
+
+      svg {
+        margin-right: 5px;
+        height: 1.3rem;
+        width: 1.3rem;
+        color: white;
+      }
+
+      .app-time {
+        color: white;
+        white-space: nowrap;
+      }
+    }
   }
 }
 

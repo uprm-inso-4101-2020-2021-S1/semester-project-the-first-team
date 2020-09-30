@@ -33,7 +33,7 @@ function App() {
             flexDirection: "column",
           }}
         >
-          <StylistHeaderBar currentView="new-stylist-view" />
+          <StylistHeaderBar currentView="queue" />
           <StylistViewBody />
         </div>
       </div>

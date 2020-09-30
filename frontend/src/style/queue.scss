@@ -21,15 +21,30 @@
       card {
         height: 100%;
         padding: 1rem;
-        width: 7rem;
+        width: 11rem;
         @extend %centered-flex-column;
         background-color: $deepPurple;
-        border-radius: 20%;
+        border-radius: 10px;
+        @extend %centered-flex-column;
+        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.4);
 
-        a {
-          color: white;
-          text-align: center;
-          font-weight: bold;
+        div {
+          display: flex;
+          flex-direction: row;
+          flex-wrap: nowrap;
+          justify-content: center;
+          align-content: space-between;
+          svg {
+            margin-right: 5px;
+            height: 2em;
+            width: 2em;
+            color: white;
+          }
+          a {
+            color: white;
+            text-align: center;
+            font-size: 1.5em;
+          }
         }
       }
     }
@@ -74,6 +89,9 @@
         .username-div {
           @extend %centered-flex-column;
           width: 50%;
+          a {
+            font-size: 1.3em;
+          }
         }
 
         .card-div {
