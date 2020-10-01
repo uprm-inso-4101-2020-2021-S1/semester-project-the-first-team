@@ -3,11 +3,13 @@ import { Link } from "react-router-dom";
 import { Container, Nav, Row, Col } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCut, faBars, faTimes } from "@fortawesome/free-solid-svg-icons";
+import {useLocation} from 'react-router-dom';
 
 function Sidebar(props) {
   const [sidebar, setSidebar] = useState(false);
 
   const showSidebar = () => setSidebar(!sidebar);
+  const location = useLocation();
 
   return (
     <>
@@ -16,14 +18,14 @@ function Sidebar(props) {
           <FontAwesomeIcon onClick={showSidebar} icon={faBars} />
         </Link>
       </div>
-      <Nav className={sidebar ? "nav-menu active" : "nav-menu"}>
+      <Nav
+        className={sidebar ? "nav-menu active" : "nav-menu"}
+        activeKey={location.pathname}
+      >
         <div className="nav-menu-items">
           <div className="navbar-toggle">
             <Link to="#" className="menu-close">
-              <FontAwesomeIcon
-                onClick={showSidebar}
-                icon={faTimes}
-              />
+              <FontAwesomeIcon onClick={showSidebar} icon={faTimes} />
             </Link>
           </div>
           <div className="nav-menu-header">

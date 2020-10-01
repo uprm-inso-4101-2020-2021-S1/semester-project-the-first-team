@@ -88,6 +88,14 @@ body {
     transition: 0.25s ease-in-out;
 }
 
+.nav-text > .active > a {
+    color: white;
+}
+
+.nav-link.active {
+    color: white;
+}
+
 .nav-menu-header {
     height: 80px;
     width: 100%;
