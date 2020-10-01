@@ -9,7 +9,6 @@ class StylistViewForm extends Component {
       email: "",
       pswd: "",
       confirmPswd: "",
-
       formTitle: {
         newStylist: "New Stylist Form",
         editStylist: "Edit Stylist Form",
@@ -18,6 +17,7 @@ class StylistViewForm extends Component {
     };
     this.handleChange = this.handleChange.bind(this);
   }
+
   handleChange(event) {
     const target = event.target;
     const name = target.name;
@@ -35,10 +35,11 @@ class StylistViewForm extends Component {
   render() {
     return (
       <card className="stylist-body-card">
-        <body className="card-body stylist-body-card-body">
+        <div className="card-body stylist-body-card-body">
           <h2 className="card-header">{this.state.formTitle["editStylist"]}</h2>
           <div className="card-header-div">
             <form>
+              {/* TODO: SIMPLIFY WITH A MAP FROM STATE */}
               <label>First Name:</label>
               <input
                 type="text"
@@ -96,7 +97,7 @@ class StylistViewForm extends Component {
               </div>
             </form>
           </div>
-        </body>
+        </div>
       </card>
     );
   }

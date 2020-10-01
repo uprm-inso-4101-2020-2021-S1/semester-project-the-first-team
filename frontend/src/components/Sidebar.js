@@ -10,22 +10,19 @@ function Sidebar(props) {
   const showSidebar = () => setSidebar(!sidebar);
 
   return (
-    <>
+    <nav className={sidebar ? "nav-menu hidden" : "nav-menu"}>
       <div className="navbar">
         <Link to="#" className="menu-bars">
           <FontAwesomeIcon onClick={showSidebar} icon={faBars} />
         </Link>
       </div>
-      <Nav className={sidebar ? "nav-menu active" : "nav-menu"}>
+      <Nav className>
         <div className="nav-menu-items">
-          <div className="navbar-toggle">
-            <Link to="#" className="menu-close">
-              <FontAwesomeIcon onClick={showSidebar} icon={faTimes} />
-            </Link>
-          </div>
           <div className="nav-menu-header">
-            <FontAwesomeIcon icon={faCut} className="icon" />
-            <h3>express cuts</h3>
+            <div className="header-container">
+              <FontAwesomeIcon icon={faCut} className="icon" />
+              <h3>express cuts</h3>
+            </div>
           </div>
           {props.items.map((item, index) => {
             return (
@@ -43,7 +40,7 @@ function Sidebar(props) {
           })}
         </div>
       </Nav>
-    </>
+    </nav>
   );
 }
 

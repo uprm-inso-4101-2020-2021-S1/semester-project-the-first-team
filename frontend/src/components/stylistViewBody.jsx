@@ -7,15 +7,15 @@ import "./../style/stylistViewBody.scss";
 
 class StylistViewBody extends Component {
   state = {
-    showForm: false,
-    showQueue: true,
+    showForm: true,
+    showQueue: false,
   };
   render() {
     return (
-      <Container className="stylist-view-container">
+      <div className="stylist-view-container">
         {this.state.showForm && <StylistViewForm />}
         {this.state.showQueue && <StylistAppointmentQueue />}
-      </Container>
+      </div>
     );
   }
 }

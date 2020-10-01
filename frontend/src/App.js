@@ -17,25 +17,20 @@ function App() {
       cName: "nav-text",
     },
   ];
+
   return (
     <Router>
-      <Sidebar items={temp} />
-      {/* Figure out how to get Sidbar and body components to flex properly. */}
-      <Switch>
-        <Route path="/">
-          <div
-            style={{
-              position: "fixed",
-              width: "100vw",
-              height: "100%",
-              right: "0px",
-            }}
-          >
-            <StylistHeaderBar />
-            <StylistViewBody />
-          </div>
-        </Route>
-      </Switch>
+      <div className="main-container">
+        <Sidebar items={temp} />
+        <div className="body-container">
+          <Switch>
+            <Route path="/">
+              <StylistHeaderBar currentView="queue" />
+              <StylistViewBody />
+            </Route>
+          </Switch>
+        </div>
+      </div>
     </Router>
   );
 }
