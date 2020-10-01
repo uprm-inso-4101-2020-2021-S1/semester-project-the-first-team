@@ -20,7 +20,7 @@ function App() {
   return (
     <Router>
       <Sidebar items={temp} />
-
+      {/* Figure out how to get Sidbar and body components to flex properly. */}
       <Switch>
         <Route path="/">
           <div
