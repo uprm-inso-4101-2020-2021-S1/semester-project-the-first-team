@@ -3,40 +3,39 @@ import Sidebar from "./components/Sidebar";
 import StylistHeaderBar from "./components/stylistHeaderBar";
 import StylistViewBody from "./components/stylistViewBody";
 
-import { BrowserRouter as Router } from "react-router-dom";
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import { faHome, faConciergeBell } from "@fortawesome/free-solid-svg-icons";
 
 function App() {
+  //Delete this later on
   const temp = [
-    { name: "home", link: "/home" },
-    { name: "reservations", link: "/reservations" },
+    { title: "home", path: "/home", icon: faHome, cName: "nav-text" },
+    {
+      title: "reservations",
+      path: "/reservations",
+      icon: faConciergeBell,
+      cName: "nav-text",
+    },
   ];
   return (
     <Router>
-      <div
-        style={{
-          display: "flex",
-          flexWrap: "nowrap",
-          height: "100%",
-          minHeight: "100%",
-        }}
-      >
-        {/* TODO: fix CSS to get Sidebar element to display fully. */}
-        {/* TODO: Figure out how router works to use that to detemrine current view instead of explicit props */}
-        <div>
-          <Sidebar items={temp} />
-        </div>
-        <div
-          style={{
-            position: "relative",
-            width: "100%",
-            display: "flex",
-            flexDirection: "column",
-          }}
-        >
-          <StylistHeaderBar currentView="queue" />
-          <StylistViewBody />
-        </div>
-      </div>
+      <Sidebar items={temp} />
+
+      <Switch>
+        <Route path="/">
+          <div
+            style={{
+              position: "fixed",
+              width: "100vw",
+              height: "100%",
+              right: "0px",
+            }}
+          >
+            <StylistHeaderBar />
+            <StylistViewBody />
+          </div>
+        </Route>
+      </Switch>
     </Router>
   );
 }
