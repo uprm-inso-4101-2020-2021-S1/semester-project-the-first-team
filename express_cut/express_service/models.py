@@ -1,18 +1,19 @@
 from django.db import models
+from django.contrib.auth.models import AbstractUser
 
 
-class User(models.Model):
-    GENDERS = [
-        ('F', 'Female'),
-        ('M', 'Male'),
-    ]
-    first_name = models.CharField(max_length=20)
-    last_name = models.CharField(max_length=30)
-    email = models.EmailField()
-    gender = models.CharField(max_length=1, choices=GENDERS)
+class User(AbstractUser):
+    MANAGER = 0
+    STYLIST = 1
+    CLIENT = 2
 
-    def __str__(self):
-        return self.first_name + ' ' + self.last_name
+    ROLE_CHOICES = (
+        (MANAGER, 'Manager'),
+        (STYLIST, 'Stylist'),
+        (CLIENT, 'Client'),
+    )
+
+    role = models.PositiveSmallIntegerField(choices=ROLE_CHOICES, null=True, blank=True)
 
 
 class Stylist(User):

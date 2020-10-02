@@ -26,7 +26,7 @@ SECRET_KEY = 'mim-1fbk4#ih!%awlxv17s_a835bpc&djw0y$4@c%&h-*eovba'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', 'express-cuts.herokuapp.com']
+ALLOWED_HOSTS = ['localhost', 'express-cuts.herokuapp.com', '127.0.0.1']
 
 
 # Application definition
@@ -87,6 +87,7 @@ DATABASES = {
     }
 }
 
+AUTH_USER_MODEL = "express_service.User"
 
 # Password validation
 # https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators
@@ -126,3 +127,4 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
