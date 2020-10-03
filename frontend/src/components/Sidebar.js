@@ -12,7 +12,7 @@ function Sidebar(props) {
   const location = useLocation();
 
   return (
-    <>
+    <nav className={sidebar ? "nav-menu hidden" : "nav-menu"}>
       <div className="navbar">
         <Link to="#" className="menu-bars">
           <FontAwesomeIcon onClick={showSidebar} icon={faBars} />
@@ -29,8 +29,10 @@ function Sidebar(props) {
             </Link>
           </div>
           <div className="nav-menu-header">
-            <FontAwesomeIcon icon={faCut} className="icon" />
-            <h3>express cuts</h3>
+            <div className="header-container">
+              <FontAwesomeIcon icon={faCut} className="icon" />
+              <h3>express cuts</h3>
+            </div>
           </div>
           {props.items.map((item, index) => {
             return (
@@ -48,7 +50,7 @@ function Sidebar(props) {
           })}
         </div>
       </Nav>
-    </>
+    </nav>
   );
 }
 
