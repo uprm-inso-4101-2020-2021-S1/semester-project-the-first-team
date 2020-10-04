@@ -25,7 +25,7 @@ function App() {
         <div className="body-container">
           <Switch>
             <Route path="/">
-              <StylistHeaderBar currentView="queue" />
+              <StylistHeaderBar currentView="new-stylist-view" />
               <StylistViewBody />
             </Route>
           </Switch>

@@ -7,14 +7,14 @@ class HeaderBarCard extends Component {
   state = {
     // Temp Royalty free image to use as a profile picture.
     route: "queue",
-    // profilePic:
-    //   "https://images.pexels.com/photos/2552130/pexels-photo-2552130.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
-    // username: "Miranda Wrightes",
-
     profilePic:
-      "https://images.pexels.com/photos/1841819/pexels-photo-1841819.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
-    username: "Tris Everdeen",
-    appTime: "3:30 P.M.",
+      "https://images.pexels.com/photos/2552130/pexels-photo-2552130.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+    username: "Miranda Wrightes",
+
+    // profilePic:
+    //   "https://images.pexels.com/photos/1841819/pexels-photo-1841819.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+    // username: "Tris Everdeen",
+    // appTime: "3:30 P.M.",
   };
 
   render() {
@@ -32,7 +32,7 @@ class HeaderBarCard extends Component {
           {/* <div>
             <a className="card-div" />
           </div> */}
-          <div>
+          {/* <div>
             <div className="header-card-rightmost-section">
               {this.state.route === "queue" && (
                 <Fragment>
@@ -41,7 +41,7 @@ class HeaderBarCard extends Component {
                 </Fragment>
               )}
             </div>
-          </div>
+          </div> */}
         </body>
       </card>
     );

@@ -7,8 +7,8 @@ import "./../style/stylistViewBody.scss";
 
 class StylistViewBody extends Component {
   state = {
-    showForm: true,
-    showQueue: false,
+    showForm: false,
+    showQueue: true,
   };
   render() {
     return (

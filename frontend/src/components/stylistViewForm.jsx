@@ -13,7 +13,7 @@ class StylistViewForm extends Component {
         newStylist: "New Stylist Form",
         editStylist: "Edit Stylist Form",
       },
-      showDeleteBtn: true,
+      showDeleteBtn: false,
     };
     this.handleChange = this.handleChange.bind(this);
   }
@@ -36,7 +36,7 @@ class StylistViewForm extends Component {
     return (
       <card className="stylist-body-card">
         <div className="card-body stylist-body-card-body">
-          <h2 className="card-header">{this.state.formTitle["editStylist"]}</h2>
+          <h2 className="card-header">{this.state.formTitle["newStylist"]}</h2>
           <div className="card-header-div">
             <form>
               {/* TODO: SIMPLIFY WITH A MAP FROM STATE */}
