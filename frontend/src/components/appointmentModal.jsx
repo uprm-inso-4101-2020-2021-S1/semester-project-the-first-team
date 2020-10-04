@@ -4,30 +4,35 @@ import Button from "react-bootstrap/Button";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
-import { faMoneyCheckAlt } from "@fortawesome/free-solid-svg-icons";
+
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faClock } from "@fortawesome/free-solid-svg-icons";
 
 import "./../style/appointmentModal.scss";
 
 const AppointmentModal = ({ show, hide, appointment }) => {
   return (
-    <Modal show={show} onHide={hide} size="lg">
+    <Modal show={show} onHide={hide} size="xl">
       <Modal.Header closeButton>
         <Container>
-          <Row>
-            <Col xs={2} md={1}>
+          <Row xs={3} md={4}>
+            <Col xs md="1">
               <picture>
                 {/* Customer's profile Pic */}
                 <img src={appointment.profilePic}></img>
               </picture>
             </Col>
-            <Col md={3}>
+            <Col>
               <Modal.Title>{appointment.username}</Modal.Title>
             </Col>
-            <Col md={4}>
-              <Modal.Title>{appointment.appTime}</Modal.Title>
+            <Col>
+              <Modal.Title>
+                <FontAwesomeIcon icon={faClock} />
+                {appointment.appTime}
+              </Modal.Title>
               <Modal.Title>Status: On Time</Modal.Title>
             </Col>
-            <Col md={4}>
+            <Col lg>
               <Modal.Title>
                 Num. of Services:{" "}
                 {appointment.services ? appointment.services.length : 0}
@@ -40,11 +45,21 @@ const AppointmentModal = ({ show, hide, appointment }) => {
       <Modal.Body>
         <Row>
           <Col>
-            <text>Pref. Stylist: {appointment.stylist}</text>
-
-            <text>Comments: {appointment.comments}</text>
+            <div>
+              <text>
+                Pref. Stylist: <a>{appointment.stylist}</a>
+              </text>
+            </div>
+            <div>
+              <text>
+                Comments:
+                <div>
+                  <a>{appointment.comments}</a>
+                </div>
+              </text>
+            </div>
           </Col>
-          <Col>
+          <Col sm lg="3">
             <ul>
               Services:
               {appointment.services
@@ -55,11 +70,11 @@ const AppointmentModal = ({ show, hide, appointment }) => {
         </Row>
       </Modal.Body>
       <Modal.Footer>
-        <Button variant="secondary" onClick={hide}>
-          Close
+        <Button variant="danger" onClick={hide}>
+          Delete
         </Button>
         <Button variant="primary" onClick={hide}>
-          Save Changes
+          Start
         </Button>
       </Modal.Footer>
     </Modal>
