@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { Switch, Route, useRouteMatch } from "react-router";
 
 class StylistViewForm extends Component {
   constructor(props) {
@@ -9,15 +10,30 @@ class StylistViewForm extends Component {
       email: "",
       pswd: "",
       confirmPswd: "",
-      formTitle: {
-        newStylist: "New Stylist Form",
-        editStylist: "Edit Stylist Form",
-      },
-      showDeleteBtn: false,
     };
     this.handleChange = this.handleChange.bind(this);
   }
 
+  componentDidMount() {
+    console.log(window.location.href);
+    if (!window.location.href.includes("/form/editstylist")) {
+      this.setState({
+        fname: "",
+        lname: "",
+        email: "",
+        pswd: "",
+        confirmPswd: "",
+      });
+    } else {
+      this.setState({
+        fname: "Miranda",
+        lname: "Wrightes",
+        email: "courtoflaw@compuserv.org",
+        pswd: "@m@zingGr@c3",
+        confirmPswd: "@m@zingGr@c3",
+      });
+    }
+  }
   handleChange(event) {
     const target = event.target;
     const name = target.name;
@@ -36,7 +52,9 @@ class StylistViewForm extends Component {
     return (
       <card className="stylist-body-card">
         <div className="card-body stylist-body-card-body">
-          <h2 className="card-header">{this.state.formTitle["newStylist"]}</h2>
+          <h2 className="card-header">
+            <FormTitle />
+          </h2>
           <div className="card-header-div">
             <form>
               {/* TODO: SIMPLIFY WITH A MAP FROM STATE */}
@@ -86,14 +104,14 @@ class StylistViewForm extends Component {
                   value="Submit"
                   onSubmit={this.handleSubmit}
                 />
-                {this.state.showDeleteBtn && (
+                <Route path="/form/editstylist">
                   <input
                     className="delete-btn"
                     type="submit"
                     value="Delete"
                     onSubmit={this.handleSubmit}
                   />
-                )}
+                </Route>
               </div>
             </form>
           </div>
@@ -104,3 +122,28 @@ class StylistViewForm extends Component {
 }
 
 export default StylistViewForm;
+
+function FormTitle() {
+  let { path, url } = useRouteMatch();
+
+  return (
+    <Switch>
+      <Route path={`${path}/newstylist`}>New Stylist Form</Route>
+      <Route path={`${path}/editstylist`}>Edit Stylist Form</Route>
+    </Switch>
+  );
+}
+
+function FormDeleteBtn() {
+  let { path } = useRouteMatch();
+  return (
+    <Route path={`${path}/editstylist`}>
+      <input
+        className="delete-btn"
+        type="submit"
+        value="Delete"
+        onSubmit={this.handleSubmit}
+      />
+    </Route>
+  );
+}

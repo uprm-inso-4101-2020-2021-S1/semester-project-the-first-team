@@ -1,28 +1,20 @@
 import React, { Component } from "react";
 import HeaderBarClock from "./headerBarClock";
 import HeaderBarCard from "./headerBarCard";
+import { Switch, Route, useRouteMatch } from "react-router";
 
 import "./../style/stylistHeaderBar.scss";
 
 class StylistHeaderBar extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      title: {
-        "new-stylist-view": "Add New Stylist:",
-        queue: "Next Appointment:",
-      },
-    };
+    this.state = {};
   }
 
   render() {
     return (
       <nav className="navbar-inverse navbar-expand-lg navbar-dark stylist-headerbar headerbar-content">
-        <div>
-          <a className="navbar-brand" href="#">
-            {this.state.title[this.props.currentView]}
-          </a>
-        </div>
+        <HeaderBarTitle />
         <div className="headerbar-card-div">
           <span>
             <HeaderBarCard />
@@ -39,3 +31,18 @@ class StylistHeaderBar extends Component {
 }
 
 export default StylistHeaderBar;
+
+function HeaderBarTitle() {
+  // let { path } = useRouteMatch();
+  return (
+    <div>
+      <a className="navbar-brand" href="#">
+        <Switch>
+          <Route path="/appointments">Next Appointment:</Route>
+          <Route path="/form/newstylist">Add New Stylist:</Route>
+          <Route path="/form/editstylist">Edit Stylist:</Route>
+        </Switch>
+      </a>
+    </div>
+  );
+}

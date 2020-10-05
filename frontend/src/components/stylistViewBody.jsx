@@ -1,20 +1,23 @@
 import React, { Component } from "react";
-import { Container } from "react-bootstrap";
+import { Switch, Route } from "react-router";
 import StylistViewForm from "./stylistViewForm";
 import StylistAppointmentQueue from "./stylistAppointmentQueue";
 
 import "./../style/stylistViewBody.scss";
 
 class StylistViewBody extends Component {
-  state = {
-    showForm: false,
-    showQueue: true,
-  };
+  state = {};
   render() {
     return (
       <div className="stylist-view-container">
-        {this.state.showForm && <StylistViewForm />}
-        {this.state.showQueue && <StylistAppointmentQueue />}
+        <Switch>
+          <Route path="/form">
+            <StylistViewForm />
+          </Route>
+          <Route path="/appointments">
+            <StylistAppointmentQueue />
+          </Route>
+        </Switch>
       </div>
     );
   }

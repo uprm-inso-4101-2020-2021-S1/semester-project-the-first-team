@@ -23,13 +23,16 @@ const AppointmentModal = ({ show, hide, appointment }) => {
               </picture>
             </Col>
             <Col>
+              {/* Customer's User name */}
               <Modal.Title>{appointment.username}</Modal.Title>
             </Col>
             <Col>
               <Modal.Title>
                 <FontAwesomeIcon icon={faClock} />
+                {/* Appointment Scheduled time */}
                 {appointment.appTime}
               </Modal.Title>
+              {/* Status: TODO: dynamically determine if on time or not. */}
               <Modal.Title>Status: On Time</Modal.Title>
             </Col>
             <Col lg>
@@ -37,6 +40,7 @@ const AppointmentModal = ({ show, hide, appointment }) => {
                 Num. of Services:{" "}
                 {appointment.services ? appointment.services.length : 0}
               </Modal.Title>
+              {/* Estimated Appointment Duration */}
               <Modal.Title>Est. Duration: {appointment.appTime}</Modal.Title>
             </Col>
           </Row>

@@ -11,8 +11,20 @@ function App() {
   const temp = [
     { title: "home", path: "/home", icon: faHome, cName: "nav-text" },
     {
-      title: "reservations",
-      path: "/reservations",
+      title: "Appointments",
+      path: "/appointments",
+      icon: faConciergeBell,
+      cName: "nav-text",
+    },
+    {
+      title: "New Stylist",
+      path: "/form/newstylist",
+      icon: faConciergeBell,
+      cName: "nav-text",
+    },
+    {
+      title: "Edit Stylist",
+      path: "/form/editstylist",
       icon: faConciergeBell,
       cName: "nav-text",
     },
