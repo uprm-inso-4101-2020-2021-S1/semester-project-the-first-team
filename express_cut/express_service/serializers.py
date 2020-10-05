@@ -12,7 +12,8 @@ from django.contrib.auth.hashers import make_password
 class UserSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = User
-        fields = ['username', 'first_name', 'last_name', 'email', 'role']
+        fields = ['username', 'first_name', 'last_name', 'email']
+        role = serializers.HiddenField(default = 0)
         extra_kwargs = {'password': {'write_only': True}, }
 
     def create(self, validated_data):

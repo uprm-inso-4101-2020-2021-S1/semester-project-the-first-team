@@ -28,7 +28,6 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['localhost', 'express-cuts.herokuapp.com', '127.0.0.1']
 
-
 # Application definition
 
 INSTALLED_APPS = [
@@ -40,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'express_service.apps.ExpressServiceConfig',
     'rest_framework',
+    'drf_yasg',
 ]
 
 MIDDLEWARE = [
