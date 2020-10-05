@@ -1,28 +1,29 @@
 @import "styleVariables";
 
 .stylist-headerbar {
-  background-color: $sidebarGray;
-  width: 100%;
-  max-height: 35%;
-  display: inline-flex;
-  align-items: center;
-  flex-wrap: nowrap;
-  justify-content: space-between;
+    background-color: $sidebarGray;
+    width: 100%;
+    max-height: 35%;
+    display: inline-flex;
+    align-items: center;
+    flex-wrap: nowrap;
+    justify-content: space-between;
 
-  .navbar-brand {
-    padding-left: 50px;
-  }
+    .navbar-brand {
+        padding-left: 50px;
+        margin-left: 10%;
+    }
 
-  .headerbar-card-div {
-    align-self: center;
-  }
+    .headerbar-card-div {
+        align-self: center;
+    }
 
-  .headerbar-clock-div {
-    border-left: 3px solid white;
-    height: 40;
-  }
-  div {
-    padding-left: 5px;
-    padding-right: 5px;
-  }
+    .headerbar-clock-div {
+        border-left: 3px solid white;
+        height: 40;
+    }
+    div {
+        padding-left: 5px;
+        padding-right: 5px;
+    }
 }
