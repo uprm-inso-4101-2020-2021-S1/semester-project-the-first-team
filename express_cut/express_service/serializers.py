@@ -8,12 +8,28 @@ from django.contrib.auth.hashers import make_password
 #         model = Stylist
 #         fields = ('username', 'first_name', 'last_name', 'email')
 
+class MyChoiceField(serializers.ChoiceField):
 
-class UserSerializer(serializers.HyperlinkedModelSerializer):
+    def to_representation(self, data):
+        if data not in self.choices.keys():
+            self.fail('invalid_choice', input=data)
+        else:
+            return self.choices[data]
+
+    def to_internal_value(self, data):
+        for key, value in self.choices.items():
+            if value == data:
+                 return key
+        self.fail('invalid_choice', input=data)
+
+
+class UserSerializer(serializers.ModelSerializer):
+    role = MyChoiceField(User.ROLE_CHOICES)
+
     class Meta:
         model = User
-        fields = ['username', 'first_name', 'last_name', 'email']
-        role = serializers.HiddenField(default = 0)
+        fields = ['username', 'first_name', 'last_name', 'email', 'role', ]
+        # role = serializers.HiddenField(default = 0)
         extra_kwargs = {'password': {'write_only': True}, }
 
     def create(self, validated_data):

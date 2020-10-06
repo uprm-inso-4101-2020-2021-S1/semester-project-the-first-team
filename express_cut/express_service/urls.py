@@ -17,16 +17,12 @@ schema_view = get_schema_view(
 
 urlpatterns = [
     path('', views.index, name='index'),
-    url(r'stylist/', views.stylist_list),
-    
-    # OPENAPI SPEC drf_yasg
-    url(r'^swagger(?P<format>\.json|\.yaml)$', schema_view.without_ui(cache_timeout=0), name='schema-json'),
-    url(r'^swagger/$', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
-    url(r'^redoc/$', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
 ]
 
 Stylist_urlpatterns = [
-    url(r'stylist/signup', views.stylist_signup),
+    path('stylist/signup', views.stylist_signup),
+    path('stylist/<int:pk>', views.stylist_view),
+    # url('stylist/', views.stylist_list),
 ]
 
 Manager_urlpatterns = [
@@ -34,11 +30,18 @@ Manager_urlpatterns = [
 ]
 
 Client_urlpatterns = [
-    url(r'client/singup', views.customer_signup),
-    url(r'client/', views.customer_list),
+    url(r'customer/singup', views.customer_signup),
+    url(r'customer/', views.customer_list),
 ]
 
+OPENAPI_urlpatterns = [
+    # OPENAPI SPEC drf_yasg
+    url(r'^swagger(?P<format>\.json|\.yaml)$', schema_view.without_ui(cache_timeout=0), name='schema-json'),
+    url(r'^swagger/$', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
+    url(r'^redoc/$', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
+]
 
 urlpatterns.extend(Stylist_urlpatterns)
 urlpatterns.extend(Manager_urlpatterns)
 urlpatterns.extend(Client_urlpatterns)
+urlpatterns.extend(OPENAPI_urlpatterns)
