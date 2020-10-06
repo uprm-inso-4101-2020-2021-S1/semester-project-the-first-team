@@ -35,7 +35,7 @@ class UserViewPermissions(Permissions):
         return False
 
     def GET_permissions(self, request, obj):
-        if self.has_owner_permission(request,obj):
+        if self.has_owner_permission(request, obj):
             return True
         elif obj.role == User.STYLIST and (self.has_manager_permission(request) or self.has_client_permission(request)):
             return True

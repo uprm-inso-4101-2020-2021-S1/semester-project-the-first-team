@@ -91,69 +91,6 @@ def users_views(request, pk):
 
     return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-#
-# @swagger_auto_schema(
-#         methods=['get'],
-#         responses={**swagResp.getResponse(UserSerializer), **swagResp.unAuthorizedResponse, **swagResp.notPermittedResponse, **swagResp.internalErrorResponse},
-#         tags=['stylist'],
-#     )
-# @api_view(['GET', ])
-# @authentication_classes([SessionAuthentication, BasicAuthentication])
-# @permission_classes([IsAuthenticated])
-# def stylist_list(request):
-#     """
-#     Return a list of all stylists in the system.
-#     """
-#     if not (Permissions.has_manager_permission(request) or Permissions.has_client_permission(request)):
-#         return Response(status=status.HTTP_403_FORBIDDEN)
-#     if request.method == 'GET':
-#         stylists = User.objects.filter(role=User.STYLIST)
-#         serializer = UserSerializer(stylists, many=True)
-#         return Response(serializer.data)
-#
-#
-#
-# @swagger_auto_schema(
-#         methods=['get'],
-#         responses={**swagResp.getResponse(UserSerializer), **swagResp.unAuthorizedResponse, **swagResp.notPermittedResponse, **swagResp.internalErrorResponse},
-#         tags=['stylist'],
-#     )
-# @api_view(['GET', ])
-# @authentication_classes([SessionAuthentication, BasicAuthentication])
-# @permission_classes([IsAuthenticated])
-# def stylist_list(request):
-#     """
-#     Return a list of all stylists in the system.
-#     """
-#     if not (Permissions.has_manager_permission(request) or Permissions.has_client_permission(request)):
-#         return Response(status=status.HTTP_403_FORBIDDEN)
-#     if request.method == 'GET':
-#         stylists = User.objects.filter(role=User.STYLIST)
-#         serializer = UserSerializer(stylists, many=True)
-#         return Response(serializer.data)
-#
-#
-# @swagger_auto_schema(
-#         methods=['get'],
-#         responses={**swagResp.getResponse(UserSerializer), **swagResp.unAuthorizedResponse, **swagResp.notPermittedResponse, **swagResp.internalErrorResponse},
-#         tags=['stylist'],
-#     )
-# @api_view(['GET', ])
-# @authentication_classes([SessionAuthentication, BasicAuthentication])
-# @permission_classes([IsAuthenticated])
-# def stylist_list(request):
-#     """
-#     Return a list of all stylists in the system.
-#     """
-#     if not (Permissions.has_manager_permission(request) or Permissions.has_client_permission(request)):
-#         return Response(status=status.HTTP_403_FORBIDDEN)
-#     if request.method == 'GET':
-#         stylists = User.objects.filter(role=User.STYLIST)
-#         serializer = UserSerializer(stylists, many=True)
-#         return Response(serializer.data)
-#
-
-
 
 def index(request):
     return HttpResponse("Welcome to Express Cuts")
