@@ -34,16 +34,16 @@ function App() {
   return (
     <Router>
       <div className="main-container">
-        <Sidebar items={temp} />
-        <div className="body-container">
-          <Switch>
-            <Route path="/stylists" >
+        <Switch>
+          <Route path="/stylists">
+            <Sidebar items={temp} />
+            <div className="body-container">
               <StylistHeaderBar currentView="new-stylist-view" />
               <StylistViewBody />
-            </Route>
-            <Route path="/customers" component={Customer} />
-          </Switch>
-        </div>
+            </div>
+          </Route>
+          <Route path="/customers" component={Customer} />
+        </Switch>
       </div>
     </Router>
   );
