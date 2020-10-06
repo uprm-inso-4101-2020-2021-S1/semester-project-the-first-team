@@ -18,7 +18,8 @@ Manager_urlpatterns = [
     url(r'manager/signup', views.manager_signup),
 ]
 Client_urlpatterns = [
-    url(r'client/singup', views.client_signup),
+    url(r'client/singup', views.customer_signup),
+    url(r'client/', views.customer_list),
 ]
 
 

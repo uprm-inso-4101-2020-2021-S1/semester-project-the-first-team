@@ -50,10 +50,10 @@ def manager_signup(request):
 
 
 @api_view(['POST'])
-def client_signup(request):
+def customer_signup(request):
     if request.method == 'POST':
         try:
-            httpResp = user_signup(request, role=User.CLIENT)
+            httpResp = user_signup(request, role=User.CUSTOMER)
         except:
             return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         return httpResp
@@ -68,6 +68,30 @@ def stylist_list(request):
     if request.method == 'GET':
         stylists = User.objects.filter(role=User.STYLIST)
         serializer = UserSerializer(stylists, many=True)
+        return Response(serializer.data)
+
+
+@api_view(['GET', ])
+@authentication_classes([SessionAuthentication, BasicAuthentication])
+@permission_classes([IsAuthenticated])
+def customer_list(request):
+    if not Permissions.has_manager_permission(request):
+        return Response(status=status.HTTP_403_FORBIDDEN)
+    if request.method == 'GET':
+        customers = User.objects.filter(role=User.CUSTOMER)
+        serializer = UserSerializer(customers, many=True)
+        return Response(serializer.data)
+
+
+@api_view(['GET', ])
+@authentication_classes([SessionAuthentication, BasicAuthentication])
+@permission_classes([IsAuthenticated])
+def manager_list(request):
+    if not Permissions.has_manager_permission(request):
+        return Response(status=status.HTTP_403_FORBIDDEN)
+    if request.method == 'GET':
+        manager = User.objects.filter(role=User.MANAGER)
+        serializer = UserSerializer(manager, many=True)
         return Response(serializer.data)
 
 
