@@ -87,7 +87,7 @@ def users_views(request, pk):
         if not UserViewPermissions().DELETE_permissions(request, usr_obj):
             return Response(status=status.HTTP_403_FORBIDDEN)
         usr_obj.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        return Response(status=status.HTTP_200_OK)
 
     return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
