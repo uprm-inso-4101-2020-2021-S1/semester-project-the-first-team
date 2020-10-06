@@ -1,25 +1,51 @@
 import React from "react";
-import { Switch, Route } from "react-router-dom";
-import Customer from "./components/Customer";
+import Sidebar from "./components/Sidebar";
 import StylistHeaderBar from "./components/stylistHeaderBar";
 import StylistViewBody from "./components/stylistViewBody";
-import Sidebar from "./components/Sidebar";
+import Customer from "./components/Customer";
+
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import { faHome, faConciergeBell } from "@fortawesome/free-solid-svg-icons";
 
 function App() {
+  //Delete this later on
+  const temp = [
+    { title: "home", path: "/stylists/home", icon: faHome, cName: "nav-text" },
+    {
+      title: "Appointments",
+      path: "/stylists/appointments",
+      icon: faConciergeBell,
+      cName: "nav-text"
+    },
+    {
+      title: "New Stylist",
+      path: "/stylists/form/newstylist",
+      icon: faConciergeBell,
+      cName: "nav-text"
+    },
+    {
+      title: "Edit Stylist",
+      path: "/stylists/form/editstylist",
+      icon: faConciergeBell,
+      cName: "nav-text"
+    }
+  ];
+
   return (
-    <div className="main-container">
-      <Switch>
-        <Route path="/" exact />
-        <Route path="/stylists">
-          <Sidebar items={[]} />
-          <div className="body-container">
-            <StylistHeaderBar currentView="queue" />
-            <StylistViewBody />
-          </div>
-        </Route>
-        <Route path="/customers" component={Customer} />
-      </Switch>
-    </div>
+    <Router>
+      <div className="main-container">
+        <Sidebar items={temp} />
+        <div className="body-container">
+          <Switch>
+            <Route path="/stylists" >
+              <StylistHeaderBar currentView="new-stylist-view" />
+              <StylistViewBody />
+            </Route>
+            <Route path="/customers" component={Customer} />
+          </Switch>
+        </div>
+      </div>
+    </Router>
   );
 }
 

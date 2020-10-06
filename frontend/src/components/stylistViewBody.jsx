@@ -11,10 +11,10 @@ class StylistViewBody extends Component {
     return (
       <div className="stylist-view-container">
         <Switch>
-          <Route path="/form">
+          <Route path="/stylists/form">
             <StylistViewForm />
           </Route>
-          <Route path="/appointments">
+          <Route path="/stylists/appointments">
             <StylistAppointmentQueue />
           </Route>
         </Switch>

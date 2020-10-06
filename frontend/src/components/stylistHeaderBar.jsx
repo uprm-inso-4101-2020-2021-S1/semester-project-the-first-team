@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import HeaderBarClock from "./headerBarClock";
 import HeaderBarCard from "./headerBarCard";
 import { Switch, Route, useRouteMatch } from "react-router";
+import { faHome, faConciergeBell } from "@fortawesome/free-solid-svg-icons";
 
 import "./../style/stylistHeaderBar.scss";
 
@@ -38,9 +39,9 @@ function HeaderBarTitle() {
     <div>
       <a className="navbar-brand" href="#">
         <Switch>
-          <Route path="/appointments">Next Appointment:</Route>
-          <Route path="/form/newstylist">Add New Stylist:</Route>
-          <Route path="/form/editstylist">Edit Stylist:</Route>
+          <Route path="/stylists/appointments">Next Appointment:</Route>
+          <Route path="/stylists/form/newstylist">Add New Stylist:</Route>
+          <Route path="/stylists/form/editstylist">Edit Stylist:</Route>
         </Switch>
       </a>
     </div>
