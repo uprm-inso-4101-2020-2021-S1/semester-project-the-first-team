@@ -34,14 +34,14 @@ class StylistHeaderBar extends Component {
 export default StylistHeaderBar;
 
 function HeaderBarTitle() {
-  // let { path } = useRouteMatch();
+  let { path } = useRouteMatch();
   return (
     <div>
       <a className="navbar-brand" href="#">
         <Switch>
-          <Route path="/stylists/appointments">Next Appointment:</Route>
-          <Route path="/stylists/form/newstylist">Add New Stylist:</Route>
-          <Route path="/stylists/form/editstylist">Edit Stylist:</Route>
+          <Route path={`${path}/appointments`}>Next Appointment:</Route>
+          <Route path={`${path}/form/newstylist`}>Add New Stylist:</Route>
+          <Route path={`${path}/form/editstylist`}>Edit Stylist:</Route>
         </Switch>
       </a>
     </div>

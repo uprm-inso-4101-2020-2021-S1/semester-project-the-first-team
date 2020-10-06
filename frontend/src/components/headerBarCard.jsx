@@ -18,6 +18,7 @@ class HeaderBarCard extends Component {
     appTime: "3:30 P.M.",
   };
 
+  // TODO: Rework route-dependent components into functions.
   render() {
     return (
       <card className=" header-card">
@@ -25,7 +26,7 @@ class HeaderBarCard extends Component {
           <div>
             <picture>
               <Switch>
-                <Route path="/appointments">
+                <Route path="/stylists/appointments">
                   <img src={this.state.profilePic2}></img>
                 </Route>
                 <Route path="/">
@@ -37,7 +38,9 @@ class HeaderBarCard extends Component {
           <div>
             <a className="card-text">
               <Switch>
-                <Route path="/appointments">{this.state.username2}</Route>
+                <Route path="/stylists/appointments">
+                  {this.state.username2}
+                </Route>
                 <Route path="/">{this.state.username}</Route>
               </Switch>
             </a>
@@ -55,7 +58,7 @@ export default HeaderBarCard;
 
 function AppointmentHeaderCardExample(appTime) {
   return (
-    <Route path="/appointments">
+    <Route path="/stylists/appointments">
       <div>
         <a className="card-div" />
       </div>
