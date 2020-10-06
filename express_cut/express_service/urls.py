@@ -17,6 +17,8 @@ schema_view = get_schema_view(
 
 urlpatterns = [
     path('', views.index, name='index'),
+    path('user/', views),
+    path('user/<int:pk>', views)
 ]
 
 Stylist_urlpatterns = [
