@@ -25,7 +25,7 @@ def user_signup_view(request):
     serializer = UserSerializer(data=data)
     if not serializer.is_valid():
         return Response({"message": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
-    if not SignUpPermissions().POST_permissions(request, data):
+    if not SignUpPermissions().POST_permissions(request, serializer.validated_data):
         return Response(status=status.HTTP_403_FORBIDDEN)
     if request.method == 'POST':
         serializer.save()

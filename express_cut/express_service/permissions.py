@@ -57,10 +57,10 @@ class UserViewPermissions(Permissions):
 
 class SignUpPermissions(Permissions):
     def POST_permissions(self, request, data):
-        if data.role == User.STYLIST and self.has_manager_permission(request):
+        if data.get('role') == User.STYLIST and self.has_manager_permission(request):
             return True
-        elif data.role == User.MANAGER and self.has_manager_permission(request):
+        elif data.get('role') == User.MANAGER and self.has_manager_permission(request):
             return True
-        elif data.role == User.CUSTOMER and (not request.user.is_authenticated or self.has_manager_permission(request)):
+        elif data.get('role') == User.CUSTOMER and (not request.user.is_authenticated or self.has_manager_permission(request)):
             return True
         return False
