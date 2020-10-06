@@ -25,12 +25,13 @@ class MyChoiceField(serializers.ChoiceField):
 
 class UserSerializer(serializers.ModelSerializer):
     role = MyChoiceField(User.ROLE_CHOICES)
+    password = serializers.CharField(write_only=True)
 
     class Meta:
         model = User
-        fields = ['username', 'first_name', 'last_name', 'email', 'role', ]
+        fields = ['username', 'first_name', 'last_name', 'email', 'role', 'password']
         # role = serializers.HiddenField(default = 0)
-        extra_kwargs = {'password': {'write_only': True}, }
+        # extra_kwargs = {'password': {'write_only': True}, }
 
     def create(self, validated_data):
         validated_data['password'] = make_password(validated_data.get('password'))

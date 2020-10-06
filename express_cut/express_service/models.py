@@ -13,7 +13,7 @@ class User(AbstractUser):
         (CUSTOMER, 'Customer'),
     )
 
-    role = models.PositiveSmallIntegerField(choices=ROLE_CHOICES, null=True, blank=True)
+    role = models.PositiveSmallIntegerField(choices=ROLE_CHOICES, default=CUSTOMER)
 
 
 class Stylist(User):

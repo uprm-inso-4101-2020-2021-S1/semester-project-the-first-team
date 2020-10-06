@@ -17,24 +17,25 @@ schema_view = get_schema_view(
 
 urlpatterns = [
     path('', views.index, name='index'),
-    path('user/', views),
-    path('user/<int:pk>', views)
+    path('user/', views.all_users),
+    path('user/<int:pk>', views.users_views),
+    path('user/signup', views.user_signup_view),
 ]
 
-Stylist_urlpatterns = [
-    path('stylist/signup', views.stylist_signup),
-    path('stylist/<int:pk>', views.stylist_view),
-    # url('stylist/', views.stylist_list),
-]
-
-Manager_urlpatterns = [
-    url(r'manager/signup', views.manager_signup),
-]
-
-Client_urlpatterns = [
-    url(r'customer/singup', views.customer_signup),
-    url(r'customer/', views.customer_list),
-]
+# Stylist_urlpatterns = [
+#     path('stylist/signup', views.stylist_signup),
+#     path('stylist/<int:pk>', views.stylist_view),
+#     # url('stylist/', views.stylist_list),
+# ]
+#
+# Manager_urlpatterns = [
+#     url(r'manager/signup', views.manager_signup),
+# ]
+#
+# Client_urlpatterns = [
+#     url(r'customer/singup', views.customer_signup),
+#     url(r'customer/', views.customer_list),
+# ]
 
 OPENAPI_urlpatterns = [
     # OPENAPI SPEC drf_yasg
@@ -43,7 +44,7 @@ OPENAPI_urlpatterns = [
     url(r'^redoc/$', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
 ]
 
-urlpatterns.extend(Stylist_urlpatterns)
-urlpatterns.extend(Manager_urlpatterns)
-urlpatterns.extend(Client_urlpatterns)
+# urlpatterns.extend(Stylist_urlpatterns)
+# urlpatterns.extend(Manager_urlpatterns)
+# urlpatterns.extend(Client_urlpatterns)
 urlpatterns.extend(OPENAPI_urlpatterns)
