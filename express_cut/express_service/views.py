@@ -16,7 +16,6 @@ from .swagger_models import SwagResponses as swagResp
                      tags=['user'], )
 @api_view(['POST'])
 @authentication_classes([SessionAuthentication, BasicAuthentication])
-@permission_classes([IsAuthenticated])
 def user_signup_view(request):
     """
     Signup a users in the system.
@@ -28,12 +27,12 @@ def user_signup_view(request):
     if not SignUpPermissions().POST_permissions(request, serializer.validated_data):
         return Response(status=status.HTTP_403_FORBIDDEN)
     if request.method == 'POST':
-        serializer.save()
-        return Response(status=status.HTTP_201_CREATED)
+        user = serializer.save()
+        return Response(data = {'pk': user.pk},status=status.HTTP_201_CREATED)
     return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-@swagger_auto_schema(methods=['GET'], responses=swagResp.commonResponses, tags=['user'], )
+@swagger_auto_schema(methods=['GET'], responses={**swagResp.commonResponses, **swagResp.getResponse(UserSerializer)}, tags=['user'], )
 @api_view(['GET', ])
 @authentication_classes([SessionAuthentication, BasicAuthentication])
 @permission_classes([IsAuthenticated])
@@ -56,9 +55,9 @@ def all_users(request):
         return Response(serializer.data)
 
 
-@swagger_auto_schema(methods=['PUT'], request_body=UserSerializer, responses=swagResp.commonResponses,
+@swagger_auto_schema(methods=['PUT'], request_body=UserSerializer, responses={**swagResp.commonResponses, **swagResp.getResponse(UserSerializer)},
                      tags=['user'], )
-@swagger_auto_schema(methods=['GET', 'DELETE'], responses=swagResp.commonResponses,)
+@swagger_auto_schema(methods=['GET', 'DELETE'], responses={**swagResp.commonResponses, **swagResp.getResponse(UserSerializer)},)
 @api_view(['GET', 'PUT', 'DELETE'])
 @authentication_classes([SessionAuthentication, BasicAuthentication])
 @permission_classes([IsAuthenticated])

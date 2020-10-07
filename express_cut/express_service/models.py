@@ -6,11 +6,13 @@ class User(AbstractUser):
     MANAGER = 0
     STYLIST = 1
     CUSTOMER = 2
+    ADMIN = 3
 
     ROLE_CHOICES = (
         (MANAGER, 'Manager'),
         (STYLIST, 'Stylist'),
         (CUSTOMER, 'Customer'),
+        (ADMIN, 'Admin'),
     )
 
     role = models.PositiveSmallIntegerField(choices=ROLE_CHOICES, default=CUSTOMER)
