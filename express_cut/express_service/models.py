@@ -5,15 +5,15 @@ from django.contrib.auth.models import AbstractUser
 class User(AbstractUser):
     MANAGER = 0
     STYLIST = 1
-    CLIENT = 2
+    CUSTOMER = 2
 
     ROLE_CHOICES = (
         (MANAGER, 'Manager'),
         (STYLIST, 'Stylist'),
-        (CLIENT, 'Client'),
+        (CUSTOMER, 'Customer'),
     )
 
-    role = models.PositiveSmallIntegerField(choices=ROLE_CHOICES, null=True, blank=True)
+    role = models.PositiveSmallIntegerField(choices=ROLE_CHOICES, default=CUSTOMER)
 
 
 class Stylist(User):

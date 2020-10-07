@@ -3,18 +3,15 @@ from .models import Stylist, User
 from django.contrib.auth.hashers import make_password
 
 
-# class StylistSerializer(serializers.HyperlinkedModelSerializer):
-#     class Meta:
-#         model = Stylist
-#         fields = ('username', 'first_name', 'last_name', 'email')
+class UserSerializer(serializers.ModelSerializer):
+    role = serializers.ChoiceField(choices=User.ROLE_CHOICES)
+    pk = serializers.PrimaryKeyRelatedField(read_only=True)
 
+    # TODO: For PUT HTTP methods fields don't need to be required
 
-class UserSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = User
-        fields = ['username', 'first_name', 'last_name', 'email']
-        role = serializers.HiddenField(default = 0)
-        extra_kwargs = {'password': {'write_only': True}, }
+        fields = ['pk', 'username', 'first_name', 'last_name', 'email', 'role', 'password']
 
     def create(self, validated_data):
         validated_data['password'] = make_password(validated_data.get('password'))

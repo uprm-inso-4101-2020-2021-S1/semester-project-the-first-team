@@ -11,7 +11,7 @@ class Permissions:
 
     @staticmethod
     def has_client_permission(request):
-        if request.user.role == User.CLIENT:
+        if request.user.role == User.CUSTOMER:
             return True
         return False
 
@@ -22,6 +22,45 @@ class Permissions:
         return False
 
     @staticmethod
-    def has_owner_permission(request):
+    def has_owner_permission(request, obj):
         # TODO: Not implemented. Check if the model to access on the request is associated with the user
+        return False
+
+
+class UserViewPermissions(Permissions):
+    @staticmethod
+    def has_owner_permission(request, obj):
+        if request.user.pk == obj.pk:
+            return True
+        return False
+
+    def GET_permissions(self, request, obj):
+        if self.has_owner_permission(request, obj):
+            return True
+        elif obj.role == User.STYLIST and (self.has_manager_permission(request) or self.has_client_permission(request)):
+            return True
+        elif (obj.role == User.MANAGER or obj.role == User.CUSTOMER) and self.has_manager_permission(request):
+            return True
+        return False
+
+    def PUT_permissions(self, request, obj):
+        if self.has_owner_permission(request, obj):
+            return True
+        elif self.has_manager_permission(request):
+            return True
+        return False
+
+    def DELETE_permissions(self, request, obj):
+        if self.has_manager_permission(request):
+            return True
+
+
+class SignUpPermissions(Permissions):
+    def POST_permissions(self, request, data):
+        if data.get('role') == User.STYLIST and self.has_manager_permission(request):
+            return True
+        elif data.get('role') == User.MANAGER and self.has_manager_permission(request):
+            return True
+        elif data.get('role') == User.CUSTOMER and (not request.user.is_authenticated or self.has_manager_permission(request)):
+            return True
         return False
