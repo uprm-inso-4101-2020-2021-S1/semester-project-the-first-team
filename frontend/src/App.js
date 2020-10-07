@@ -18,6 +18,12 @@ function App() {
       cName: "nav-text",
     },
     {
+      title: "Active Appointment",
+      path: "/stylists/activeappointment",
+      icon: faConciergeBell,
+      cName: "nav-text",
+    },
+    {
       title: "New Stylist",
       path: "/stylists/form/newstylist",
       icon: faConciergeBell,

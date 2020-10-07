@@ -1,7 +1,8 @@
 import React, { Component } from "react";
-import { Switch, Route } from "react-router";
+import { Switch, Route, useRouteMatch } from "react-router";
 import StylistViewForm from "./stylistViewForm";
 import StylistAppointmentQueue from "./stylistAppointmentQueue";
+import ActiveAppointmentView from "./activeAppointmentView";
 
 import "./../style/stylistViewBody.scss";
 
@@ -10,17 +11,27 @@ class StylistViewBody extends Component {
   render() {
     return (
       <div className="stylist-view-container">
-        <Switch>
-          <Route path="/stylists/form">
-            <StylistViewForm />
-          </Route>
-          <Route path="/stylists/appointments">
-            <StylistAppointmentQueue />
-          </Route>
-        </Switch>
+        <StylistViews />
       </div>
     );
   }
 }
 
 export default StylistViewBody;
+
+function StylistViews() {
+  let { path } = useRouteMatch();
+  return (
+    <Switch>
+      <Route path={`${path}/form`}>
+        <StylistViewForm />
+      </Route>
+      <Route path={`${path}/appointments`}>
+        <StylistAppointmentQueue />
+      </Route>
+      <Route path={`${path}/activeappointment`}>
+        <ActiveAppointmentView />
+      </Route>
+    </Switch>
+  );
+}
