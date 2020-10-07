@@ -31,9 +31,28 @@ class ActiveAppointmentView extends Component {
       { servName: "Manicure", isDeleted: false, startTime: "", endTime: "" },
       { servName: "Trim", isDeleted: false, startTime: "", endTime: "" },
     ],
-    comments: "Used to have a little shampoo, now I have a lot!",
+    comments:
+      "Used to have a little shampoo, now I have a lot!Used to have a little shampoo, now I have a lot!Used to have a little shampoo, now I have a lot!Used to have a little shampoo, now I have a lot!Used to have a little shampoo, now I have a lot!Used to have a little shampoo, now I have a lot!Used to have a little shampoo, now I have a lot!Used to have a little shampoo, now I have a lot!Used to have a little shampoo, now I have a lot!Used to have a little shampoo, now I have a lot!Used to have a little shampoo, now I have a lot!Used to have a little shampoo, now I have a lot!Used to have a little shampoo, now I have a lot!Used to have a little shampoo, now I have a lot!Used to have a little shampoo, now I have a lot!Used to have a little shampoo, now I have a lot!Used to have a little shampoo, now I have a lot!Used to have a little shampoo, now I have a lot!Used to have a little shampoo, now I have a lot!Used to have a little shampoo, now I have a lot!Used to have a little shampoo, now I have a lot!Used to have a little shampoo, now I have a lot!",
     stylist: "Jenna Fromdablok",
   };
+
+  setServiceCardClassName(isDeleted, startTime, endTime) {
+    //   Todo: improve this and get it to work.
+    if (isDeleted) {
+      return "service-card deleted";
+    } else if (startTime === "") {
+      return "service-card pending";
+    } else if (endTime === "") {
+      return "service-card active";
+    } else {
+      return "service-card finished";
+    }
+  }
+
+  startService(service) {
+    service.startTime = "started";
+    console.log("service started.");
+  }
 
   render() {
     return (
@@ -61,7 +80,11 @@ class ActiveAppointmentView extends Component {
           >
             {this.state.services.map((service) => (
               <card
-                className="service-card"
+                className={this.setServiceCardClassName(
+                  service.isDeleted,
+                  service.startTime,
+                  service.endTime
+                )}
                 style={{
                   width: "16rem",
                   height: "16rem",
@@ -81,21 +104,51 @@ class ActiveAppointmentView extends Component {
                 />
                 <a>{service.servName}</a>
                 <div>
-                  <button>Start</button>
+                  {/* TODO: Change buttons and card display based on status of service. */}
+                  <button onClick={() => this.startService(service)}>
+                    Start
+                  </button>
                   <button>Delete</button>
                 </div>
               </card>
             ))}
           </div>
         </div>
-        <div>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            flexWrap: "nowrap",
+          }}
+        >
           <div style={{ height: "70%" }}>
-            <a style={{ color: "white" }}>Comments:</a>
-            <div className="card">
-              <a>{this.state.comments}</a>
+            <a
+              style={{
+                color: "white",
+              }}
+            >
+              Comments:
+            </a>
+            <div
+              className="card"
+              style={{
+                height: "40vh",
+                width: "20vw",
+                borderRadius: "5px",
+                overflowX: "hidden",
+                overflowY: "auto",
+              }}
+            >
+              <a style={{ padding: "0.5rem" }}>{this.state.comments}</a>
             </div>
           </div>
-          <div>
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              flexWrap: "nowrap",
+            }}
+          >
             <button>Finish</button>
             <button>Cancel</button>
           </div>
