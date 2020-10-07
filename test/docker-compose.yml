@@ -1,0 +1,83 @@
+version: "3.1"
+
+services:
+
+  db:
+    image: postgres:12.4
+    container_name: database
+    restart: always
+    healthcheck:
+      test: pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: test-db
+
+  rest:
+    image: express-cuts-rest-api:latest
+    build:
+      context: ../express_cut
+    container_name: express-API
+    ports:
+      - 8000:8000
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      - DJANGO_ALLOWED_HOSTS=*
+      # - DJANGO_SECRET_KEY="mim-1fbk4#ih!%awlxv17s_a835bpc&djw0y#4@c%&h-*eovba"
+      - DJANGO_CORS_ORIGIN_WHITELIST=*
+      - DEBUG=true
+      - CORS_ALLOW_ALL=true
+
+      # Connection settings
+      - DATABASE_NAME=test-db
+      - DATABASE_USER=admin
+      - DATABASE_PASSWORD=password
+      - DATABASE_HOST=db
+      - DATABASE_PORT=5432
+
+      # For initial populating DB
+      - GENERATE_TEST_DATA=true
+
+  # ui:
+  #   image: node
+  #   container_name: User-Interface
+    
+  tester:
+    # Create image from Dockerfile if image not created.
+    # In script we should delete the image after testing
+    build: .
+    image: verification-tests:latest
+    command: "/usr/share/tag/start-tests.sh"
+    depends_on:
+      - chrome
+      - selenium-hub
+      # - ui
+      # - rest
+    environment:
+      - TEST=test
+
+#### SELENIUM Containers
+
+  chrome:
+    image: selenium/node-chrome:4.0.0
+    depends_on:
+      - selenium-hub
+    environment:
+      - SE_EVENT_BUS_HOST=selenium-hub
+      # - SE_EVENT_BUS_PUBLISH_PORT=4442
+      # - SE_EVENT_BUS_SUBSCRIBE_PORT=4443
+    # ports:
+    #   - "6900:5900"
+
+  selenium-hub:
+    image: selenium/hub:4.0.0
+    container_name: selenium-hub
+    # ports:
+    #   - "4442:4442"
+    #   - "4443:4443"
+    #   - "4444:4444"
