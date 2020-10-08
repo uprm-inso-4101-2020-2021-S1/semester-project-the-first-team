@@ -1,21 +1,6 @@
 import React, { Component } from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import ServiceCard from "./serviceCard";
 
-import {
-  faSoap,
-  faPumpSoap,
-  faWind,
-  faHandSparkles,
-  faHandScissors,
-} from "@fortawesome/free-solid-svg-icons";
-
-const SERVICEICONS = {
-  Shampoo: faSoap,
-  Conditioner: faPumpSoap,
-  Blower: faWind,
-  Manicure: faHandSparkles,
-  Trim: faHandScissors,
-};
 class ActiveAppointmentView extends Component {
   state = {
     //   Temp royalty free profile picture
@@ -24,35 +9,11 @@ class ActiveAppointmentView extends Component {
     username: "Tris Everdeen",
     appTime: "3:30 P.M.",
     estWait: 15,
-    services: [
-      { servName: "Shampoo", isDeleted: false, startTime: "", endTime: "" },
-      { servName: "Conditioner", isDeleted: false, startTime: "", endTime: "" },
-      { servName: "Blower", isDeleted: false, startTime: "", endTime: "" },
-      { servName: "Manicure", isDeleted: false, startTime: "", endTime: "" },
-      { servName: "Trim", isDeleted: false, startTime: "", endTime: "" },
-    ],
+    services: ["Shampoo", "Conditioner", "Blower", "Manicure", "Trim"],
     comments:
       "Used to have a little shampoo, now I have a lot!Used to have a little shampoo, now I have a lot!Used to have a little shampoo, now I have a lot!Used to have a little shampoo, now I have a lot!Used to have a little shampoo, now I have a lot!Used to have a little shampoo, now I have a lot!Used to have a little shampoo, now I have a lot!Used to have a little shampoo, now I have a lot!Used to have a little shampoo, now I have a lot!Used to have a little shampoo, now I have a lot!Used to have a little shampoo, now I have a lot!Used to have a little shampoo, now I have a lot!Used to have a little shampoo, now I have a lot!Used to have a little shampoo, now I have a lot!Used to have a little shampoo, now I have a lot!Used to have a little shampoo, now I have a lot!Used to have a little shampoo, now I have a lot!Used to have a little shampoo, now I have a lot!Used to have a little shampoo, now I have a lot!Used to have a little shampoo, now I have a lot!Used to have a little shampoo, now I have a lot!Used to have a little shampoo, now I have a lot!",
     stylist: "Jenna Fromdablok",
   };
-
-  setServiceCardClassName(isDeleted, startTime, endTime) {
-    //   Todo: improve this and get it to work.
-    if (isDeleted) {
-      return "service-card deleted";
-    } else if (startTime === "") {
-      return "service-card pending";
-    } else if (endTime === "") {
-      return "service-card active";
-    } else {
-      return "service-card finished";
-    }
-  }
-
-  startService(service) {
-    service.startTime = "started";
-    console.log("service started.");
-  }
 
   render() {
     return (
@@ -79,38 +40,7 @@ class ActiveAppointmentView extends Component {
             }}
           >
             {this.state.services.map((service) => (
-              <card
-                className={this.setServiceCardClassName(
-                  service.isDeleted,
-                  service.startTime,
-                  service.endTime
-                )}
-                style={{
-                  width: "16rem",
-                  height: "16rem",
-                  backgroundColor: "white",
-                  margin: "5px",
-                  display: "flex",
-                  flexDirection: "column",
-                  flexWrap: "nowrap",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  borderRadius: "12px",
-                }}
-              >
-                <FontAwesomeIcon
-                  icon={SERVICEICONS[service.servName]}
-                  style={{ height: "40%", width: "40%" }}
-                />
-                <a>{service.servName}</a>
-                <div>
-                  {/* TODO: Change buttons and card display based on status of service. */}
-                  <button onClick={() => this.startService(service)}>
-                    Start
-                  </button>
-                  <button>Delete</button>
-                </div>
-              </card>
+              <ServiceCard service={service} />
             ))}
           </div>
         </div>
