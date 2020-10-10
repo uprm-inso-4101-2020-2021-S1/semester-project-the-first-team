@@ -28,67 +28,54 @@ const BUTTONSTATES = {
 class ServiceCard extends Component {
   state = {
     serviceState: "pending",
-    startTime: "",
-    endTime: "",
+    startTime: 0,
+    endTime: 0,
   };
 
   handlePositiveAction = () => {
-    // TODO: FIX TIME COLLECTION.
     switch (this.state.serviceState) {
       case "pending":
         var d = new Date();
         this.setState({ serviceState: "active", startTime: d.getTime() });
-        console.log(
-          "Starting service: ",
-          this.props.service,
-          " at: ",
-          this.props.startTime
-        );
         break;
       case "active":
         var d = new Date();
         this.setState({ serviceState: "finished", endTime: d.getTime() });
-        console.log(
-          "Finishing service: ",
-          this.props.service,
-          " at: ",
-          this.state.endTime
-        );
-        var duration = this.state.endTime - this.state.startTime;
-        var minutes = Math.floor(duration / 60000);
-        var seconds = ((duration % 60000) / 1000).toFixed(0);
-
-        console.log(
-          "Total duration: ",
-          duration,
-          " or ",
-          minutes,
-          ":",
-          seconds
-        );
         break;
       case "deleted":
         this.setState({ serviceState: "pending" });
-        console.log("Restoring service: ", this.props.service);
         break;
     }
   };
+
   handleNegativeAction = () => {
     switch (this.state.serviceState) {
       case "pending":
         this.setState({ serviceState: "deleted" });
-        console.log("Deleting service: ", this.props.service);
         break;
       case "active":
-        this.setState({ serviceState: "pending", startTime: "" });
-        console.log("Stopping service: ", this.props.service);
+        this.setState({ serviceState: "pending", startTime: 0 });
         break;
       case "finished":
-        this.setState({ serviceState: "active", endTime: "" });
-        console.log("Resuming service: ", this.props.service);
+        this.setState({ serviceState: "active", endTime: 0 });
         break;
     }
   };
+
+  printDuration() {
+    var duration = this.state.endTime - this.state.startTime;
+    var minutes = Math.floor(duration / 60000);
+    var seconds = ((duration % 60000) / 1000).toFixed(0);
+    console.log(
+      "Total duration: ",
+      duration,
+      " ms, or ",
+      minutes,
+      " minutes, ",
+      seconds,
+      " seconds."
+    );
+  }
 
   render() {
     return (
@@ -96,7 +83,6 @@ class ServiceCard extends Component {
         <FontAwesomeIcon icon={SERVICEICONS[this.props.service]} />
         <a>{this.props.service}</a>
         <div className="btn-div">
-          {/* TODO: Change buttons and card display based on status of service. */}
           <button
             className={"pos-btn " + this.state.serviceState}
             onClick={this.handlePositiveAction}
