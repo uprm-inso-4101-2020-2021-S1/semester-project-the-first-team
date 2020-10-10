@@ -40,10 +40,13 @@ class ServiceCard extends Component {
         break;
       case "active":
         var d = new Date();
-        this.setState({ serviceState: "finished", endTime: d.getTime() });
+        var end=d.getTime();
+        this.setState({ serviceState: "finished", endTime: end });
+        this.props.handleCulmination(this.props.service, (end - this.state.startTime))
         break;
       case "deleted":
         this.setState({ serviceState: "pending" });
+        this.props.handleCulmination(this.props.service, -1);
         break;
     }
   };
@@ -52,12 +55,14 @@ class ServiceCard extends Component {
     switch (this.state.serviceState) {
       case "pending":
         this.setState({ serviceState: "deleted" });
+        this.props.handleCulmination(this.props.service, 0);
         break;
       case "active":
         this.setState({ serviceState: "pending", startTime: 0 });
         break;
       case "finished":
         this.setState({ serviceState: "active", endTime: 0 });
+        this.props.handleCulmination(this.props.service, -1);
         break;
     }
   };

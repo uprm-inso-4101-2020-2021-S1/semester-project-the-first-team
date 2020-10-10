@@ -60,6 +60,17 @@
         height: 4rem;
         margin: 5px;
         border-radius: 6px;
+        font-size: x-large;
+
+        &.hidden {
+          display: none;
+        }
+        &.finish {
+          background-color: green;
+        }
+        &.cancel {
+          background-color: red;
+        }
       }
     }
   }
