@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import ServiceCard from "./serviceCard";
-
+import "./../style/stylistViewBody.scss";
 class ActiveAppointmentView extends Component {
   state = {
     //   Temp royalty free profile picture
@@ -17,70 +17,26 @@ class ActiveAppointmentView extends Component {
 
   render() {
     return (
-      <div
-        style={{
-          display: "flex",
-          flexWrap: "nowrap",
-          width: "100%",
-        }}
-      >
-        <div style={{ width: "75%" }}>
-          <a style={{ color: "white" }}>Services:</a>
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "row",
-
-              height: "75vh",
-              alignContent: "space-between",
-              justifyContent: "center",
-              flexWrap: "wrap",
-              overflowX: "hidden",
-              overflowY: "auto",
-            }}
-          >
+      <div className="active-appointment-container">
+        <div className="service-container">
+          <h3>Services:</h3>
+          <div className="service-card-container">
             {this.state.services.map((service) => (
               <ServiceCard service={service} />
             ))}
           </div>
         </div>
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            flexWrap: "nowrap",
-          }}
-        >
-          <div style={{ height: "70%" }}>
-            <a
-              style={{
-                color: "white",
-              }}
-            >
-              Comments:
-            </a>
-            <div
-              className="card"
-              style={{
-                height: "40vh",
-                width: "20vw",
-                borderRadius: "5px",
-                overflowX: "hidden",
-                overflowY: "auto",
-              }}
-            >
-              <a style={{ padding: "0.5rem" }}>{this.state.comments}</a>
+        {/* Right-column */}
+        <div className="comment-completion-container">
+          <div className="comment-section">
+            <h4>Comments:</h4>
+            <div className="card comments-card">
+              <a>{this.state.comments}</a>
             </div>
           </div>
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              flexWrap: "nowrap",
-            }}
-          >
-            <button>Finish</button>
-            <button>Cancel</button>
+          <div className="btn-div">
+            <button className="finish">Finish</button>
+            <button className="cancel">Cancel</button>
           </div>
         </div>
       </div>
