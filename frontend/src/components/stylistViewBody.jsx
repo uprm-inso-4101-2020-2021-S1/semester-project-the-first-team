@@ -3,6 +3,7 @@ import { Switch, Route, useRouteMatch } from "react-router";
 import StylistViewForm from "./stylistViewForm";
 import StylistAppointmentQueue from "./stylistAppointmentQueue";
 import ActiveAppointmentView from "./activeAppointmentView";
+import ScheduleManagementView from "./scheduleManagementView";
 
 import "./../style/stylistViewBody.scss";
 
@@ -31,6 +32,9 @@ function StylistViews() {
       </Route>
       <Route path={`${path}/activeappointment`}>
         <ActiveAppointmentView />
+      </Route>
+      <Route path={`${path}/schedule/manage`}>
+        <ScheduleManagementView />
       </Route>
     </Switch>
   );
