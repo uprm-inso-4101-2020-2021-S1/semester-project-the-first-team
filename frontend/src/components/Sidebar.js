@@ -4,6 +4,7 @@ import { Nav } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCut, faBars, faTimes } from "@fortawesome/free-solid-svg-icons";
 import { useLocation } from "react-router-dom";
+import PropTypes from "prop-types";
 
 function Sidebar(props) {
   const [sidebar, setSidebar] = useState(false);
@@ -55,5 +56,9 @@ function Sidebar(props) {
     </>
   );
 }
+
+Sidebar.propTypes = {
+  items: PropTypes.array,
+};
 
 export default Sidebar;
