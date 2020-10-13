@@ -16,7 +16,9 @@ body {
 /*** App.js Divs ***/
 .main-container {
   display: flex;
-  align-items: stretch;
+  width: 100%;
+  height: 100%;
+  flex-wrap: nowrap;
 }
 
 .body-container {
@@ -108,11 +110,11 @@ body {
 }
 
 .nav-text > .active > a {
-    color: white;
+  color: white;
 }
 
 .nav-link.active {
-    color: white;
+  color: white;
 }
 
 .nav-menu-header {

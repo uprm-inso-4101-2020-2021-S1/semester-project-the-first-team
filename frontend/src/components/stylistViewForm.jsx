@@ -10,6 +10,8 @@ class StylistViewForm extends Component {
       email: "",
       pswd: "",
       confirmPswd: "",
+      utype: "",
+      usertypes: ["customer", "stylist", "manager"],
     };
     this.handleChange = this.handleChange.bind(this);
   }
@@ -34,14 +36,15 @@ class StylistViewForm extends Component {
       });
     }
   }
-  handleChange(event) {
+
+  handleChange = (event) => {
     const target = event.target;
     const name = target.name;
 
     this.setState({
       [name]: event.target.value,
     });
-  }
+  };
 
   handleSubmit(event) {
     event.preventDefault();
@@ -97,6 +100,21 @@ class StylistViewForm extends Component {
                 value={this.state.confirmPswd}
                 onChange={this.handleChange}
               />
+
+              <label>Select a stylist: </label>
+              <select
+                className="form-control "
+                name="utype"
+                onChange={this.handleChange}
+              >
+                <option value="" selected disabled hidden>
+                  Choose here
+                </option>
+                {this.state.usertypes.map((type) => (
+                  <option value={type}>{type}</option>
+                ))}
+              </select>
+
               <div className="form-btns">
                 <input
                   className="submit-btn"

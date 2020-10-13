@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component, Fragment } from "react";
 import AppointmentModal from "./appointmentModal";
 import "./../style/queue.scss";
 
@@ -8,6 +8,8 @@ class stylistAppointmentQueue extends Component {
   // TODO: FIGURE OUT HOW TO SORT APPOINTMENTS BY TIME.
 
   state = {
+    utype: "manager",
+    stylists: ["Jenna", "Miranda", "Eliza"],
     showModal: false,
     modalAppointment: {},
     appoinmtents: [
@@ -58,9 +60,68 @@ class stylistAppointmentQueue extends Component {
     this.setState({ modalAppointment: {} });
   };
 
+  fetchStylistQueue = (event) => {
+    const target = event.target;
+    const stylist = target.value;
+    console.log("Fetching Appointment Queue for: ", stylist);
+    // TODO: ACTUALLY FETCH QUEUE FOR STYLIST.
+
+    // TEMP SET STATE TO DEMO FUNCTIONALITY.
+    this.setState({
+      appoinmtents: [
+        {
+          //   Temp royalty free profile picture
+          profilePic:
+            "https://images.pexels.com/photos/1841819/pexels-photo-1841819.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+          username: "Fanola Winona",
+          appTime: "2:30 P.M.",
+          estWait: 5,
+          services: ["Shampoo", "manicure", "trim"],
+          comments: "Test 1",
+          stylist: "Riga Marowl",
+        },
+
+        {
+          //   Temp royalty free profile picture
+          profilePic:
+            "https://images.pexels.com/photos/1580270/pexels-photo-1580270.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+          username: "Shamla Damla",
+          appTime: "8:30 P.M.",
+          estWait: 16,
+          services: ["conditioner", "blower", "manicure"],
+          comments: "Can u make me look prety",
+          stylist: "Miranda",
+        },
+      ],
+    });
+  };
+
+  selectStylistQueueDropdown = () => {
+    if (this.state.utype === "manager" || this.state.utype === "admin") {
+      return (
+        <Fragment>
+          <label style={{ color: "white" }}>Select a stylist: </label>
+          <select
+            className="form-control "
+            name="utype"
+            onChange={this.fetchStylistQueue}
+          >
+            <option value="" selected disabled hidden>
+              Choose here
+            </option>
+            {this.state.stylists.map((stylist) => (
+              <option value={stylist}>{stylist}</option>
+            ))}
+          </select>
+        </Fragment>
+      );
+    }
+  };
+
   render() {
     return (
       <div className="appointment-queue-container">
+        {this.selectStylistQueueDropdown()}
         {/* Appointment Modal that dynamicaly receives data to show */}
         <AppointmentModal
           show={this.state.showModal}

@@ -1,11 +1,5 @@
 @import "styleVariables";
 
-%centered-flex-column {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-}
-
 .appointment-queue-container {
   min-width: 60%;
 
@@ -25,7 +19,6 @@
         @extend %centered-flex-column;
         background-color: $deepPurple;
         border-radius: 10px;
-        @extend %centered-flex-column;
         box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.4);
 
         div {
@@ -101,9 +94,7 @@
         }
 
         .appointment-info-div {
-          display: flex;
-          flex-direction: column;
-          flex-wrap: nowrap;
+          @extend %flexcolnowrap;
         }
       }
     }

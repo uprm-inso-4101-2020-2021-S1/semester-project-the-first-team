@@ -21,6 +21,7 @@
     flex-wrap: nowrap;
     border-radius: 10px;
     min-height: 40px;
+    // min-width: 30%;
 
     .card-text {
       color: white;
@@ -140,6 +141,73 @@
           margin-bottom: 0rem;
           margin-left: 1rem;
         }
+      }
+    }
+  }
+}
+
+.service-card {
+  width: 15.5rem;
+  height: 15.5rem;
+  // White should mean something went wrong adding css.
+  background-color: white;
+  margin: 3px;
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  justify-content: center;
+  align-items: center;
+  border-radius: 12px;
+
+  // Color changes for different stages.
+  &.pending {
+    background-color: $cardGray;
+    color: white;
+  }
+
+  &.active {
+    background-color: orange;
+  }
+
+  &.finished {
+    background-color: green;
+  }
+
+  &.deleted {
+    background-color: red;
+  }
+
+  &[class*=" "] svg {
+    height: 40%;
+    width: 40%;
+  }
+
+  &[class*=" "] a {
+    font-size: x-large;
+  }
+
+  &[class*=" "] .btn-div {
+    margin-top: 15px;
+
+    button {
+      margin: 5px;
+      height: 3rem;
+      width: 6.5rem;
+      border-radius: 5px;
+      color: white;
+
+      &.pos-btn {
+        &.finished {
+          display: none;
+        }
+        background-color: $deepPurple;
+      }
+
+      &.neg-btn {
+        &.deleted {
+          display: none;
+        }
+        background-color: $bgGray;
       }
     }
   }

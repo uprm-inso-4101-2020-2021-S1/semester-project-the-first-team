@@ -15,20 +15,31 @@ function App() {
       title: "Appointments",
       path: "/stylists/appointments",
       icon: faConciergeBell,
-      cName: "nav-text"
+      cName: "nav-text",
+    },
+    {
+      title: "Active Appointment",
+      path: "/stylists/activeappointment",
+      icon: faConciergeBell,
+      cName: "nav-text",
     },
     {
       title: "New Stylist",
       path: "/stylists/form/newstylist",
       icon: faConciergeBell,
-      cName: "nav-text"
+      cName: "nav-text",
     },
     {
       title: "Edit Stylist",
       path: "/stylists/form/editstylist",
       icon: faConciergeBell,
-      cName: "nav-text"
-    }
+      cName: "nav-text",
+    },{
+      title: "Manage Schedules",
+      path: "/stylists/schedule/manage",
+      icon: faConciergeBell,
+      cName: "nav-text",
+    },
   ];
 
   return (
