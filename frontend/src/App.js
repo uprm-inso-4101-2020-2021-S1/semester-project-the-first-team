@@ -34,9 +34,16 @@ function App() {
       path: "/stylists/form/editstylist",
       icon: faConciergeBell,
       cName: "nav-text",
-    },{
+    },
+    {
       title: "Manage Schedules",
       path: "/stylists/schedule/manage",
+      icon: faConciergeBell,
+      cName: "nav-text",
+    },
+    {
+      title: "View Schedule",
+      path: "/stylists/schedule",
       icon: faConciergeBell,
       cName: "nav-text",
     },

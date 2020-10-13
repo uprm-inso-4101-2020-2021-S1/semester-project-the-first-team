@@ -2,7 +2,6 @@ import React, { Component, Fragment } from "react";
 import { Calendar, momentLocalizer, Views } from "react-big-calendar";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import moment from "moment";
-import Button from "react-bootstrap/Button";
 import ScheduleManagmentModal from "./scheduleManagementModal";
 
 const localizer = momentLocalizer(moment);
@@ -98,7 +97,6 @@ class ScheduleManagementView extends Component {
           events={this.state.events}
           defaultView={Views.WEEK}
           scrollToTime={new Date().setHours(7)}
-          // defaultDate={new Date(2015, 3, 12)}
           // TODO: add componenets of diff colors for all stylists.
           onSelectEvent={(event) => this.showEditBlockModal(event)}
           onSelectSlot={this.showStylistSelectionModal}

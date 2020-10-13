@@ -4,6 +4,7 @@ import StylistViewForm from "./stylistViewForm";
 import StylistAppointmentQueue from "./stylistAppointmentQueue";
 import ActiveAppointmentView from "./activeAppointmentView";
 import ScheduleManagementView from "./scheduleManagementView";
+import ViewScheduleComponent from "./viewScheduleComponent";
 
 import "./../style/stylistViewBody.scss";
 
@@ -35,6 +36,9 @@ function StylistViews() {
       </Route>
       <Route path={`${path}/schedule/manage`}>
         <ScheduleManagementView />
+      </Route>
+      <Route path={`${path}/schedule`}>
+        <ViewScheduleComponent />
       </Route>
     </Switch>
   );
