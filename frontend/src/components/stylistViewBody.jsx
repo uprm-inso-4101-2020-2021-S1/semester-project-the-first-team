@@ -5,6 +5,7 @@ import StylistAppointmentQueue from "./stylistAppointmentQueue";
 import ActiveAppointmentView from "./activeAppointmentView";
 import ScheduleManagementView from "./scheduleManagementView";
 import ViewScheduleComponent from "./viewScheduleComponent";
+import StatsView from "./statsView";
 
 import "./../style/stylistViewBody.scss";
 
@@ -39,6 +40,9 @@ function StylistViews() {
       </Route>
       <Route path={`${path}/schedule`}>
         <ViewScheduleComponent />
+      </Route>
+      <Route path={`${path}/stats`}>
+        <StatsView />
       </Route>
     </Switch>
   );

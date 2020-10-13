@@ -47,6 +47,12 @@ function App() {
       icon: faConciergeBell,
       cName: "nav-text",
     },
+    {
+      title: "Statistics",
+      path: "/stylists/stats",
+      icon: faConciergeBell,
+      cName: "nav-text",
+    },
   ];
 
   return (
