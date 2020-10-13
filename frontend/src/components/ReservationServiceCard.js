@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Card } from "react-bootstrap";
 import PropTypes from "prop-types";
 
-function ServiceCard(props) {
+function ReservationServiceCard(props) {
   const [serviceName] = useState(props.name);
 
   const handleClick = (e) => {
@@ -13,7 +13,7 @@ function ServiceCard(props) {
   };
 
   return (
-    <Card className={"service-card " + (props.active && "active")}>
+    <Card className={"reservation-service-card " + (props.active && "active")}>
       <div className="service-header">
         <span className="circle-background">
           <FontAwesomeIcon className="service-icon" icon={props.icon} />
@@ -30,7 +30,7 @@ function ServiceCard(props) {
   );
 }
 
-ServiceCard.propTypes = {
+ReservationServiceCard.propTypes = {
   active: PropTypes.bool,
   icon: PropTypes.object,
   getServiceName: PropTypes.func,
@@ -39,4 +39,4 @@ ServiceCard.propTypes = {
   setActive: PropTypes.func,
 };
 
-export default ServiceCard;
+export default ReservationServiceCard;
