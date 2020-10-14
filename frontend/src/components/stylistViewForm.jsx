@@ -122,14 +122,7 @@ class StylistViewForm extends Component {
                   value="Submit"
                   onSubmit={this.handleSubmit}
                 />
-                <Route path="/form/editstylist">
-                  <input
-                    className="delete-btn"
-                    type="submit"
-                    value="Delete"
-                    onSubmit={this.handleSubmit}
-                  />
-                </Route>
+                <FormDeleteBtn />
               </div>
             </form>
           </div>
@@ -142,7 +135,7 @@ class StylistViewForm extends Component {
 export default StylistViewForm;
 
 function FormTitle() {
-  let { path, url } = useRouteMatch();
+  let { path } = useRouteMatch();
 
   return (
     <Switch>
@@ -160,7 +153,7 @@ function FormDeleteBtn() {
         className="delete-btn"
         type="submit"
         value="Delete"
-        onSubmit={this.handleSubmit}
+        // onSubmit={this.handleSubmit}
       />
     </Route>
   );

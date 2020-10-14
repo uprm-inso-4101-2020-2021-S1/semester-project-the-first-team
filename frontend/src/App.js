@@ -1,7 +1,6 @@
 import React from "react";
 import Sidebar from "./components/Sidebar";
-import StylistHeaderBar from "./components/stylistHeaderBar";
-import StylistViewBody from "./components/stylistViewBody";
+import StylistView from "./components/stylistView";
 import Customer from "./components/Customer";
 
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
@@ -61,10 +60,7 @@ function App() {
         <Switch>
           <Route path="/stylists">
             <Sidebar items={temp} />
-            <div className="body-container">
-              <StylistHeaderBar currentView="new-stylist-view" />
-              <StylistViewBody />
-            </div>
+            <StylistView />
           </Route>
           <Route path="/customers" component={Customer} />
         </Switch>

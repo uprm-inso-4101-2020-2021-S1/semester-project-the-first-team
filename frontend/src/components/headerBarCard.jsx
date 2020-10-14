@@ -1,55 +1,61 @@
 import React, { Component, Fragment } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faClock } from "@fortawesome/free-solid-svg-icons";
-import { Switch, Route, useRouteMatch } from "react-router";
+import { Switch, Route } from "react-router";
 
 import "./../style/card.scss";
 class HeaderBarCard extends Component {
-  state = {
-    // Temp Royalty free image to use as a profile picture.
-    route: "queue",
-    profilePic:
-      "https://images.pexels.com/photos/2552130/pexels-photo-2552130.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
-    username: "Miranda Wrightes",
+  state = {};
 
-    profilePic2:
-      "https://images.pexels.com/photos/1841819/pexels-photo-1841819.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
-    username2: "Tris Everdeen",
-    appTime: "3:30 P.M.",
+  getStylistsForDropdown = () => {
+    // TODO: GET DATA FROM BACKEND
+    return [
+      {
+        profilePic:
+          "https://images.pexels.com/photos/2552130/pexels-photo-2552130.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+        username: "Miranda Wrightes",
+        appTime: null,
+      },
+      {
+        profilePic:
+          "https://images.pexels.com/photos/1841819/pexels-photo-1841819.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+        username: "Tris Everdeen",
+        appTime: null,
+      },
+    ];
   };
 
   // TODO: Rework route-dependent components into functions.
+  // Create dropdown for various stylist views.
   render() {
     return (
-      <card className=" header-card">
+      <div className=" header-card">
         <body className="card-body header-card-body">
           <div>
             <picture>
-              <Switch>
-                <Route path="/stylists/appointments">
-                  <img src={this.state.profilePic2}></img>
-                </Route>
-                <Route path="/">
-                  <img src={this.state.profilePic}></img>
-                </Route>
-              </Switch>
+              <img
+                src={
+                  this.props.headerCard.profilePic
+                    ? this.props.headerCard.profilePic
+                    : ""
+                }
+              ></img>
             </picture>
           </div>
           <div>
             <a className="card-text">
-              <Switch>
-                <Route path="/stylists/appointments">
-                  {this.state.username2}
-                </Route>
-                <Route path="/">{this.state.username}</Route>
-              </Switch>
+              {this.props.headerCard.username
+                ? this.props.headerCard.username
+                : ""}
             </a>
           </div>
-          <AppointmentHeaderCardExample
-            appTime={this.state.appTime ? this.state.appTime : 0}
-          />
+          {this.props.headerCard.appTime && (
+            <AppointmentHeaderCardExample
+              appTime={this.props.headerCard.appTime}
+            />
+          )}
         </body>
-      </card>
+      </div>
     );
   }
 }
@@ -58,7 +64,7 @@ export default HeaderBarCard;
 
 function AppointmentHeaderCardExample(appTime) {
   return (
-    <Route path="/stylists/appointments">
+    <Fragment>
       <div>
         <a className="card-div" />
       </div>
@@ -68,6 +74,6 @@ function AppointmentHeaderCardExample(appTime) {
           <a className="app-time">{appTime.appTime}</a>
         </div>
       </div>
-    </Route>
+    </Fragment>
   );
 }
