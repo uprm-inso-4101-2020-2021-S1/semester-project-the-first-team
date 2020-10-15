@@ -17,7 +17,7 @@ class StylistViewBody extends Component {
       <div className="stylist-view-container">
         <Switch>
           <Route path={`${path}/form`}>
-            <StylistViewForm />
+            <StylistViewForm headerCard={this.props.headerCard} />
           </Route>
           <Route path={`${path}/appointments`}>
             <StylistAppointmentQueue
@@ -25,7 +25,10 @@ class StylistViewBody extends Component {
             />
           </Route>
           <Route path={`${path}/activeappointment`}>
-            <ActiveAppointmentView />
+            <ActiveAppointmentView
+              changeHeaderCard={this.props.changeHeaderCard}
+              activeAppointment={this.props.activeAppointment}
+            />
           </Route>
           <Route path={`${path}/schedule/manage`}>
             <ScheduleManagementView />

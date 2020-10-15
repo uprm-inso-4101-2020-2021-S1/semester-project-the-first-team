@@ -16,27 +16,6 @@ class StylistViewForm extends Component {
     this.handleChange = this.handleChange.bind(this);
   }
 
-  componentDidMount() {
-    console.log(window.location.href);
-    if (!window.location.href.includes("/form/editstylist")) {
-      this.setState({
-        fname: "",
-        lname: "",
-        email: "",
-        pswd: "",
-        confirmPswd: "",
-      });
-    } else {
-      this.setState({
-        fname: "Miranda",
-        lname: "Wrightes",
-        email: "courtoflaw@compuserv.org",
-        pswd: "@m@zingGr@c3",
-        confirmPswd: "@m@zingGr@c3",
-      });
-    }
-  }
-
   handleChange = (event) => {
     const target = event.target;
     const name = target.name;
@@ -46,10 +25,15 @@ class StylistViewForm extends Component {
     });
   };
 
-  handleSubmit(event) {
+  handleSubmit = (event) => {
     event.preventDefault();
-    alert("A name was submitted: " + this.state.fname);
-  }
+    alert(
+      "A name was submitted: " +
+        this.state.fname +
+        " and the header card says: " +
+        (this.props.headerCard.username ? this.props.headerCard.username : "")
+    );
+  };
 
   render() {
     return (
@@ -101,17 +85,16 @@ class StylistViewForm extends Component {
                 onChange={this.handleChange}
               />
 
-              <label>Select a stylist: </label>
+              <label>Select a user type: </label>
               <select
                 className="form-control "
                 name="utype"
                 onChange={this.handleChange}
               >
-                <option value="" selected disabled hidden>
-                  Choose here
-                </option>
                 {this.state.usertypes.map((type) => (
-                  <option value={type}>{type}</option>
+                  <option value={type} key={type}>
+                    {type}
+                  </option>
                 ))}
               </select>
 
@@ -120,7 +103,7 @@ class StylistViewForm extends Component {
                   className="submit-btn"
                   type="submit"
                   value="Submit"
-                  onSubmit={this.handleSubmit}
+                  onClick={this.handleSubmit}
                 />
                 <FormDeleteBtn />
               </div>

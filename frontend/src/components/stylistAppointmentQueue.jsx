@@ -61,6 +61,7 @@ class stylistAppointmentQueue extends Component {
       modalAppointment: {},
       appoinmtents: tempappointments,
     });
+    this.changeHeaderCard(tempappointments[0]);
   };
 
   changeHeaderCard = (newCardInfo) => {

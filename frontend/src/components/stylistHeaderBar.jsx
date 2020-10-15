@@ -18,7 +18,7 @@ class StylistHeaderBar extends Component {
           <span>
             <HeaderBarCard
               headerCard={this.props.headerCard}
-              onChangeHeaderCard={this.props.changeHeaderCard}
+              changeHeaderCard={this.props.changeHeaderCard}
             />
           </span>
         </div>

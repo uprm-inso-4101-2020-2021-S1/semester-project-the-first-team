@@ -24,14 +24,28 @@ class StylistView extends Component {
     headerCard: {}, // Stuff for the headercard
     isManager: false,
     activeAppointment: {},
+    currUser: {},
   };
 
   componentDidMount() {
-    this.setState({ headerCard: tempcard[0] });
+    this.setState({
+      currUser: {
+        profilePic:
+          "https://images.pexels.com/photos/2552130/pexels-photo-2552130.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+        username: "Miranda Wrightes",
+        appTime: null,
+      },
+    });
   }
 
   changeHeaderCard(cardInfo) {
     this.setState({ headerCard: cardInfo });
+  }
+
+  componentDidUpdate() {
+    if (!this.state.headerCard || !this.state.headerCard.username) {
+      this.changeHeaderCard(this.state.currUser);
+    }
   }
 
   setActiveAppointment = (appointment) => {
@@ -44,9 +58,14 @@ class StylistView extends Component {
       <div className="body-container">
         <StylistHeaderBar
           headerCard={this.state.headerCard}
-          onChangeHeaderCard={this.changeHeaderCard.bind(this)}
+          changeHeaderCard={this.changeHeaderCard.bind(this)}
         />
-        <StylistViewBody changeHeaderCard={this.changeHeaderCard.bind(this)} />
+        <StylistViewBody
+          changeHeaderCard={this.changeHeaderCard.bind(this)}
+          setActiveAppointment={this.setActiveAppointment.bind(this)}
+          activeAppointment={this.state.activeAppointment}
+          headerCard={this.state.headerCard}
+        />
       </div>
     );
   }

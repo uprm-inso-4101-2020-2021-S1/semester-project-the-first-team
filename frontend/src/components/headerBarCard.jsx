@@ -35,9 +35,7 @@ class HeaderBarCard extends Component {
             <picture>
               <img
                 src={
-                  this.props.headerCard.profilePic
-                    ? this.props.headerCard.profilePic
-                    : ""
+                  this.props.headerCard ? this.props.headerCard.profilePic : ""
                 }
                 alt="Header Bar Card."
               ></img>
@@ -45,16 +43,16 @@ class HeaderBarCard extends Component {
           </div>
           <div>
             <div className="card-text">
-              {this.props.headerCard.username
-                ? this.props.headerCard.username
-                : ""}
+              {this.props.headerCard ? this.props.headerCard.username : ""}
             </div>
           </div>
-          {this.props.headerCard.appTime && (
-            <AppointmentHeaderCardExample
+          {this.props.headerCard && this.props.headerCard.appTime && (
+            <HeaderCardAppointmentTime
               appTime={this.props.headerCard.appTime}
             />
           )}
+          {/* TODO: MAKE THIS SHOW UP ONLY ON ROUTES NEEDED. */}
+          <HeaderCardDropRight changeHeaderCard={this.props.changeHeaderCard} />
         </div>
       </div>
     );
@@ -63,7 +61,7 @@ class HeaderBarCard extends Component {
 
 export default HeaderBarCard;
 
-function AppointmentHeaderCardExample(appTime) {
+function HeaderCardAppointmentTime(appTime) {
   return (
     <Fragment>
       <div>
@@ -78,3 +76,53 @@ function AppointmentHeaderCardExample(appTime) {
     </Fragment>
   );
 }
+
+const tempstylists = [
+  {
+    profilePic:
+      "https://images.pexels.com/photos/2552130/pexels-photo-2552130.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+    username: "Miranda Wrightes",
+  },
+  {
+    profilePic:
+      "https://images.pexels.com/photos/1841819/pexels-photo-1841819.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+    username: "Tris Everdeen",
+  },
+  {
+    profilePic:
+      "https://images.pexels.com/photos/1382731/pexels-photo-1382731.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+    username: "Robin Moneypenny",
+  },
+];
+
+class HeaderCardDropRight extends Component {
+  state = { dropdownOptions: [] };
+  componentDidMount() {
+    this.setState({ dropdownOptions: tempstylists });
+  }
+
+  render() {
+    return (
+      <div class="btn-group dropright">
+        <button
+          type="button"
+          class="btn btn-secondary dropdown-toggle"
+          data-toggle="dropdown"
+          aria-haspopup="true"
+          aria-expanded="false"
+        >
+          Dropright
+        </button>
+        <div class="dropdown-menu">
+          {this.state.dropdownOptions.map((cardoption) => (
+            <a onClick={() => this.props.changeHeaderCard(cardoption)}>
+              {cardoption.username}
+            </a>
+          ))}
+        </div>
+      </div>
+    );
+  }
+}
+
+// export default HeaderCardDropRight;
