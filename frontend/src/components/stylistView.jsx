@@ -23,14 +23,19 @@ class StylistView extends Component {
   state = {
     headerCard: {}, // Stuff for the headercard
     isManager: false,
+    activeAppointment: {},
   };
 
   componentDidMount() {
     this.setState({ headerCard: tempcard[0] });
   }
 
-  changeHeaderCard = (cardInfo) => {
+  changeHeaderCard(cardInfo) {
     this.setState({ headerCard: cardInfo });
+  }
+
+  setActiveAppointment = (appointment) => {
+    this.setState({ activeAppointment: appointment });
   };
   //   TODO: HANDLE GETTING DATA BASED ON ROUTES FOR THE HEADERBAR.
 
@@ -39,9 +44,9 @@ class StylistView extends Component {
       <div className="body-container">
         <StylistHeaderBar
           headerCard={this.state.headerCard}
-          onChangeHeaderCard={this.changeHeaderCard}
+          onChangeHeaderCard={this.changeHeaderCard.bind(this)}
         />
-        <StylistViewBody />
+        <StylistViewBody changeHeaderCard={this.changeHeaderCard.bind(this)} />
       </div>
     );
   }

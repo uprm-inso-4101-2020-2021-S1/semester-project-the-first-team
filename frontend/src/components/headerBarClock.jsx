@@ -29,11 +29,11 @@ class HeaderBarClock extends Component {
   }
   render() {
     return (
-      <a className="navbar-brand text-light">
+      <div className="navbar-brand text-light">
         {this.state.time}
-        {this.state.showSeconds && <a>{":" + this.state.seconds}</a>}{" "}
+        {this.state.showSeconds && <span>{":" + this.state.seconds}</span>}{" "}
         {this.state.meridian}
-      </a>
+      </div>
     );
   }
 }

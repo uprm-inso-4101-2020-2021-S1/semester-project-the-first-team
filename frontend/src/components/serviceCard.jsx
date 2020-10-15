@@ -39,14 +39,20 @@ class ServiceCard extends Component {
         this.setState({ serviceState: "active", startTime: d.getTime() });
         break;
       case "active":
-        var d = new Date();
-        var end=d.getTime();
+        var de = new Date();
+        var end = de.getTime();
         this.setState({ serviceState: "finished", endTime: end });
-        this.props.handleCulmination(this.props.service, (end - this.state.startTime))
+        this.props.handleCulmination(
+          this.props.service,
+          end - this.state.startTime
+        );
         break;
       case "deleted":
         this.setState({ serviceState: "pending" });
         this.props.handleCulmination(this.props.service, -1);
+        break;
+      default:
+        console.log("Something went wrong handling positive action.");
         break;
     }
   };
@@ -63,6 +69,9 @@ class ServiceCard extends Component {
       case "finished":
         this.setState({ serviceState: "active", endTime: 0 });
         this.props.handleCulmination(this.props.service, -1);
+        break;
+      default:
+        console.log("Something went wrong handling negative action.");
         break;
     }
   };
@@ -86,7 +95,7 @@ class ServiceCard extends Component {
     return (
       <card className={"service-card " + this.state.serviceState}>
         <FontAwesomeIcon icon={SERVICEICONS[this.props.service]} />
-        <a>{this.props.service}</a>
+        <text>{this.props.service}</text>
         <div className="btn-div">
           <button
             className={"pos-btn " + this.state.serviceState}

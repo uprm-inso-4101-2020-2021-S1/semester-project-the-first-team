@@ -4,50 +4,67 @@ import "./../style/queue.scss";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faClock } from "@fortawesome/free-solid-svg-icons";
+
+const tempappointments = [
+  {
+    //   Temp royalty free profile picture
+    profilePic:
+      "https://images.pexels.com/photos/1841819/pexels-photo-1841819.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+    username: "Tris Everdeen",
+    appTime: "3:30 P.M.",
+    estWait: 15,
+    services: ["Shampoo", "conditioner", "blower", "manicure", "trim"],
+    comments: "Used to have a little shampoo, now I have a lot!",
+    stylist: "Jenna Fromdablok",
+  },
+  {
+    //   Temp royalty free profile picture
+    profilePic:
+      "https://images.pexels.com/photos/1382731/pexels-photo-1382731.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+    username: "Robin Moneypenny",
+    appTime: "4:30 P.M.",
+    estWait: 15,
+    services: ["Shampoo", "manicure", "trim"],
+    comments: "You don't have to put on the red light, the green shade is ok.",
+    stylist: "Roxxanne Thony",
+  },
+  {
+    //   Temp royalty free profile picture
+    profilePic:
+      "https://images.pexels.com/photos/1580270/pexels-photo-1580270.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+    username: "Alexandria Doubledaddario Itzacadoiozi",
+    appTime: "5:30 P.M.",
+    estWait: 15,
+    services: ["Shampoo", "conditioner", "blower", "manicure"],
+    comments: "Set me up, Fam!",
+    stylist: "Any",
+  },
+];
 class stylistAppointmentQueue extends Component {
   // TODO: FIGURE OUT HOW TO SORT APPOINTMENTS BY TIME.
 
   state = {
-    utype: "manager",
-    stylists: ["Jenna", "Miranda", "Eliza"],
+    utype: "",
+    stylists: [],
     showModal: false,
     modalAppointment: {},
-    appoinmtents: [
-      {
-        //   Temp royalty free profile picture
-        profilePic:
-          "https://images.pexels.com/photos/1841819/pexels-photo-1841819.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
-        username: "Tris Everdeen",
-        appTime: "3:30 P.M.",
-        estWait: 15,
-        services: ["Shampoo", "conditioner", "blower", "manicure", "trim"],
-        comments: "Used to have a little shampoo, now I have a lot!",
-        stylist: "Jenna Fromdablok",
-      },
-      {
-        //   Temp royalty free profile picture
-        profilePic:
-          "https://images.pexels.com/photos/1382731/pexels-photo-1382731.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
-        username: "Robin Moneypenny",
-        appTime: "4:30 P.M.",
-        estWait: 15,
-        services: ["Shampoo", "manicure", "trim"],
-        comments:
-          "You don't have to put on the red light, the green shade is ok.",
-        stylist: "Roxxanne Thony",
-      },
-      {
-        //   Temp royalty free profile picture
-        profilePic:
-          "https://images.pexels.com/photos/1580270/pexels-photo-1580270.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
-        username: "Alexandria Doubledaddario Itzacadoiozi",
-        appTime: "5:30 P.M.",
-        estWait: 15,
-        services: ["Shampoo", "conditioner", "blower", "manicure"],
-        comments: "Set me up, Fam!",
-        stylist: "Any",
-      },
-    ],
+    appoinmtents: [],
+  };
+
+  componentDidMount = () => {
+    // TODO: GET DATA AND SET STATE.
+
+    this.setState({
+      utype: "manager",
+      stylists: ["Jenna", "Miranda", "Eliza"],
+      showModal: false,
+      modalAppointment: {},
+      appoinmtents: tempappointments,
+    });
+  };
+
+  changeHeaderCard = (newCardInfo) => {
+    this.props.changeHeaderCard(newCardInfo);
   };
 
   enableModal = (appointment) => {
@@ -94,6 +111,13 @@ class stylistAppointmentQueue extends Component {
         },
       ],
     });
+
+    this.changeHeaderCard({
+      profilePic:
+        "https://images.pexels.com/photos/1841819/pexels-photo-1841819.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+      username: "Fanola Winona",
+      appTime: "2:30 P.M.",
+    });
   };
 
   selectStylistQueueDropdown = () => {
@@ -110,7 +134,9 @@ class stylistAppointmentQueue extends Component {
               Choose here
             </option>
             {this.state.stylists.map((stylist) => (
-              <option value={stylist}>{stylist}</option>
+              <option value={stylist} key={stylist}>
+                {stylist}
+              </option>
             ))}
           </select>
         </Fragment>
@@ -132,37 +158,40 @@ class stylistAppointmentQueue extends Component {
         {this.state.appoinmtents.map((appointment) => (
           <div className="appointment-container" key={appointment.username}>
             <div className="appointment-time-container">
-              <card className="card">
+              <div className="card">
                 {/* Time of appointment */}
                 <div>
                   <FontAwesomeIcon icon={faClock} />
-                  <a>{appointment.appTime}</a>
+                  <text>{appointment.appTime}</text>
                 </div>
-              </card>
+              </div>
             </div>
-            <card
-              className="appointment-card"
+            <div
+              className=" appointment-card"
               onClick={() => this.enableModal(appointment)}
             >
               <div className="card-body">
                 <picture>
                   {/* Customer's profile Pic */}
-                  <img src={appointment.profilePic}></img>
+                  <img
+                    src={appointment.profilePic}
+                    alt="Appointment Profile"
+                  ></img>
                 </picture>
                 <div className="username-div">
                   {/* Customer's display name */}
-                  <a>{appointment.username}</a>
+                  <text>{appointment.username}</text>
                 </div>
                 <div className="card-div" />
                 <div className="appointment-info-div">
                   {/* Appointment Information: num services, duration, status. */}
-                  <a>Num. of Services: {appointment.services.length}</a>
-                  <a>Est. Duration: {appointment.estWait} min.</a>
+                  <text>Num. of Services: {appointment.services.length}</text>
+                  <text>Est. Duration: {appointment.estWait} min.</text>
                   {/* TODO: DYNAMICALLY DETERMINE IF APPOINTMENT IS ON TIME OR WAITING. */}
-                  <a>Status: Waiting</a>
+                  <text>Status: Waiting</text>
                 </div>
               </div>
-            </card>
+            </div>
           </div>
         ))}
       </div>

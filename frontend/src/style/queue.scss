@@ -12,7 +12,7 @@
     .appointment-time-container {
       padding-right: 1rem;
 
-      card {
+      .card {
         height: 100%;
         padding: 1rem;
         width: 11rem;
@@ -33,7 +33,7 @@
             width: 2em;
             color: white;
           }
-          a {
+          text {
             color: white;
             text-align: center;
             font-size: 1.5em;
@@ -59,7 +59,7 @@
         justify-content: space-evenly;
         border-radius: 10px;
 
-        a {
+        text {
           color: white;
           padding-right: 5px;
           word-wrap: break-word;

@@ -13,29 +13,28 @@ class ActiveAppointmentView extends Component {
     comments:
       "Used to have a little shampoo, now I have a lot!Used to have a little shampoo, now I have a lot!Used to have a little shampoo, now I have a lot!Used to have a little shampoo, now I have a lot!Used to have a little shampoo, now I have a lot!Used to have a little shampoo, now I have a lot!Used to have a little shampoo, now I have a lot!Used to have a little shampoo, now I have a lot!Used to have a little shampoo, now I have a lot!Used to have a little shampoo, now I have a lot!Used to have a little shampoo, now I have a lot!Used to have a little shampoo, now I have a lot!Used to have a little shampoo, now I have a lot!Used to have a little shampoo, now I have a lot!Used to have a little shampoo, now I have a lot!Used to have a little shampoo, now I have a lot!Used to have a little shampoo, now I have a lot!Used to have a little shampoo, now I have a lot!Used to have a little shampoo, now I have a lot!Used to have a little shampoo, now I have a lot!Used to have a little shampoo, now I have a lot!Used to have a little shampoo, now I have a lot!",
     stylist: "Jenna Fromdablok",
-    serviceDurations:{},
-    showFinish:false
+    serviceDurations: {},
+    showFinish: false,
   };
 
-  handleServiceCulmination = (service, duration)=>{
+  handleServiceCulmination = (service, duration) => {
     let currServDurs = this.state.serviceDurations;
     currServDurs[service] = duration;
-    if(Object.keys(currServDurs).length === this.state.services.length){
-      var showFinish=true;
-      for(const servDur in currServDurs){
+    if (Object.keys(currServDurs).length === this.state.services.length) {
+      var showFinish = true;
+      for (const servDur in currServDurs) {
         console.log(servDur);
 
         // Using negative values for invalid status, and 0ms for deleted.
-          if(currServDurs[servDur] < 0){
-            showFinish=false;
-            break;
-          }
+        if (currServDurs[servDur] < 0) {
+          showFinish = false;
+          break;
+        }
       }
-      this.setState({showFinish:showFinish});
+      this.setState({ showFinish: showFinish });
     }
-    this.setState({serviceDurations:currServDurs});
-
-  }
+    this.setState({ serviceDurations: currServDurs });
+  };
 
   render() {
     return (
@@ -44,7 +43,10 @@ class ActiveAppointmentView extends Component {
           <h3>Services:</h3>
           <div className="service-card-container">
             {this.state.services.map((service) => (
-              <ServiceCard service={service} handleCulmination={this.handleServiceCulmination}/>
+              <ServiceCard
+                service={service}
+                handleCulmination={this.handleServiceCulmination}
+              />
             ))}
           </div>
         </div>
@@ -53,11 +55,13 @@ class ActiveAppointmentView extends Component {
           <div className="comment-section">
             <h4>Comments:</h4>
             <div className="card comments-card">
-              <a>{this.state.comments}</a>
+              <text>{this.state.comments}</text>
             </div>
           </div>
           <div className="btn-div">
-            <button className={this.state.showFinish?"finish":"hidden"}>Finish</button>
+            <button className={this.state.showFinish ? "finish" : "hidden"}>
+              Finish
+            </button>
             <button className="cancel">Cancel</button>
           </div>
         </div>

@@ -1,7 +1,7 @@
 import React, { Component, Fragment } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faClock } from "@fortawesome/free-solid-svg-icons";
-import { Switch, Route } from "react-router";
+// import { Switch, Route } from "react-router";
 
 import "./../style/card.scss";
 class HeaderBarCard extends Component {
@@ -30,7 +30,7 @@ class HeaderBarCard extends Component {
   render() {
     return (
       <div className=" header-card">
-        <body className="card-body header-card-body">
+        <div className="card-body header-card-body">
           <div>
             <picture>
               <img
@@ -39,22 +39,23 @@ class HeaderBarCard extends Component {
                     ? this.props.headerCard.profilePic
                     : ""
                 }
+                alt="Header Bar Card."
               ></img>
             </picture>
           </div>
           <div>
-            <a className="card-text">
+            <div className="card-text">
               {this.props.headerCard.username
                 ? this.props.headerCard.username
                 : ""}
-            </a>
+            </div>
           </div>
           {this.props.headerCard.appTime && (
             <AppointmentHeaderCardExample
               appTime={this.props.headerCard.appTime}
             />
           )}
-        </body>
+        </div>
       </div>
     );
   }
@@ -66,12 +67,12 @@ function AppointmentHeaderCardExample(appTime) {
   return (
     <Fragment>
       <div>
-        <a className="card-div" />
+        <span className="card-div" />
       </div>
       <div>
         <div className="header-card-rightmost-section">
           <FontAwesomeIcon icon={faClock} />
-          <a className="app-time">{appTime.appTime}</a>
+          <text className="app-time">{appTime.appTime}</text>
         </div>
       </div>
     </Fragment>

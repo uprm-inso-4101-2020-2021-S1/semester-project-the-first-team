@@ -37,20 +37,18 @@ export default StylistHeaderBar;
 function HeaderBarTitle() {
   let { path } = useRouteMatch();
   return (
-    <div>
-      <a className="navbar-brand" href="#">
-        <Switch>
-          <Route path={`${path}/appointments`}>Next Appointment:</Route>
-          <Route path={`${path}/activeappointment`}>Active Appointment:</Route>
-          <Route path={`${path}/schedule/manage`}>
-            Manage Stylist Schedules:
-          </Route>
-          <Route path={`${path}/schedule`}>View Schedule For:</Route>
-          <Route path={`${path}/stats`}>Statistics:</Route>
-          <Route path={`${path}/form/newstylist`}>Add New Stylist:</Route>
-          <Route path={`${path}/form/editstylist`}>Edit Stylist:</Route>
-        </Switch>
-      </a>
+    <div className="navbar-brand">
+      <Switch>
+        <Route path={`${path}/appointments`}>Next Appointment:</Route>
+        <Route path={`${path}/activeappointment`}>Active Appointment:</Route>
+        <Route path={`${path}/schedule/manage`}>
+          Manage Stylist Schedules:
+        </Route>
+        <Route path={`${path}/schedule`}>View Schedule For:</Route>
+        <Route path={`${path}/stats`}>Statistics:</Route>
+        <Route path={`${path}/form/newstylist`}>Add New Stylist:</Route>
+        <Route path={`${path}/form/editstylist`}>Edit Stylist:</Route>
+      </Switch>
     </div>
   );
 }

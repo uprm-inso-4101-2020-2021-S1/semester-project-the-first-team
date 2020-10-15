@@ -19,7 +19,7 @@ const AppointmentModal = ({ show, hide, appointment }) => {
             <Col xs md="1">
               <picture>
                 {/* Customer's profile Pic */}
-                <img src={appointment.profilePic}></img>
+                <img src={appointment.profilePic} alt="Appointment Modal"></img>
               </picture>
             </Col>
             <Col>
@@ -51,14 +51,15 @@ const AppointmentModal = ({ show, hide, appointment }) => {
           <Col>
             <div>
               <text>
-                Pref. Stylist: <a>{appointment.stylist}</a>
+                Pref. Stylist:{" "}
+                <text className="boxed-txt">{appointment.stylist}</text>
               </text>
             </div>
             <div>
               <text>
                 Comments:
                 <div>
-                  <a>{appointment.comments}</a>
+                  <text className="boxed-txt">{appointment.comments}</text>
                 </div>
               </text>
             </div>

@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React from "react";
 import Modal from "react-bootstrap/Modal";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
@@ -19,7 +19,7 @@ function ScheduleManagementModal(props) {
             <h5>Schedule: </h5>
           </div>
           <div>
-            <a style={{ fontWeight: "bold" }}>Start: </a>
+            <text style={{ fontWeight: "bold" }}>Start: </text>
             <span>
               {props.event.start ? props.event.start.toDateString() : ""}{" "}
             </span>
@@ -28,7 +28,7 @@ function ScheduleManagementModal(props) {
             </span>
           </div>
           <div>
-            <a style={{ fontWeight: "bold" }}>End: </a>
+            <text style={{ fontWeight: "bold" }}>End: </text>
             <span>
               {props.event.end ? props.event.end.toDateString() : ""}{" "}
             </span>
@@ -40,7 +40,7 @@ function ScheduleManagementModal(props) {
             <Form.Label>Select Stylist:</Form.Label>
             <Form.Control as="select" name="stylistName" type="select">
               {props.stylistNames.map((stylistName) => (
-                <option>{stylistName}</option>
+                <option key={stylistName}>{stylistName}</option>
               ))}
             </Form.Control>
             <Button variant="primary" type="submit">
