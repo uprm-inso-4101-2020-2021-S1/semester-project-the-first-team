@@ -1,7 +1,9 @@
 import React, { Component, Fragment } from "react";
+import DropdownButton from "react-bootstrap/DropdownButton";
+import DropdownItem from "react-bootstrap/DropdownItem";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faClock } from "@fortawesome/free-solid-svg-icons";
-// import { Switch, Route } from "react-router";
+import { Switch, Route } from "react-router";
 
 import "./../style/card.scss";
 class HeaderBarCard extends Component {
@@ -51,8 +53,14 @@ class HeaderBarCard extends Component {
               appTime={this.props.headerCard.appTime}
             />
           )}
-          {/* TODO: MAKE THIS SHOW UP ONLY ON ROUTES NEEDED. */}
-          <HeaderCardDropRight changeHeaderCard={this.props.changeHeaderCard} />
+          <Route
+            exact
+            path={["/stylists/form/editstylist", "/stylists/schedule"]}
+          >
+            <HeaderCardDropRight
+              changeHeaderCard={this.props.changeHeaderCard}
+            />
+          </Route>
         </div>
       </div>
     );
@@ -103,23 +111,17 @@ class HeaderCardDropRight extends Component {
 
   render() {
     return (
-      <div class="btn-group dropright">
-        <button
-          type="button"
-          class="btn btn-secondary dropdown-toggle"
-          data-toggle="dropdown"
-          aria-haspopup="true"
-          aria-expanded="false"
-        >
-          Dropright
-        </button>
-        <div class="dropdown-menu">
+      <div class="btn-group dropdown">
+        <DropdownButton class="btn btn-secondary dropdown-toggle" drop="down">
           {this.state.dropdownOptions.map((cardoption) => (
-            <a onClick={() => this.props.changeHeaderCard(cardoption)}>
+            <DropdownItem
+              onClick={() => this.props.changeHeaderCard(cardoption)}
+              key={cardoption.username}
+            >
               {cardoption.username}
-            </a>
+            </DropdownItem>
           ))}
-        </div>
+        </DropdownButton>
       </div>
     );
   }

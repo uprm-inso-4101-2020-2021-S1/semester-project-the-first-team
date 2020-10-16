@@ -29,7 +29,7 @@ class HeaderBarClock extends Component {
   }
   render() {
     return (
-      <div className="navbar-brand text-light">
+      <div className="clock-time">
         {this.state.time}
         {this.state.showSeconds && <span>{":" + this.state.seconds}</span>}{" "}
         {this.state.meridian}
