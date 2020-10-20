@@ -14,11 +14,11 @@ java -cp /usr/share/tag/tester.jar:/usr/share/tag/libs/* org.testng.TestNG -test
 if [ $? -ne 0 ]
 then
     echo -e "${RED}REST test failed.${NC}"
-    mv /target/report.html /output/reports/REST-Api-report.html
+    mv target/report.html /output/reports/REST-Api-report.html
     exit 1
 else
     echo -e "${GREEN}REST test passed.${NC}"
-    mv /target/report.html /output/reports/REST-Api-report.html
+    mv target/report.html /output/reports/REST-Api-report.html
 fi
 
 # Minor sleep. Not actually necessary

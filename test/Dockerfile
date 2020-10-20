@@ -5,9 +5,9 @@ COPY target/tester.jar /usr/share/tag/tester.jar
 COPY target/libs /usr/share/tag/libs
 
 # Include source in container
-COPY src/test/resources express-test/src/test/resources
-COPY src/test/java express-test/src/test/java
-COPY pom.xml express-test/pom.xml
+COPY src/test/resources /usr/share/tag/src/test/resources
+COPY src/test/java /usr/share/tag/src/test/java
+COPY pom.xml /usr/share/tag/pom.xml
 
 # Include start test script
 COPY start-test.sh /usr/share/tag/start-test.sh

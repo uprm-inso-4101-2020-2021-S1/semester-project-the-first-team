@@ -21,6 +21,11 @@ services:
     build:
       context: ../express_cut
     container_name: express-API
+    healthcheck:
+      test: curl http://127.0.0.1:8000
+      interval: 5s
+      timeout: 5s
+      retries: 20
     ports:
       - 8000:8000
     depends_on:
@@ -52,14 +57,14 @@ services:
     # In script we should delete the image after testing
     build: .
     image: verification-tests:latest
-    command: "/usr/share/tag/start-tests.sh"
+    container_name: express-TEST
     depends_on:
-      - chrome
-      - selenium-hub
-      # - ui
-      # - rest
+      rest:
+        condition: service_healthy
     environment:
-      - TEST=test
+      - REST_API_URL=http://rest:8000
+    volumes:
+        - "./docker-test-out:/output/reports/"
 
 #### SELENIUM Containers
 
