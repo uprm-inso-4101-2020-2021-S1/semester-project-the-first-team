@@ -20,7 +20,7 @@ class SwagResponses():
 
     # Apply for GET, PUT, DELETE methods
     commonResponses = {**invalidResponse, **unAuthorizedResponse, **notPermittedResponse, **missingResponse,
-                       **internalErrorResponse, **validResponse}
+                       **internalErrorResponse}
 
     commonPOSTResponses = {**createResponse, **invalidResponse, **unAuthorizedResponse, **notPermittedResponse,
                            **internalErrorResponse}
