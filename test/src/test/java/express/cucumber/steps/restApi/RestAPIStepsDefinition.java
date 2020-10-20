@@ -35,8 +35,8 @@ import cucumber.api.java.en.When;
 public class RestAPIStepsDefinition {
 
 	// Routes for rest api
-    private final String userSignupPath="/user/signup";
-    private final String userGetPath="/user";
+	private final String userSignupPath="/user/signup";
+	private final String userGetPath="/user";
 	
 	// URI for backend
 	private String url = System.getenv("REST_API_URL");
@@ -48,41 +48,41 @@ public class RestAPIStepsDefinition {
 	// Initial number of users in db
 	private int testStartUserNumber = 4;
 
-    @Given("^Rest API is up and running and the user logs in as (.*) and (.*)$")
-    public void rest_API_is_up_and_running_and_the_user_logs_in_as_and(String user, String pass) throws Throwable {
-        if(url==null)
+	@Given("^Rest API is up and running and the user logs in as (.*) and (.*)$")
+	public void rest_API_is_up_and_running_and_the_user_logs_in_as_and(String user, String pass) throws Throwable {
+		if(url==null)
 			url=System.getenv("REST_API_URL");
 		// Disable SSL cert check
 		SSLContext sslcontext = SSLContext.getInstance("TLS");
 		sslcontext.init(null, new TrustManager[]{new X509TrustManager() {
-	        public void checkClientTrusted(X509Certificate[] arg0, String arg1) throws CertificateException {}
-	        public void checkServerTrusted(X509Certificate[] arg0, String arg1) throws CertificateException {}
-	        public X509Certificate[] getAcceptedIssuers() { return new X509Certificate[0]; }
-	    }}, new java.security.SecureRandom());
+			public void checkClientTrusted(X509Certificate[] arg0, String arg1) throws CertificateException {}
+			public void checkServerTrusted(X509Certificate[] arg0, String arg1) throws CertificateException {}
+			public X509Certificate[] getAcceptedIssuers() { return new X509Certificate[0]; }
+		}}, new java.security.SecureRandom());
 		client = ClientBuilder.newBuilder()
-		    .sslContext(sslcontext)
-		    .hostnameVerifier((s1, s2) -> true)
-		    .build();
+			.sslContext(sslcontext)
+			.hostnameVerifier((s1, s2) -> true)
+			.build();
 		credentials=user+":"+pass;
 		credentials=Base64.getEncoder().encodeToString(credentials.getBytes());
 		target=client.target(url);
     }
 
-    @When("^Manager adds stylist credentials as (.*)$")
-    public void manager_adds_stylist_credentials_as(String stylistJsonData) throws Throwable {
-        ObjectMapper mapper = new ObjectMapper();
+	@When("^Manager adds stylist credentials as (.*)$")
+	public void manager_adds_stylist_credentials_as(String stylistJsonData) throws Throwable {
+		ObjectMapper mapper = new ObjectMapper();
 		WebTarget localTarget = target.path(userSignupPath);
-        Response resp = localTarget
-            .request(MediaType.APPLICATION_JSON)
-            .accept(MediaType.APPLICATION_JSON)
-            .header(HttpHeaders.AUTHORIZATION, "Basic "+credentials)
-            .post(Entity.entity(stylistJsonData, MediaType.APPLICATION_JSON),Response.class);
+		Response resp = localTarget
+			.request(MediaType.APPLICATION_JSON)
+			.accept(MediaType.APPLICATION_JSON)
+			.header(HttpHeaders.AUTHORIZATION, "Basic "+credentials)
+			.post(Entity.entity(stylistJsonData, MediaType.APPLICATION_JSON),Response.class);
 		Assert.assertTrue(resp.getStatus()==201);
     }
 
-    @Then("^the stylist (.*) should be created and added to the database$")
-    public void the_stylist_should_be_created_and_added_to_the_database(String stylistJsonData) throws Throwable {
-        ObjectMapper mapper = new ObjectMapper();
+	@Then("^the stylist (.*) should be created and added to the database$")
+	public void the_stylist_should_be_created_and_added_to_the_database(String stylistJsonData) throws Throwable {
+		ObjectMapper mapper = new ObjectMapper();
 		String pk = Integer.toString(++testStartUserNumber);
 		WebTarget localTarget = target.path(userGetPath+"/"+pk);
 		Response resp = localTarget
