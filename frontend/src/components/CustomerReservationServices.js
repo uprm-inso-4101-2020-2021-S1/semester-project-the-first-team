@@ -1,15 +1,9 @@
-import React, { useState } from "react";
+import React from "react";
 import ReservationServiceCard from "./ReservationServiceCard";
 import { Container, Row, Col } from "react-bootstrap";
 import PropTypes from "prop-types";
 
 function CustomerReservationServices(props) {
-
-  const getServiceName = (name) => {
-    props.getServiceName(name);
-  };
-
-
   return (
     <>
       <Row className="reservations-services">
@@ -17,9 +11,9 @@ function CustomerReservationServices(props) {
           <Row>
             {props.services.map((service, i) => {
               return (
-                <Col key={i} className="justify-content-center" md={4}>
+                <Col key={i} className="justify-content-center" sm={8} md={5} lg={4}>
                   <ReservationServiceCard
-                    getServiceName={getServiceName}
+                    getServiceName={props.getServiceName}
                     name={service.name}
                     icon={service.icon}
                     id={i}
