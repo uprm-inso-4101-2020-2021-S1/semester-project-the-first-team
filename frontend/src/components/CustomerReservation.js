@@ -6,7 +6,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowRight, faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import { Link } from "react-router-dom";
 
-const numStages = 4; function CustomerReservation(props) {
+const numStages = 4;
+function CustomerReservation(props) {
   const [reservationStage, setReservationStage] = useState(0);
 
   const subHeaderTitles = [
@@ -20,10 +21,12 @@ const numStages = 4; function CustomerReservation(props) {
     <Container fluid>
       <Row className="justify-content-center">
         <Container className="justify-content-center">
-          <Row className="justify-content-start">
-            <div className="reservations-header">
-              <h3>Reservations</h3>
-            </div>
+          <Row>
+            <Col className="justify-content-start">
+              <div className="reservations-header">
+                <h3>Reservations</h3>
+              </div>
+            </Col>
           </Row>
           <Row>
             <Col>
@@ -66,7 +69,10 @@ const numStages = 4; function CustomerReservation(props) {
           </Row>
           <ReservationForm
             services={props.services}
+            stylists={props.stylists}
+            timeSlots={props.timeSlots}
             reservationStage={reservationStage}
+            setReservationStage={setReservationStage}
           />
         </Container>
       </Row>
@@ -76,6 +82,8 @@ const numStages = 4; function CustomerReservation(props) {
 
 CustomerReservation.propTypes = {
   services: PropTypes.array,
+  stylists: PropTypes.array,
+  timeSlots: PropTypes.array,
 };
 
 export default CustomerReservation;

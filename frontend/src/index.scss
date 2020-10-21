@@ -2,285 +2,452 @@
 @import "./style/styleVariables";
 
 * {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-    font-family: "Quicksand", sans-serif;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: "Quicksand", sans-serif;
 }
 
 html,
 body {
-    background-color: #2b2d44;
+  background-color: #2b2d44;
 }
 
 h3 {
-    color: white;
-    font-weight: 500;
+  color: white;
+  font-weight: 500;
 }
 
 /*** App.js Divs ***/
 .main-container {
-    display: flex;
-    align-items: stretch;
+  display: flex;
+  align-items: stretch;
 }
 
 .body-container {
-    width: 100%;
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
-    flex-wrap: nowrap;
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
 }
 
 /*** Sidebar ***/
 
 .sidebar-open {
-    display: flex;
-    position: absolute;
-    left: 15px;
-    top: 30px;
-    transition: 350ms;
+  display: flex;
+  position: absolute;
+  left: 15px;
+  margin-left: 2rem;
+  top: 30px;
+  transition: 350ms;
 }
 
 .menu-bars {
-    margin-left: 2rem;
-    font-size: 1.6rem;
-    background: none;
-    color: #8e8e8e;
-    transition: 0.25s ease-in-out;
-    margin-right: 10%;
+  font-size: 1.6rem;
+  position: relative;
+  background: none;
+  color: #8e8e8e;
+  transition: 0.25s ease-in-out;
+  margin-right: 10%;
 }
 
 .menu-bars:hover {
-    color: #6d45a4;
+  color: #6d45a4;
 }
 
 .menu-close {
-    font-size: 1.4rem;
-    background: none;
-    color: #8e8e8e;
-    transition: 0.25s ease-in-out;
+  font-size: 1.4rem;
+  background: none;
+  color: #8e8e8e;
+  transition: 0.25s ease-in-out;
 }
 
 .menu-close:hover {
-    color: #6d45a4;
+  color: #6d45a4;
 }
 
 .nav-menu {
-    background-color: #434761;
-    width: 280px;
-    height: 100vh;
-    display: flex;
-    // justify-content: center;
+  background-color: #434761;
+  width: 280px;
+  min-height: 100vh;
+  display: flex;
+  // justify-content: center;
 
-    top: 0;
-    position: relative;
+  top: 0;
+  position: relative;
 
-    transition: 850ms;
-    -webkit-box-shadow: 4px 2px 5px 0px rgba(0, 0, 0, 0.3);
-    -moz-box-shadow: 4px 2px 5px 0px rgba(0, 0, 0, 0.3);
-    box-shadow: 4px 2px 5px 0px rgba(0, 0, 0, 0.3);
+  transition: 850ms;
+  -webkit-box-shadow: 4px 2px 5px 0px rgba(0, 0, 0, 0.3);
+  -moz-box-shadow: 4px 2px 5px 0px rgba(0, 0, 0, 0.3);
+  box-shadow: 4px 2px 5px 0px rgba(0, 0, 0, 0.3);
 }
 
 .nav-menu.hidden {
-    margin-left: -280px;
-    transition: 850ms;
+  margin-left: -280px;
+  transition: 850ms;
 }
 
 .nav-text {
-    display: flex;
-    justify-content: start;
-    align-items: center;
-    padding: 8px 0px 8px 16px;
-    list-style: none;
-    height: 60px;
+  display: flex;
+  justify-content: start;
+  align-items: center;
+  padding: 8px 0px 8px 16px;
+  list-style: none;
+  height: 60px;
 }
 
 .nav-text a {
-    text-decoration: none;
-    color: #8e8e8e;
-    font-size: 23px;
-    width: 85%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    padding: 0 16px;
+  text-decoration: none;
+  color: #8e8e8e;
+  font-size: 23px;
+  width: 85%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
 }
 
 .nav-text a:hover {
-    color: white;
-    transition: 0.25s ease-in-out;
+  color: white;
+  transition: 0.25s ease-in-out;
 }
 
 .nav-text > .active > a {
-    color: white;
+  color: white;
 }
 
 .nav-link.active {
-    color: white;
+  color: white;
 }
 
 .nav-menu-header {
-    height: 80px;
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    flex-wrap: nowrap;
+  height: 80px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  flex-wrap: nowrap;
 
-    .header-container {
-        display: flex;
-        flex-wrap: nowrap;
-        justify-content: center;
-    }
+  .header-container {
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: center;
+  }
 }
 
 .nav-menu-header h3 {
-    color: white;
-    font-weight: 600;
-    padding-left: 5px;
+  color: white;
+  font-weight: 600;
+  padding-left: 5px;
 }
 
 .nav-menu-header .icon {
-    opacity: 64%;
-    font-size: 1.8rem;
-    margin-top: 3px;
+  opacity: 64%;
+  font-size: 1.8rem;
+  margin-top: 3px;
 }
 
 .nav-menu-items {
-    width: 100%;
+  width: 100%;
 }
 
 .sidebar-toggle {
-    background-color: #434761;
-    width: 100%;
-    height: 60px;
-    display: flex;
-    justify-content: flex-end;
-    align-items: top;
-    padding-right: 13px;
-    padding-top: 10px;
+  background-color: #434761;
+  width: 100%;
+  height: 60px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: top;
+  padding-right: 13px;
+  padding-top: 10px;
 }
 
 .nav-menu span {
-    margin-left: 16px;
+  margin-left: 16px;
 }
 
 /*** Customer Reservations ***/
 
 .reservations-header {
-    padding-top: 80px;
-    padding-bottom: 8px;
-    padding-left: 5px;
-    width: 100%;
-    border-bottom: 2px solid rgba($color: #b0b0b0, $alpha: 0.4);
-    h3 {
-        font-size: 43px;
-    }
+  padding-top: 80px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  width: 100%;
+  border-bottom: 2px solid rgba($color: #b0b0b0, $alpha: 0.4);
+  h3 {
+    font-size: 43px;
+  }
 }
 
 .reservations-subheader {
-    margin-top: 28px;
-    padding-left: 5px;
+  margin-top: 28px;
+  padding-left: 5px;
 
-    span {
-        font-weight: 400;
-        font-size: 28px;
-        color: #b9b9b9;
-    }
+  span {
+    font-weight: 400;
+    font-size: 28px;
+    color: #b9b9b9;
+  }
 }
 
 .reservations-services {
-    margin: 3rem 3rem 0 3rem;
+  margin: 3rem 3rem 0 3rem;
 }
 
 .reservations-next {
-    display: flex;
-    margin-top: 18px;
-    height: 100%;
-    align-items: center;
-    justify-content: flex-end;
-    .next-arrow {
-        color: #b3b3b3;
-        opacity: 43%;
-        font-size: 28px;
-    }
-    .next-arrow:hover {
-        color: white;
-    }
-    .prev-arrow {
-        color: #b3b3b3;
-        opacity: 43%;
-        font-size: 28px;
-        margin-right: 15px;
-    }
-    .prev-arrow:hover {
-        color: white;
-    }
+  display: flex;
+  margin-top: 18px;
+  height: 100%;
+  align-items: center;
+  justify-content: flex-end;
+  .next-arrow {
+    color: #b3b3b3;
+    opacity: 43%;
+    font-size: 28px;
+  }
+  .next-arrow:hover {
+    color: white;
+  }
+  .prev-arrow {
+    color: #b3b3b3;
+    opacity: 43%;
+    font-size: 28px;
+    margin-right: 15px;
+  }
+  .prev-arrow:hover {
+    color: white;
+  }
 }
 
 .reservation-service-card {
-    padding: 2.5rem 1.3rem;
-    border-radius: 1rem;
-    margin-bottom: 3rem;
-    background-color: #565d76;
+  padding: 2.5rem 1.3rem;
+  border-radius: 1rem;
+  margin-bottom: 3rem;
+  background-color: #565d76;
 
-    -webkit-box-shadow: 0px 0px 5px 2px rgba(0, 0, 0, 0.35);
-    -moz-box-shadow: 0px 0px 5px 2px rgba(0, 0, 0, 0.35);
-    box-shadow: 0px 0px 5px 2px rgba(0, 0, 0, 0.35);
+  -webkit-box-shadow: 0px 0px 5px 2px rgba(0, 0, 0, 0.35);
+  -moz-box-shadow: 0px 0px 5px 2px rgba(0, 0, 0, 0.35);
+  box-shadow: 0px 0px 5px 2px rgba(0, 0, 0, 0.35);
 
-    .service-header {
-        padding-bottom: 10px;
-        border-bottom: 1px solid rgba($color: #b0b0b0, $alpha: 0.38);
+  .service-header {
+    border-bottom: 1px solid rgba($color: #b0b0b0, $alpha: 0.38);
+    padding-bottom: 15px;
+  }
+
+  .circle-background {
+    display: flex;
+    height: 100px;
+    width: 100px;
+    font-size: 4rem;
+    border-radius: 50%;
+    line-height: 1.55;
+    margin: 0 auto;
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+
+    background-color: #bbb;
+
+    .service-icon {
+      font-size: 4rem;
+      color: #33346a;
     }
+  }
 
-    .circle-background {
-        display: flex;
-        height: 100px;
-        width: 100px;
-        font-size: 4rem;
-        border-radius: 50%;
-        line-height: 1.55;
-        margin: 0 auto;
-        text-align: center;
-        justify-content: center;
-        align-items: center;
+  .service-content {
+    padding-top: 1.2rem;
 
-        background-color: #bbb;
-
-        .service-icon {
-            font-size: 4rem;
-            color: #33346a;
-        }
+    .service-title {
+      font-weight: 300;
+      font-size: 2rem;
+      color: #8e8e8e;
+      text-align: center;
+      padding: 0.4rem 0;
     }
+  }
 
-    .service-content {
-        padding-top: 1.2rem;
-
-        .service-title {
-            font-weight: 300;
-            font-size: 2rem;
-            color: #8e8e8e;
-            text-align: center;
-            padding: 0.4rem 0;
-        }
+  .service-content:hover {
+    text-decoration: none;
+    .service-title {
+      color: white;
+      transition: 0.25s ease-in-out;
     }
-
-    .service-content:hover {
-        text-decoration: none;
-        .service-title {
-            color: white;
-            transition: 0.25s ease-in-out;
-            border: none;
-        }
-    }
+  }
 }
 
 .reservation-service-card.active {
-    background-color: #454a5e;
-    transition: 200ms;
+  background-color: #454a5e;
+  transition: 200ms;
 
-    .service-content .service-title {
-        color: white;
+  .service-content .service-title {
+    color: white;
+  }
+}
+
+.reservations-stylists {
+  margin: 3rem;
+}
+
+.reservations-stylist-portrait {
+  display: inline-block;
+  justify-content: center;
+
+  .reservations-stylist-portrait-header {
+    margin-bottom: 10px;
+  }
+
+  .stylist-portrait {
+    display: inline-block;
+    margin: 0 auto;
+    height: 275px;
+    width: 275px;
+    border: solid grey 3px;
+    border-radius: 50%;
+    object-fit: cover;
+    -moz-border-radius: 50%;
+    -webkit-border-radius: 50%;
+  }
+
+  .stylist-name {
+    display: block;
+    font-weight: 300;
+    font-size: 2rem;
+    color: #8e8e8e;
+    text-align: center;
+    padding: 0.4rem 0;
+    margin-bottom: 30px;
+  }
+
+  .stylist-content:hover {
+    text-decoration: none;
+
+    .stylist-name {
+      color: white;
+      transition: 0.25s ease-in-out;
     }
+  }
+}
+
+.reservations-stylist-portrait.active {
+  .stylist-portrait {
+    border-color: #6d45a4;
+    transition: 0.1s ease-in;
+  }
+  .stylist-name {
+    color: white;
+  }
+}
+
+.reservations-time-slots {
+  margin-top: 2rem;
+
+  .reservations-time-slots-alt {
+    margin-top: 7rem;
+
+    h3 {
+      font-size: 2.1rem;
+      font-weight: 400;
+    }
+
+    .alt-message {
+      padding-top: 0.6rem;
+      color: #aeaeae;
+      font-size: 1.5rem;
+    }
+
+    .back-button {
+      position: relative;
+      width: fit-content;
+      margin: auto;
+      padding-top: 0.9rem;
+      color: #aeaeae;
+      font-size: 1.7rem;
+      transition: 0.25s ease-in-out;
+    }
+
+    .back-button:hover {
+      color: white;
+      transition: 0.25s ease-in-out;
+    }
+
+    .prev-arrow {
+      color: #aeaeae;
+      margin-right: 0.8rem;
+      font-size: 1.6rem;
+      transition: 0.25s ease-in-out;
+    }
+
+    .prev-arrow:hover {
+      color: #6d45a4;
+      transition: 0.25s ease-in-out;
+    }
+  }
+}
+
+.time-slot {
+  display: flex;
+  position: relative;
+  flex-direction: column;
+  background-color: #565d76;
+  border-radius: 15px;
+  padding: 1.7em 1em 1.7em 1em;
+  margin: 1em 3em 1em 3em;
+  -webkit-box-shadow: 0px 0px 8px 1px rgba(0, 0, 0, 0.3);
+  -moz-box-shadow: 0px 0px 8px 1px rgba(0, 0, 0, 0.3);
+  box-shadow: 0px 0px 8px 1px rgba(0, 0, 0, 0.3);
+
+  .time-slot-header {
+    display: flex;
+    align-items: center;
+    color: white;
+
+    .time-slot-icon {
+      color: #838383;
+      font-size: 2rem;
+      padding-left: 15px;
+      float: left;
+      transition: 0.25s ease-in-out;
+    }
+
+    span {
+      float: left;
+      font-size: 1.8rem;
+      margin-left: 20px;
+    }
+  }
+
+  .time-slot-time {
+    display: flex;
+    color: white;
+    height: 100%;
+    justify-content: flex-end;
+    align-items: center;
+
+    span {
+      display: flex;
+      align-items: center;
+      font-size: 1.5rem;
+      font-weight: 300;
+      padding-right: 10px;
+    }
+  }
+}
+
+.time-slot-link:hover {
+  text-decoration: none;
+
+  .time-slot-icon {
+    color: #9b62ea;
+    transition: 0.25s ease-in-out;
+  }
+}
+
+.time-slot.active {
+  background-color: #454a5e;
+  transition: 200ms;
+
+  .time-slot-icon {
+    color: #9b62ea;
+  }
 }

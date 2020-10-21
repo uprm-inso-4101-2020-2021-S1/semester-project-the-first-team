@@ -1,15 +1,14 @@
-import React, { useState } from "react";
+import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Card } from "react-bootstrap";
 import PropTypes from "prop-types";
 
 function ReservationServiceCard(props) {
-  const [serviceName] = useState(props.name);
 
   const handleClick = (e) => {
     e.preventDefault();
-    props.getServiceName(serviceName);
     props.setActive(props.id);
+    props.getServiceName(props.name, props.id);
   };
 
   return (
