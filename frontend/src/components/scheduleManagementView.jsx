@@ -102,10 +102,11 @@ class ScheduleManagementView extends Component {
           onSelectSlot={this.showStylistSelectionModal}
           style={{
             width: "100%",
-            height: "80vh",
+            height: "79vh",
             backgroundColor: "white",
             borderRadius: "5px",
             margin: "0px",
+            padding: "5px",
           }}
           // Ommitted submit btn in favor of sending/deleting per event.
         />

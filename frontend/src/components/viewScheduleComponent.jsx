@@ -45,10 +45,11 @@ class ViewScheduleComponent extends Component {
         length={7}
         style={{
           width: "100%",
-          height: "80vh",
+          height: "79vh",
           backgroundColor: "white",
           borderRadius: "5px",
           margin: "0px",
+          padding: "5px",
         }}
       />
     );
