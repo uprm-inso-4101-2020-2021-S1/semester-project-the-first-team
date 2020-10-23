@@ -92,5 +92,18 @@ def users_views(request, pk):
     return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
+# @api_view(['GET','PUT', 'POST','DELETE'])
+# @authentication_classes([SessionAuthentication, BasicAuthentication])
+# @permission_classes([IsAuthenticated])
+# def schedule_views(request, stylist_id):
+#     if request.method == 'POST':
+#         if not UserViewPermissions().GET_permissions(request):
+#             return Response(status=status.HTTP_403_FORBIDDEN)
+#         if
+
+
+
+
+
 def index(request):
     return HttpResponse("Welcome to Express Cuts")

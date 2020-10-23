@@ -20,6 +20,7 @@ urlpatterns = [
     path('user/', views.all_users),
     path('user/<int:pk>', views.users_views),
     path('user/signup', views.user_signup_view),
+    # path('schedule/<int:stylist_id>', views.schedule_views),
 ]
 
 # Stylist_urlpatterns = [

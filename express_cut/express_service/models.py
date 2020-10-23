@@ -34,15 +34,16 @@ class Service(models.Model):
         return self.name
 
 
-class Schedule(models.Model):
-    timestamp = models.DateTimeField()
-    stylist = models.ForeignKey(Stylist, on_delete=models.CASCADE)
+class DailySchedule(models.Model):
+    timestamp = models.DateTimeField(auto_now_add=True)
+    date = models.DateField()
+    stylist = models.ForeignKey(User, on_delete=models.CASCADE, limit_choices_to={'role': User.STYLIST},)
 
 
 class TimeSlot(models.Model):
     start_time = models.TimeField()
     end_time = models.TimeField()
-    schedule = models.ForeignKey(Schedule, on_delete=models.CASCADE)
+    dailySchedule = models.ForeignKey(DailySchedule, on_delete=models.CASCADE)
     # TODO: Add Duration
 
 
