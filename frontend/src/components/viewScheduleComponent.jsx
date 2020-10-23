@@ -5,13 +5,13 @@ import moment from "moment";
 const localizer = momentLocalizer(moment);
 const TEMPEVENTS = [
   {
-    start: new Date(2020, 9, 13, 8),
-    end: new Date(2020, 9, 13, 12),
+    start: new Date(2020, 9, 22, 8),
+    end: new Date(2020, 9, 22, 12),
     title: "Jenny Fromdablock",
   },
   {
-    start: new Date(2020, 9, 13, 13),
-    end: new Date(2020, 9, 13, 17),
+    start: new Date(2020, 9, 22, 13),
+    end: new Date(2020, 9, 22, 17),
     title: "Jenny Fromdablock",
   },
 ];
