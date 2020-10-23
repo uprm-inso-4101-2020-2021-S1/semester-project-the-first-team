@@ -1,7 +1,6 @@
 venv*/
 .idea/
 __pycache__/
-express_cut/express_service/migrations/0002_auto_20200929_1521.py
-express_cut/express_service/migrations/0001_initial.py
-express_cut/express_service/migrations/0002_auto_20201023_1625.py
-express_cut/express_service/migrations/0003_auto_20201023_1707.py
+express_cut/express_service/migrations/
+!express_cut/express_service/migrations/__init__.py
+

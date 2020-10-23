@@ -21,12 +21,17 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'mim-1fbk4#ih!%awlxv17s_a835bpc&djw0y$4@c%&h-*eovba'
+# SECRET_KEY = 'mim-1fbk4#ih!%awlxv17s_a835bpc&djw0y$4@c%&h-*eovba'
+SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = (os.getenv("DEBUG") == 'true')
 
-ALLOWED_HOSTS = ['localhost', 'express-cuts.herokuapp.com', '127.0.0.1']
+# ALLOWED_HOSTS = ['localhost', 'express-cuts.herokuapp.com', '127.0.0.1']
+ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS").split(" ")
+
+CORS_ORIGIN_ALLOW_ALL = (os.getenv("CORS_ALLOW_ALL") == 'true')
+CORS_ORIGIN_WHITELIST =os.environ.get("DJANGO_CORS_ORIGIN_WHITELIST").split(" ")
 
 # Application definition
 
@@ -76,14 +81,15 @@ WSGI_APPLICATION = 'express_cut.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'express_cuts_db',
-        'USER': 'admin',
-        'PASSWORD': 'password',
-        'HOST': 'localhost',
-        'PORT': '5432'
+        'NAME': os.environ.get("DATABASE_NAME"),
+        'USER': os.environ.get("DATABASE_USER"),
+        'PASSWORD': os.environ.get("DATABASE_PASSWORD"),
+        'HOST': os.environ.get("DATABASE_HOST"),
+        'PORT': os.environ.get("DATABASE_PORT")
     }
 }
 
