@@ -3,6 +3,7 @@ import CustomerReservationServices from "./CustomerReservationServices";
 import CustomerRersevationStylists from "./CustomerReservationStylists";
 import PropTypes from "prop-types";
 import CustomerResevationTimeSlots from "./CustomerReservationTimeSlots";
+import CustomerReservationSummary from "./CustomerReservationSummary";
 
 const maxServices = 3;
 
@@ -15,7 +16,7 @@ function ReservationForm(props) {
     })
   );
   const [activeServiceCount, setActiveServiceCount] = useState(0);
-  const [stylistName, setStylistName] = useState(null);
+  const [stylistName, setStylistName] = useState("");
   const [portraitIsActive, setPortraitIsActive] = useState(
     props.stylists.map(() => {
       return false;
@@ -28,8 +29,6 @@ function ReservationForm(props) {
       return false;
     })
   );
-
-  console.log(serviceNames, stylistName, timeSlotId);
 
   // Handlers
   const setServiceActive = (index) => {
@@ -128,6 +127,15 @@ function ReservationForm(props) {
           setActive={setTimeSlotActive}
           reservationStage={props.reservationStage}
           setReservationStage={props.setReservationStage}
+        />
+      )}
+      {props.reservationStage === 3 && (
+        <CustomerReservationSummary
+          selectedServices={serviceNames}
+          selectedStylist={stylistName}
+          selectedTimeSlot={
+            timeSlotId ? props.timeSlots[timeSlotId].time : null
+          }
         />
       )}
     </form>

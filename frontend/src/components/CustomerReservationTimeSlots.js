@@ -45,7 +45,7 @@ function CustomerResevationTimeSlots(props) {
               </Row>
               <Row>
                 <Col className="justify-content-center">
-                  <div className="back-button">
+                  <div className=" back-button">
                     <Link
                       to="/#"
                       onClick={(e) => {
