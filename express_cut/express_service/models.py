@@ -18,34 +18,36 @@ class User(AbstractUser):
     role = models.PositiveSmallIntegerField(choices=ROLE_CHOICES, default=CUSTOMER)
 
 
+class Service(models.Model):
+    serviceName = models.CharField(max_length=50)
+    defaultDuration = models.IntegerField()
+    description = models.CharField(max_length=200)
+
+    def __str__(self):
+        return self.serviceName
+
+
 class Stylist(User):
     available = models.BooleanField()
     profile_details = models.CharField(max_length=200)
+    services = models.ManyToManyField(Service)
 
 
 class Customer(User):
     prefer_stylist = models.ForeignKey(Stylist, on_delete=models.CASCADE)
 
 
-class Service(models.Model):
-    name = models.CharField(max_length=50)
-    avgDuration = models.IntegerField()
-    description = models.CharField(max_length=200)
-
-    def __str__(self):
-        return self.name
-
-
-class Schedule(models.Model):
-    timestamp = models.DateTimeField()
+class StylistOfferServices(models.Model):
+    EstimatedTime = models.IntegerField()
     stylist = models.ForeignKey(Stylist, on_delete=models.CASCADE)
+    service = models.ForeignKey(Service, on_delete=models.CASCADE)
 
 
-class TimeSlot(models.Model):
-    start_time = models.TimeField()
-    end_time = models.TimeField()
-    schedule = models.ForeignKey(Schedule, on_delete=models.CASCADE)
-    # TODO: Add Duration
+class DailySchedule(models.Model):
+    date = models.DateField()
+    startTime = models.TimeField()
+    endTime = models.TimeField()
+    stylist = models.ForeignKey(Stylist, on_delete=models.CASCADE)
 
 
 class Reservation(models.Model):
@@ -53,7 +55,13 @@ class Reservation(models.Model):
     client = models.ForeignKey(Customer, on_delete=models.CASCADE)
     stylist = models.ForeignKey(Stylist, on_delete=models.CASCADE)
     service = models.ManyToManyField(Service)
-    time_slot = models.ForeignKey(TimeSlot, on_delete=models.CASCADE)
+
+
+class ReservationsContainServices(models.Model):
+    serviceStartTime = models.TimeField()
+    serviceEndTime = models.TimeField()
+    reservation = models.ForeignKey(Reservation, on_delete=models.CASCADE)
+    service = models.ForeignKey(Service, on_delete=models.CASCADE)
 
 
 class Notification(models.Model):

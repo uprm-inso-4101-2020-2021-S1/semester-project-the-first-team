@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import User, Stylist, Customer, Service, Reservation, TimeSlot
+from .models import User, Stylist, Customer, Service, StylistOfferServices, DailySchedule, Reservation, ReservationsContainServices, Notification
 from django.contrib import admin
 # Register your models here.
 
@@ -19,5 +19,9 @@ class ReservationAdmin(admin.ModelAdmin):
     list_display = ('id', 'stylist', 'client', 'timestamp', )
 
 
-admin.site.register(Service)
-admin.site.register(TimeSlot)
+@admin.register(Service)
+class ServiceAdmin(admin.ModelAdmin):
+    list_display = ('serviceName', 'defaultDuration', 'description', )
+
+admin.site.register(User)
+# admin.site.register()

@@ -1,5 +1,5 @@
 from django.urls import path
-from . import views
+from . import views, service_view
 from django.conf.urls import url
 from rest_framework.urlpatterns import format_suffix_patterns
 from rest_framework import permissions
@@ -20,6 +20,8 @@ urlpatterns = [
     path('user/', views.all_users),
     path('user/<int:pk>', views.users_views),
     path('user/signup', views.user_signup_view),
+    path('service', service_view.all_services),
+    path('service/<int:pk>', service_view.service_views),
 ]
 
 # Stylist_urlpatterns = [

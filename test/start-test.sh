@@ -7,8 +7,9 @@ PURPLE='\033[0;35m'
 GREEN='\033[0;32m'
 [ -d /output ] || mkdir /output
 [ -d /output/reports ] || mkdir /output/reports
+sleep 2s
 # Test the backend
-echo -e "${PURPLE}*********************\n${PURPLE}*********************\n${PURPLE}******    Testing the backend    ******\n${PURPLE}*********************\n${PURPLE}*********************${NC}"
+echo -e "${PURPLE}**************************\n${PURPLE}**************************\n${PURPLE}**  Testing the backend **\n${PURPLE}**************************\n${PURPLE}**************************\n${NC}"
 sleep 1s
 java -cp /usr/share/tag/tester.jar:/usr/share/tag/libs/* org.testng.TestNG -testclass express.cucumber.runners.RestAPITestRunner
 if [ $? -ne 0 ]
@@ -25,8 +26,8 @@ fi
 sleep 2s
 
 # Test the  UI
-echo -e "${PURPLE}*********************\n${PURPLE}*********************\n${PURPLE}******    Testing the frontend    ******\n${PURPLE}*********************\n${PURPLE}*********************${NC}"
+echo -e "${PURPLE}**************************\n${PURPLE}**************************\n${PURPLE}** Testing the frontend **\n${PURPLE}**************************\n${PURPLE}**************************\n${NC}"
 # No tests defined yet. Change to frontend runner when defined
 # java -cp /usr/share/tag/tester.jar:/usr/share/tag/libs/* org.testng.TestNG -testclass express.cucumber.runners.RestAPITestRunner
-echo -e "${PURPLE}\nNo UI tests ran.${NC}"
+echo -e "${RED}No UI tests ran.\n${NC}"
 exit 0
