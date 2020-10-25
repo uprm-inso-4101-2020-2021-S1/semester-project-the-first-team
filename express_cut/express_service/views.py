@@ -97,7 +97,6 @@ def users_views(request, pk):
 @authentication_classes([SessionAuthentication, BasicAuthentication])
 @permission_classes([IsAuthenticated])
 def schedule_views(request):
-
     if request.method == 'POST':
         data = request.data
         serializer = DailyScheduleSerializer(data=data)
@@ -107,20 +106,14 @@ def schedule_views(request):
         # Checks if you have both a date and a stylist id.
         if not serializer.is_valid():
             return Response({"message": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+        try:
+            schedule = serializer.save()
+            return Response(data={'pk': schedule.pk}, status=status.HTTP_201_CREATED)
+        except:
+            return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-        # # Check if the stylist exists.
-        # try:
-        #     usr_obj = User.objects.get(pk=stylist_id, role=Stylist)
-        # except User.DoesNotExist:
-        #     return Response(status=status.HTTP_404_NOT_FOUND)
-        #
-        # # Check if there already exist a schedule.
-        # schedule = DailySchedule.objects.filter(date=schedule_date, stylist_id=stylist_id)
-        # if not schedule:
-        #     schedule = serializer.save()
-        #     return Response(data={'date': schedule.date, 'stylist_id': schedule.stylist_id}, status=status.HTTP_201_CREATED)
-        return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 
 
 def index(request):

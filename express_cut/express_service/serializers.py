@@ -22,19 +22,7 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class DailyScheduleSerializer(serializers.ModelSerializer):
-    # date = serializers.DateField(required=True)
-    # stylist_id = serializers.PrimaryKeyRelatedField(required=True)
-
-    # TODO: For PUT HTTP methods fields don't need to be required
-    # TODO: Roles cant be updated to other roles on put.
 
     class Meta:
         model = DailySchedule
-        fields = ['date', 'stylist_id']
-        
-    def is_valid(self, raise_exception=False):
-
-        super(DailyScheduleSerializer, self).is_valid(self, raise_exception)
-        # Verify if the stylist exists
-        stylist = User.objects.get(pk=self.validated_data['stylist_id'], role=User.STYLIST)
-        return True
+        fields = ['date', 'stylist']
