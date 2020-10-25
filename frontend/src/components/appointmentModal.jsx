@@ -10,7 +10,14 @@ import { faClock } from "@fortawesome/free-solid-svg-icons";
 
 import "./../style/appointmentModal.scss";
 
-const AppointmentModal = ({ show, hide, appointment }) => {
+const AppointmentModal = ({
+  show,
+  hide,
+  appointment,
+  setActiveAppointment,
+  showDelModal,
+  displayTime,
+}) => {
   return (
     <Modal show={show} onHide={hide} size="xl">
       <Modal.Header closeButton>
@@ -30,10 +37,16 @@ const AppointmentModal = ({ show, hide, appointment }) => {
               <Modal.Title>
                 <FontAwesomeIcon icon={faClock} />
                 {/* Appointment Scheduled time */}
-                {appointment.appTime}
+                {appointment.appTime ? displayTime(appointment.appTime) : ""}
               </Modal.Title>
               {/* Status: TODO: dynamically determine if on time or not. */}
-              <Modal.Title>Status: On Time</Modal.Title>
+              <Modal.Title>
+                Status:{" "}
+                {appointment.appTime &&
+                  (new Date().valueOf() < appointment.appTime.valueOf()
+                    ? "On Time"
+                    : "Waiting")}
+              </Modal.Title>
             </Col>
             <Col lg>
               <Modal.Title>
@@ -41,7 +54,7 @@ const AppointmentModal = ({ show, hide, appointment }) => {
                 {appointment.services ? appointment.services.length : 0}
               </Modal.Title>
               {/* Estimated Appointment Duration */}
-              <Modal.Title>Est. Duration: {appointment.appTime}</Modal.Title>
+              <Modal.Title>Est. Duration: {appointment.estWait}</Modal.Title>
             </Col>
           </Row>
         </Container>
@@ -68,19 +81,26 @@ const AppointmentModal = ({ show, hide, appointment }) => {
             <ul>
               Services:
               {appointment.services
-                ? appointment.services.map((service) => <li>{service}</li>)
+                ? appointment.services.map((service) => (
+                    <li key={service}>{service}</li>
+                  ))
                 : ""}
             </ul>
           </Col>
         </Row>
       </Modal.Body>
       <Modal.Footer>
-        <Button variant="danger" onClick={hide}>
+        <Button variant="danger" onClick={showDelModal}>
           Delete
         </Button>
-        <Button variant="primary" onClick={hide}>
-          Start
-        </Button>
+        {!localStorage.getItem("activeAppointmentID") && (
+          <Button
+            variant="primary"
+            onClick={() => setActiveAppointment(appointment)}
+          >
+            Start
+          </Button>
+        )}
       </Modal.Footer>
     </Modal>
   );

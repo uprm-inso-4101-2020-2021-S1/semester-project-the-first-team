@@ -22,17 +22,32 @@ class ViewScheduleComponent extends Component {
     lastSun: null,
   };
 
-  componentDidMount() {
+  componentDidUpdate(prevProps) {
+    if (prevProps.headerCard !== this.props.headerCard) {
+      console.log(
+        "HeaderCard changed! Fetching new schedules for" +
+          this.props.headerCard.username
+      );
+      this.fetchSchedule(this.props.headerCard.username);
+    }
+  }
+
+  fetchSchedule(stylist) {
     //   TODO: GET SCHEDULE FROM BACKEND.
     let today = new Date();
+    this.getLastSunday(today);
     this.setState({
       events: TEMPEVENTS,
-      lastSun: new Date(
-        today.getFullYear(),
-        today.getMonth(),
-        today.getDate() - today.getDay()
-      ),
     });
+  }
+
+  getLastSunday(date) {
+    var lastSun = new Date(
+      date.getFullYear(),
+      date.getMonth(),
+      date.getDate() - date.getDay()
+    );
+    this.setState({ lastSun: lastSun });
   }
 
   render() {
@@ -42,6 +57,7 @@ class ViewScheduleComponent extends Component {
         events={this.state.events}
         defaultView={Views.AGENDA}
         date={this.state.lastSun}
+        onNavigate={(date) => this.getLastSunday(date)}
         length={7}
         style={{
           width: "100%",

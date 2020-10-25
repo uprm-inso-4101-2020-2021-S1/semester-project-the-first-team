@@ -6,7 +6,7 @@ const tempappointment = {
   profilePic:
     "https://images.pexels.com/photos/1841819/pexels-photo-1841819.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
   username: "Tris Everdeen",
-  appTime: "3:30 P.M.",
+  appTime: new Date(2020, 9, 12, 15, 30),
   estWait: 15,
   services: ["Shampoo", "Conditioner", "Blower", "Manicure", "Trim"],
   comments:
@@ -23,6 +23,8 @@ class ActiveAppointmentView extends Component {
 
   componentDidMount() {
     // TODO: GET DATA FROM BACKEND AND SET STATE.
+    let actApp = localStorage.getItem("activeAppointmentID");
+
     // this.props.changeHeaderCard(this.props.activeAppointment);
     this.setState({ appointment: tempappointment });
     this.props.changeHeaderCard(tempappointment);
@@ -49,6 +51,8 @@ class ActiveAppointmentView extends Component {
     }
     this.setState({ serviceDurations: currServDurs });
   };
+
+  showCancelModal;
 
   render() {
     return (
@@ -78,10 +82,19 @@ class ActiveAppointmentView extends Component {
             </div>
           </div>
           <div className="btn-div">
-            <button className={this.state.showFinish ? "finish" : "hidden"}>
+            <button
+              className={this.state.showFinish ? "finish" : "hidden"}
+              onClick={() => this.props.setActiveAppointment({})}
+            >
               Finish
             </button>
-            <button className="cancel">Cancel</button>
+            <button
+              className="cancel"
+              // TODO: REPLACE WITH ARE YOU SURE MODAL.
+              onClick={() => this.props.setActiveAppointment({})}
+            >
+              Cancel
+            </button>
           </div>
         </div>
       </div>

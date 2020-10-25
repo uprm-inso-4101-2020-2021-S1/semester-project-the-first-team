@@ -22,19 +22,22 @@ class StylistViewBody extends Component {
           <Route path={`${path}/appointments`}>
             <StylistAppointmentQueue
               changeHeaderCard={this.props.changeHeaderCard}
+              setActiveAppointment={this.props.setActiveAppointment}
+              activeAppointment={this.props.activeAppointment}
             />
           </Route>
           <Route path={`${path}/activeappointment`}>
             <ActiveAppointmentView
               changeHeaderCard={this.props.changeHeaderCard}
               activeAppointment={this.props.activeAppointment}
+              setActiveAppointment={this.props.setActiveAppointment}
             />
           </Route>
           <Route path={`${path}/schedule/manage`}>
             <ScheduleManagementView />
           </Route>
           <Route path={`${path}/schedule`}>
-            <ViewScheduleComponent />
+            <ViewScheduleComponent headerCard={this.props.headerCard} />
           </Route>
           <Route path={`${path}/stats`}>
             <StatsView />

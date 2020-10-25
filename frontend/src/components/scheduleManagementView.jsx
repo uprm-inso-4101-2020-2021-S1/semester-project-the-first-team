@@ -7,6 +7,9 @@ import ScheduleManagmentModal from "./scheduleManagementModal";
 const localizer = momentLocalizer(moment);
 const stylistNames = ["Eliza", "joanne murr", "Tiffany", "anne"];
 
+var todayAt7 = new Date();
+todayAt7.setHours(7);
+
 // Months in date start at 0-11. yyyy,m-1, dd, hh,mm,ss,ms
 class ScheduleManagementView extends Component {
   state = {
@@ -96,7 +99,7 @@ class ScheduleManagementView extends Component {
           localizer={localizer}
           events={this.state.events}
           defaultView={Views.WEEK}
-          scrollToTime={new Date().setHours(7)}
+          scrollToTime={todayAt7}
           // TODO: add componenets of diff colors for all stylists.
           onSelectEvent={(event) => this.showEditBlockModal(event)}
           onSelectSlot={this.showStylistSelectionModal}

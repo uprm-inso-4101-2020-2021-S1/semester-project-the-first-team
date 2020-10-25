@@ -78,7 +78,7 @@ function HeaderCardAppointmentTime(appTime) {
       <div>
         <div className="header-card-rightmost-section">
           <FontAwesomeIcon icon={faClock} />
-          <text className="app-time">{appTime.appTime}</text>
+          <p className="app-time">{displayTime(appTime.appTime)}</p>
         </div>
       </div>
     </Fragment>
@@ -111,8 +111,8 @@ class HeaderCardDropRight extends Component {
 
   render() {
     return (
-      <div class="btn-group dropdown">
-        <DropdownButton class="btn btn-secondary dropdown-toggle" drop="down">
+      <div className="btn-group dropdown">
+        <DropdownButton className="btn dropdown-toggle" drop="down" title="">
           {this.state.dropdownOptions.map((cardoption) => (
             <DropdownItem
               onClick={() => this.props.changeHeaderCard(cardoption)}
@@ -127,4 +127,14 @@ class HeaderCardDropRight extends Component {
   }
 }
 
-// export default HeaderCardDropRight;
+// TODO: CONSOLIDATE THIS WITH SAME FUNCT IN APPOINTMENTS QUEUE VIEW.
+function displayTime(dateob) {
+  var hours = dateob.getHours(); //Current Hours
+  var min = dateob.getMinutes(); //Current Minutes
+  var base12Hour = hours % 12 !== 0 ? hours % 12 : 12;
+  if (min < 10) {
+    min = "0" + min;
+  }
+  var meridian = hours < 12 ? "AM" : "PM";
+  return base12Hour + ":" + min + " " + meridian;
+}
