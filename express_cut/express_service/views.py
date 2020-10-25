@@ -1,11 +1,11 @@
 from django.shortcuts import render
 from django.http import HttpResponse
-from .models import Stylist, User
-from .serializers import UserSerializer
+from .models import Stylist, User, DailySchedule
+from .serializers import UserSerializer, DailyScheduleSerializer
 from rest_framework.response import Response
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 from rest_framework.permissions import IsAuthenticated
-from .permissions import Permissions, SignUpPermissions, UserViewPermissions
+from .permissions import Permissions, SignUpPermissions, UserViewPermissions, DailySchedulePermissions
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from drf_yasg.utils import swagger_auto_schema
@@ -91,17 +91,36 @@ def users_views(request, pk):
     return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-# @api_view(['GET','PUT', 'POST','DELETE'])
-# @authentication_classes([SessionAuthentication, BasicAuthentication])
-# @permission_classes([IsAuthenticated])
-# def schedule_views(request, stylist_id):
-#     if request.method == 'POST':
-#         if not UserViewPermissions().GET_permissions(request):
-#             return Response(status=status.HTTP_403_FORBIDDEN)
-#         if
+@swagger_auto_schema(methods=['POST'], request_body=DailyScheduleSerializer, responses=swagResp.commonPOSTResponses,
+                     tags=['dailySchedule'], )
+@api_view(['GET','PUT', 'POST','DELETE'])
+@authentication_classes([SessionAuthentication, BasicAuthentication])
+@permission_classes([IsAuthenticated])
+def schedule_views(request):
+
+    if request.method == 'POST':
+        data = request.data
+        serializer = DailyScheduleSerializer(data=data)
+        # Checks if the user logged in is a manager & if it's logged in.
+        if not DailySchedulePermissions().POST_permissions(request):
+            return Response(status=status.HTTP_403_FORBIDDEN)
+        # Checks if you have both a date and a stylist id.
+        if not serializer.is_valid():
+            return Response({"message": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
 
-
+        # # Check if the stylist exists.
+        # try:
+        #     usr_obj = User.objects.get(pk=stylist_id, role=Stylist)
+        # except User.DoesNotExist:
+        #     return Response(status=status.HTTP_404_NOT_FOUND)
+        #
+        # # Check if there already exist a schedule.
+        # schedule = DailySchedule.objects.filter(date=schedule_date, stylist_id=stylist_id)
+        # if not schedule:
+        #     schedule = serializer.save()
+        #     return Response(data={'date': schedule.date, 'stylist_id': schedule.stylist_id}, status=status.HTTP_201_CREATED)
+        return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 def index(request):

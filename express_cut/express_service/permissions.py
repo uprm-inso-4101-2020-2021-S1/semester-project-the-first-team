@@ -64,3 +64,11 @@ class SignUpPermissions(Permissions):
         elif data.get('role') == User.CUSTOMER and (not request.user.is_authenticated or (request.user.is_authenticated and self.has_manager_permission(request))):
             return True
         return False
+
+
+class DailySchedulePermissions(Permissions):
+    def POST_permissions(self, request):
+        if request.user.is_authenticated and self.has_manager_permission(request):
+            return True
+        return False
+

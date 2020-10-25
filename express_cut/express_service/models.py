@@ -39,7 +39,7 @@ class Service(models.Model):
 class DailySchedule(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True)
     date = models.DateField()
-    stylist = models.ForeignKey(User, on_delete=models.CASCADE, limit_choices_to={'role': User.STYLIST},)
+    stylist_id = models.ForeignKey(User, on_delete=models.CASCADE, limit_choices_to={'role': User.STYLIST},)
 
 
 class TimeSlot(models.Model):
