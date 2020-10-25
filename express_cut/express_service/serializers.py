@@ -22,7 +22,8 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class DailyScheduleSerializer(serializers.ModelSerializer):
+    pk = serializers.PrimaryKeyRelatedField(read_only=True)
 
     class Meta:
         model = DailySchedule
-        fields = ['date', 'stylist']
+        fields = ['date', 'stylist', 'pk']

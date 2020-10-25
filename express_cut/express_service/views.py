@@ -93,7 +93,7 @@ def users_views(request, pk):
 
 @swagger_auto_schema(methods=['POST'], request_body=DailyScheduleSerializer, responses=swagResp.commonPOSTResponses,
                      tags=['dailySchedule'], )
-@api_view(['GET','PUT', 'POST','DELETE'])
+@api_view(['POST'])
 @authentication_classes([SessionAuthentication, BasicAuthentication])
 @permission_classes([IsAuthenticated])
 def schedule_views(request):
@@ -113,8 +113,36 @@ def schedule_views(request):
             return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
+@swagger_auto_schema(methods=['GET', 'DELETE'], responses={**swagResp.commonResponses, **swagResp.getResponse(UserSerializer)},tags=['dailySchedule'],)
+@swagger_auto_schema(methods=['PUT'], request_body=DailyScheduleSerializer, responses=swagResp.commonPOSTResponses,
+                     tags=['dailySchedule'], )
+@api_view(['GET','PUT', 'DELETE'])
+@authentication_classes([SessionAuthentication, BasicAuthentication])
+@permission_classes([IsAuthenticated])
+def schedule_views_put(request, pk):
+    try:
+        schedule = DailySchedule.objects.get(pk=pk)
+    except DailySchedule.DoesNotExist:
+        return Response({'message': 'The daily schedule does not exist.'}, status=status.HTTP_404_NOT_FOUND)
 
+    if request.method == 'GET':
+        serializer = DailyScheduleSerializer(schedule)
+        return Response(serializer.data)
 
+    elif request.method == 'PUT':
+        data = request.data
+        serializer = DailyScheduleSerializer(schedule, data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    elif request.method == 'DELETE':
+        schedule.delete()
+        return Response({'message': 'Daily Schedule was deleted successfully.'}, status.HTTP_204_NO_CONTENT)
+
+    else:
+        return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 def index(request):
     return HttpResponse("Welcome to Express Cuts")

@@ -21,6 +21,7 @@ urlpatterns = [
     path('user/<int:pk>', views.users_views),
     path('user/signup', views.user_signup_view),
     path('schedule/', views.schedule_views),
+    path('schedule/<int:pk>', views.schedule_views_put),
 ]
 
 # Stylist_urlpatterns = [
