@@ -51,6 +51,11 @@ function App() {
       path: "/stylists/stats",
       icon: faConciergeBell,
       cName: "nav-text",
+    }, {
+      title: "View Users",
+      path: "/stylists/userlist",
+      icon: faConciergeBell,
+      cName: "nav-text",
     },
   ];
 
