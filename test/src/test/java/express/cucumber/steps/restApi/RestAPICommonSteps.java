@@ -62,17 +62,17 @@ public class RestAPICommonSteps {
 		target=client.target(url);
 	}
 
-	@Given("^Rest API is up and running and the user logs in as manager (.*) and (.*)$")
+	@Given("^The user logs in as manager (.*) and (.*)$")
 	public void rest_API_is_up_and_running_and_the_user_logs_in_as_manager(String user, String pass) throws Throwable {
 		user_login(user, pass);
 	}
 	
-	@Given("^Rest API is up and running and the user logs in as customer (.*) and (.*)$")
+	@Given("^The user logs in as customer (.*) and (.*)$")
 	public void rest_API_is_up_and_running_and_the_user_logs_in_as_customer(String user, String pass) throws Throwable {
 		user_login(user, pass);
 	}
 
-	@Given("^Rest API is up and running and the user logs in as stylist (.*) and (.*)$")
+	@Given("^The user logs in as stylist (.*) and (.*)$")
 	public void rest_API_is_up_and_running_and_the_user_logs_in_as_stylist(String user, String pass) throws Throwable {
 		user_login(user, pass);
 	}

@@ -44,7 +44,6 @@ public class RestAPIUserSteps {
 
 	@When("^Manager adds stylist credentials as (.*)$")
 	public void manager_adds_stylist_credentials_as(String stylistJsonData) throws Throwable {
-		ObjectMapper mapper = new ObjectMapper();
 		WebTarget localTarget = RestAPICommonSteps.target.path(userSignupPath);
 		Response resp = localTarget
 			.request(MediaType.APPLICATION_JSON)
@@ -54,7 +53,7 @@ public class RestAPIUserSteps {
 		Assert.assertTrue(resp.getStatus()==201);
 	}
 
-	@Then("^the stylist (.*) should be created and added to the database$")
+	@Then("^the stylist (.*) should be added to the database$")
 	public void the_stylist_should_be_created_and_added_to_the_database(String stylistJsonData) throws Throwable {
 		ObjectMapper mapper = new ObjectMapper();
 		String pk = Integer.toString(++testStartUserNumber);
@@ -82,9 +81,7 @@ public class RestAPIUserSteps {
 			.accept(MediaType.APPLICATION_JSON)
 			.header(HttpHeaders.AUTHORIZATION, "Basic "+RestAPICommonSteps.credentials)
             .post(Entity.entity(stylistData, MediaType.APPLICATION_JSON),Response.class);
-        int stat = resp.getStatus();
-        System.out.println(stat);
-        Assert.assertTrue(stat==403);
+        Assert.assertTrue(resp.getStatus()==403);
     }
 	
 }

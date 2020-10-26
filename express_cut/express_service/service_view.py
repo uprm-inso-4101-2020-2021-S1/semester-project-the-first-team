@@ -19,21 +19,24 @@ from .swagger_models import SwagResponses as swagResp
 @authentication_classes([SessionAuthentication, BasicAuthentication])
 @permission_classes([IsAuthenticated])
 def all_services(request):
-    if not Permissions.has_manager_permission(request):
-        return Response(status=status.HTTP_403_FORBIDDEN)
-
     if request.method == 'GET':
         services = Service.objects.all()
         serializer = ServiceSerializer(services, many=True)
         return Response(serializer.data)
+
+    if not Permissions.has_manager_permission(request):
+        return Response(status=status.HTTP_403_FORBIDDEN)
 
     if request.method == 'POST':
         data = request.data
         serializer = ServiceSerializer(data=data)
         if not serializer.is_valid():
             return Response({"message": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
-        service = serializer.save()
-        return Response(data = {'pk': service.pk},status=status.HTTP_201_CREATED)
+        try:
+            service = serializer.save()
+            return Response(data = {'pk': service.pk},status=status.HTTP_201_CREATED)
+        except:
+            return Response(serializer.errors, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
@@ -44,8 +47,6 @@ def all_services(request):
 @authentication_classes([SessionAuthentication, BasicAuthentication])
 @permission_classes([IsAuthenticated])
 def service_views(request, pk):
-    if not Permissions.has_manager_permission(request):
-        return Response(status=status.HTTP_403_FORBIDDEN)
     try:
         service_obj = Service.objects.get(pk=pk)
     except Service.DoesNotExist:
@@ -55,16 +56,24 @@ def service_views(request, pk):
         serializer = ServiceSerializer(service_obj)
         return Response(serializer.data)
 
+    if not Permissions.has_manager_permission(request):
+        return Response(status=status.HTTP_403_FORBIDDEN)
+
     elif request.method == 'PUT':
         serializer = ServiceSerializer(service_obj, data=request.data)
         if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
+            try:
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            except:
+                return Response(serializer.errors, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     elif request.method == 'DELETE':
-        service_obj.delete()
-        return Response(status=status.HTTP_200_OK)
-
+        try:
+            service_obj.delete()
+            return Response(status=status.HTTP_200_OK)
+        except:
+            return Response(serializer.errors, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 

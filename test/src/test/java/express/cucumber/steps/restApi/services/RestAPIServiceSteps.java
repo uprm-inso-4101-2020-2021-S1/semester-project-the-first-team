@@ -43,7 +43,6 @@ public class RestAPIServiceSteps {
 	
 	@When("^Manager adds the new service (.*)$")
 	public void manager_adds_the_new_service(String serviceData) throws Throwable {
-		ObjectMapper mapper = new ObjectMapper();
 		WebTarget localTarget = RestAPICommonSteps.target.path(servicePath);
 		Response resp = localTarget
 			.request(MediaType.APPLICATION_JSON)
@@ -53,7 +52,7 @@ public class RestAPIServiceSteps {
 		Assert.assertTrue(resp.getStatus()==201);
 	}
 	
-	@Then("^the service (.*) should be created and added to the database$")
+	@Then("^the service (.*) should be added to the database$")
 	public void the_service_should_be_created_and_added_to_the_database(String serviceData) throws Throwable {
 		ObjectMapper mapper = new ObjectMapper();
 		String pk = Integer.toString(++testStartServiceNumber);
