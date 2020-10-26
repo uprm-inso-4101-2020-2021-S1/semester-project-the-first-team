@@ -1,5 +1,5 @@
 from django.urls import path
-from . import views
+from . import views, service_view
 from django.conf.urls import url
 from rest_framework.urlpatterns import format_suffix_patterns
 from rest_framework import permissions
@@ -17,11 +17,16 @@ schema_view = get_schema_view(
 
 urlpatterns = [
     path('', views.index, name='index'),
-    path('user/', views.all_users),
+    path('user', views.all_users),
     path('user/<int:pk>', views.users_views),
     path('user/signup', views.user_signup_view),
-    path('schedule/', views.schedule_views),
+
+    path('schedule', views.schedule_views),
     path('schedule/<int:pk>', views.schedule_views_put),
+  
+    path('service', service_view.all_services),
+    path('service/<int:pk>', service_view.service_views),
+
 ]
 
 # Stylist_urlpatterns = [
