@@ -13,7 +13,7 @@ function ReservationStylistPortrait(props) {
       className={"reservations-stylist-portrait " + (props.active && "active")}
     >
       <div className="reservations-stylist-portrait-header">
-        <img src={props.image} className="stylist-portrait" />
+        <img src={props.image} className="stylist-portrait" alt="portrait" />
       </div>
       <a
         href="/#"

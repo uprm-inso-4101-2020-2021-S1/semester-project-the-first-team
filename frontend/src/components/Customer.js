@@ -4,6 +4,7 @@ import { CustomerSidebarItems } from "./CustomerSidebarItems";
 import CustomerReservation from "./CustomerReservation";
 import { Route, useRouteMatch } from "react-router-dom";
 import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
+import "../style/customer.scss";
 
 const temp = [
   {

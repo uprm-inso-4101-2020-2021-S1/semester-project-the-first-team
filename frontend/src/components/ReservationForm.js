@@ -4,11 +4,16 @@ import CustomerRersevationStylists from "./CustomerReservationStylists";
 import PropTypes from "prop-types";
 import CustomerResevationTimeSlots from "./CustomerReservationTimeSlots";
 import CustomerReservationSummary from "./CustomerReservationSummary";
+import { Link } from "react-router-dom";
+import { Row, Col } from "react-bootstrap";
+import { faHome } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 const maxServices = 3;
 
 function ReservationForm(props) {
-  // Form variables
+
+  // State variables
   const [serviceNames, setServiceNames] = useState([]);
   const [serviceIsActive, setServiceIsActive] = useState(
     props.services.map(() => {
@@ -31,6 +36,14 @@ function ReservationForm(props) {
   );
 
   // Handlers
+  const updateStageMinimumSelected = (status) => {
+    props.setStageMinimumSelected(() => {
+      let arr = [...props.stageMinimumSelected];
+      arr[props.reservationStage] = status;
+      return arr;
+    });
+  };
+
   const setServiceActive = (index) => {
     if (!serviceIsActive[index]) {
       if (activeServiceCount < maxServices) {
@@ -49,6 +62,7 @@ function ReservationForm(props) {
       serviceIsActive[index] = false;
       setActiveServiceCount(activeServiceCount - 1);
     }
+    updateStageMinimumSelected(serviceIsActive.includes(true));
   };
 
   const setPortraitActive = (index) => {
@@ -58,6 +72,8 @@ function ReservationForm(props) {
         else return false;
       })
     );
+    if (!props.stageMinimumSelected[props.reservationStage])
+      updateStageMinimumSelected(true);
   };
 
   const setTimeSlotActive = (index) => {
@@ -67,11 +83,12 @@ function ReservationForm(props) {
         else return false;
       })
     );
+    if (!props.stageMinimumSelected[props.reservationStage])
+      updateStageMinimumSelected(true);
   };
 
   const getSelectedService = (name, index) => {
     const isActive = serviceIsActive[index];
-    console.log(isActive);
     if (isActive) {
       if (activeServiceCount < maxServices) {
         setServiceNames([...serviceNames, name]);
@@ -96,11 +113,13 @@ function ReservationForm(props) {
     setTimeSlotId(id);
   };
 
-  const handleSubmit = () => {};
+  const handleSubmit = () => {
+    props.setSubmitted(true);
+  };
 
   return (
     <form onSubmit={handleSubmit} method="POST">
-      {props.reservationStage === 0 && (
+      {!props.submitted && props.reservationStage === 0 && (
         <CustomerReservationServices
           name="serviceName"
           getServiceName={getSelectedService}
@@ -109,7 +128,7 @@ function ReservationForm(props) {
           setActive={setServiceActive}
         />
       )}
-      {props.reservationStage === 1 && (
+      {!props.submitted && props.reservationStage === 1 && (
         <CustomerRersevationStylists
           name="stylistName"
           getStylistName={getSelectedStylist}
@@ -118,7 +137,7 @@ function ReservationForm(props) {
           setActive={setPortraitActive}
         />
       )}
-      {props.reservationStage === 2 && (
+      {!props.submitted && props.reservationStage === 2 && (
         <CustomerResevationTimeSlots
           name="timeSlotId"
           getTimeSlotId={getSelectedTimeSlot}
@@ -129,14 +148,39 @@ function ReservationForm(props) {
           setReservationStage={props.setReservationStage}
         />
       )}
-      {props.reservationStage === 3 && (
+      {!props.submitted && props.reservationStage === 3 && (
         <CustomerReservationSummary
           selectedServices={serviceNames}
           selectedStylist={stylistName}
           selectedTimeSlot={
             timeSlotId ? props.timeSlots[timeSlotId].time : null
           }
+          handleSubmit={handleSubmit}
         />
+      )}
+      {props.submitted && (
+        <Row>
+          <Col className="reservation-end justify-content-center text-center">
+            <Row>
+              <Col>
+                <h3>Thank You!</h3>
+              </Col>
+            </Row>
+            <Row>
+              <Col className="mt-3">
+                <span>Your reservation has been processed.</span>
+              </Col>
+            </Row>
+            <Row>
+              <Col className="mt-4 align-items-center">
+                <Link to="/customers/home" className="stretched-link home-link">
+                  <FontAwesomeIcon className="home-link-icon" icon={faHome} />
+                  <span>Home</span>
+                </Link>
+              </Col>
+            </Row>
+          </Col>
+        </Row>
       )}
     </form>
   );
@@ -146,7 +190,11 @@ ReservationForm.propTypes = {
   reservationStage: PropTypes.number,
   services: PropTypes.array,
   setReservationStage: PropTypes.func,
+  setStageMinimumSelected: PropTypes.func,
+  setSubmitted: PropTypes.func,
+  stageMinimumSelected: PropTypes.array,
   stylists: PropTypes.array,
+  submitted: PropTypes.bool,
   timeSlots: PropTypes.array,
 };
 

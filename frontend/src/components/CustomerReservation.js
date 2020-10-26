@@ -1,14 +1,22 @@
 import React, { useState } from "react";
-import { Container, Row, Col } from "react-bootstrap";
+import { Alert, Container, Row, Col } from "react-bootstrap";
 import PropTypes from "prop-types";
 import ReservationForm from "./ReservationForm";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowRight, faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import { Link } from "react-router-dom";
+import { SlideDown } from "react-slidedown";
+import "react-slidedown/lib/slidedown.css";
 
 const numStages = 4;
 function CustomerReservation(props) {
   const [reservationStage, setReservationStage] = useState(0);
+  const [stageMinimumSelected, setStageMinimumSelected] = useState(
+    Array(numStages).fill(false)
+  );
+  const [submitted, setSubmitted] = useState(false);
+  const [selectWarning, setSelectWarning] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const subHeaderTitles = [
     "Select a service",
@@ -31,12 +39,12 @@ function CustomerReservation(props) {
           <Row>
             <Col>
               <div className="reservations-subheader">
-                <span>{subHeaderTitles[reservationStage]}</span>
+                {!submitted && <span>{subHeaderTitles[reservationStage]}</span>}
               </div>
             </Col>
             <Col>
               <div className="reservations-next">
-                {reservationStage >= 1 && (
+                {!submitted && reservationStage >= 1 && (
                   <Link
                     to="/#"
                     onClick={(e) => {
@@ -50,12 +58,17 @@ function CustomerReservation(props) {
                     />
                   </Link>
                 )}
-                {reservationStage < numStages - 1 && (
+                {!submitted && reservationStage < numStages - 1 && (
                   <Link
                     to="/#"
                     onClick={(e) => {
                       e.preventDefault();
-                      setReservationStage(reservationStage + 1);
+                      if (stageMinimumSelected[reservationStage]) {
+                        setReservationStage(reservationStage + 1);
+                        setSelectWarning(false);
+                      } else {
+                        setSelectWarning(true);
+                      }
                     }}
                   >
                     <FontAwesomeIcon
@@ -67,12 +80,27 @@ function CustomerReservation(props) {
               </div>
             </Col>
           </Row>
+          <SlideDown className="alert-slide">
+            {selectWarning ? (
+              <Row>
+                <Col className="justify-content-center text-center mt-3 mb-1">
+                  <Alert className="select-alert" variant="warning">
+                    Please select an item before continuing.
+                  </Alert>
+                </Col>
+              </Row>
+            ) : null}
+          </SlideDown>
           <ReservationForm
             services={props.services}
             stylists={props.stylists}
+            submitted={submitted}
             timeSlots={props.timeSlots}
             reservationStage={reservationStage}
             setReservationStage={setReservationStage}
+            setSubmitted={setSubmitted}
+            stageMinimumSelected={stageMinimumSelected}
+            setStageMinimumSelected={setStageMinimumSelected}
           />
         </Container>
       </Row>

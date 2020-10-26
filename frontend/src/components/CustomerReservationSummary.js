@@ -103,7 +103,11 @@ function CustomerReservationSummary(props) {
         </Row>
         <Row className="submit-area">
           <Col className="justify-content-center align-items-center text-center">
-            <Button className="submit-button" size="lg">
+            <Button
+              onClick={props.handleSubmit}
+              className="submit-button"
+              size="lg"
+            >
               <div className="button-content">
                 <FontAwesomeIcon
                   type="submit"
@@ -121,6 +125,7 @@ function CustomerReservationSummary(props) {
 }
 
 CustomerReservationSummary.propTypes = {
+  handleSubmit: PropTypes.func,
   selectedServices: PropTypes.array,
   selectedStylist: PropTypes.string,
   selectedTimeSlot: PropTypes.number,
