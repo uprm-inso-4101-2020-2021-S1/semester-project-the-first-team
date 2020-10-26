@@ -36,18 +36,23 @@ class Stylist(User):
 class Customer(User):
     prefer_stylist = models.ForeignKey(Stylist, on_delete=models.CASCADE)
 
+class DailySchedule(models.Model):
+    timestamp = models.DateTimeField(auto_now_add=True)
+    date = models.DateField()
+    stylist = models.ForeignKey(User, on_delete=models.CASCADE, limit_choices_to={'role': User.STYLIST},)
 
+
+class TimeSlot(models.Model):
+    start_time = models.TimeField()
+    end_time = models.TimeField()
+    dailySchedule = models.ForeignKey(DailySchedule, on_delete=models.CASCADE)
+    # TODO: Add Duration
+
+    
 class StylistOfferServices(models.Model):
     EstimatedTime = models.IntegerField()
     stylist = models.ForeignKey(Stylist, on_delete=models.CASCADE)
     service = models.ForeignKey(Service, on_delete=models.CASCADE)
-
-
-class DailySchedule(models.Model):
-    date = models.DateField()
-    startTime = models.TimeField()
-    endTime = models.TimeField()
-    stylist = models.ForeignKey(Stylist, on_delete=models.CASCADE)
 
 
 class Reservation(models.Model):
