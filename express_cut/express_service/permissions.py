@@ -67,7 +67,7 @@ class SignUpPermissions(Permissions):
 
 
 class DailySchedulePermissions(Permissions):
-    def POST_permissions(self, request):
+    def POST_PUT_DELETE_permissions(self, request):
         if request.user.is_authenticated and self.has_manager_permission(request):
             return True
         return False

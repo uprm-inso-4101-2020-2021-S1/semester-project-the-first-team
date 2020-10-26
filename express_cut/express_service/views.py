@@ -52,7 +52,7 @@ def all_users(request):
         elif role == User.MANAGER:
             users.filter(role=User.MANAGER)
         serializer = UserSerializer(users, many=True)
-        return Response(serializer.data)
+        return Response(serializer.data, status=status.HTTP_302_FOUND)
 
 
 @swagger_auto_schema(methods=['PUT'], request_body=UserSerializer, responses={**swagResp.commonResponses, **swagResp.getResponse(UserSerializer)},
@@ -71,7 +71,7 @@ def users_views(request, pk):
         if not UserViewPermissions().GET_permissions(request, usr_obj):
             return Response(status=status.HTTP_403_FORBIDDEN)
         serializer = UserSerializer(usr_obj)
-        return Response(serializer.data)
+        return Response(serializer.data, status=status.HTTP_302_FOUND)
 
     elif request.method == 'PUT':
         if not UserViewPermissions().PUT_permissions(request, usr_obj):
@@ -79,7 +79,7 @@ def users_views(request, pk):
         serializer = UserSerializer(usr_obj, data=request.data)
         if serializer.is_valid():
             serializer.save()
-            return Response(serializer.data)
+            return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     elif request.method == 'DELETE':
@@ -116,7 +116,7 @@ def schedule_views(request):
 @swagger_auto_schema(methods=['GET', 'DELETE'], responses={**swagResp.commonResponses, **swagResp.getResponse(UserSerializer)},tags=['dailySchedule'],)
 @swagger_auto_schema(methods=['PUT'], request_body=DailyScheduleSerializer, responses=swagResp.commonPOSTResponses,
                      tags=['dailySchedule'], )
-@api_view(['GET','PUT', 'DELETE'])
+@api_view(['GET', 'PUT', 'DELETE'])
 @authentication_classes([SessionAuthentication, BasicAuthentication])
 @permission_classes([IsAuthenticated])
 def schedule_views_put(request, pk):
@@ -127,17 +127,21 @@ def schedule_views_put(request, pk):
 
     if request.method == 'GET':
         serializer = DailyScheduleSerializer(schedule)
-        return Response(serializer.data)
+        return Response(serializer.data, status=status.HTTP_302_FOUND)
 
     elif request.method == 'PUT':
+        if not DailySchedulePermissions().POST_PUT_DELETE_permissions(request):
+            return Response(status=status.HTTP_403_FORBIDDEN)
         data = request.data
         serializer = DailyScheduleSerializer(schedule, data)
         if serializer.is_valid():
             serializer.save()
-            return Response(serializer.data)
+            return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     elif request.method == 'DELETE':
+        if not DailySchedulePermissions().POST_PUT_DELETE_permissions(request):
+            return Response(status=status.HTTP_403_FORBIDDEN)
         schedule.delete()
         return Response({'message': 'Daily Schedule was deleted successfully.'}, status.HTTP_204_NO_CONTENT)
 
