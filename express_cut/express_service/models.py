@@ -1,3 +1,4 @@
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 
@@ -35,6 +36,7 @@ class Stylist(User):
 
 class Customer(User):
     prefer_stylist = models.ForeignKey(Stylist, on_delete=models.CASCADE)
+
 
 class DailySchedule(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True)
@@ -80,3 +82,8 @@ class Notification(models.Model):
     timestamp = models.DateTimeField()
     status = models.CharField(max_length=1, choices=STATUS)
 
+
+class Feedback(models.Model):
+    reservation = models.OneToOneField(Reservation, on_delete=models.CASCADE, primary_key=True)
+    rating = models.IntegerField(validators=[MaxValueValidator(5), MinValueValidator(1)])
+    comment = models.CharField(max_length=250)
