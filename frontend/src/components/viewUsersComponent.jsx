@@ -1,11 +1,12 @@
 import React, { Component } from "react";
-import { Dropdown } from "react-bootstrap";
 import DropdownButton from "react-bootstrap/DropdownButton";
 import DropdownItem from "react-bootstrap/DropdownItem";
 
 const dropdownFilters = ["Name", "Type"];
+
 class ViewUsersComponent extends Component {
   state = { userlist: [], filterTitle: "Filter" };
+
   componentDidMount() {
     this.getUsers();
   }
@@ -115,10 +116,10 @@ const TEMPUSERS = [
       "https://images.pexels.com/photos/5480755/pexels-photo-5480755.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
   },
   {
-    username: "Carlos Barlos",
+    username: "Dylan Badilan",
     type: "Admin",
     usrSince: new Date(),
     photo:
-      "https://images.pexels.com/photos/5480755/pexels-photo-5480755.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+      "https://images.pexels.com/photos/2896840/pexels-photo-2896840.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
   },
 ];

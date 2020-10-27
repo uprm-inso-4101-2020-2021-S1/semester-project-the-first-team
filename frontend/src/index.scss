@@ -146,6 +146,9 @@ body {
 
 .nav-menu-items {
   width: 100%;
+  height: 100vh;
+  margin-bottom: 0px;
+  overflow-y: auto;
 }
 
 .sidebar-toggle {

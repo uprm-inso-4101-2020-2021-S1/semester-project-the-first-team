@@ -7,6 +7,7 @@ import ScheduleManagementView from "./scheduleManagementView";
 import ViewScheduleComponent from "./viewScheduleComponent";
 import StatsView from "./statsView";
 import ViewUsersComponent from "./viewUsersComponent";
+import ManageServicesView from "./manageServicesView";
 
 import "./../style/stylistViewBody.scss";
 const path = "/stylists";
@@ -45,6 +46,9 @@ class StylistViewBody extends Component {
           </Route>
           <Route path={`${path}/userlist`}>
             <ViewUsersComponent />
+          </Route>
+          <Route path={`${path}/manageservices`}>
+            <ManageServicesView />
           </Route>
         </Switch>
       </div>
