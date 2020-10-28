@@ -49,6 +49,7 @@ function HeaderBarTitle() {
         <Route path={`${path}/form/newstylist`}>Add New Stylist:</Route>
         <Route path={`${path}/form/editstylist`}>Edit Stylist:</Route>
         <Route path={`${path}/userlist`}>View Users in System:</Route>
+        <Route path={`${path}/manageservices`}>Manage Services Provided:</Route>
       </Switch>
     </div>
   );

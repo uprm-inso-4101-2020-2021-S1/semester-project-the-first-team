@@ -103,7 +103,7 @@
   }
 
   .service-lst-container {
-    width: 35%;
+    width: 60%;
     // height: 80vh;
     overflow-x: hidden;
     overflow-y: auto;
@@ -129,12 +129,44 @@
 
   .mng-srvc-form-container {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     flex-wrap: nowrap;
-
+    justify-content: center;
+    width: 100%;
     .mng-srvc-form-card {
       padding: 2rem;
-      width: 50vw;
+      width: 30vw;
+      display: flex;
+      flex-direction: row;
+      flex-wrap: nowrap;
+      justify-content: center;
+
+      form {
+        overflow-x: hidden;
+        overflow-y: auto;
+      }
+
+      label {
+        margin-bottom: 5px;
+      }
+      input,
+      textarea {
+        margin-bottom: 1rem;
+        width: 20vw;
+
+        &.servDescr {
+          min-height: 20vh;
+        }
+      }
+      .form-btns {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        justify-content: center;
+        Button {
+          margin: 1rem;
+        }
+      }
     }
   }
 }

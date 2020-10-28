@@ -35,15 +35,15 @@ class ManageServicesView extends Component {
     });
   };
 
-  setActiveService(srvc) {
+  setActiveService = (srvc) => {
     this.setState({ activeService: srvc });
-  }
+  };
 
-  saveService() {
+  saveService = () => {
     // TODO: ADD TO BACKEND.
     alert("saved Service.");
     this.setActiveService(emptyService);
-  }
+  };
 
   toggleModal = () => {
     this.setState({ showModal: !this.state.showModal });
@@ -61,7 +61,7 @@ class ManageServicesView extends Component {
 
   confirmDeleteModal(serviceName) {
     return (
-      <Modal show={this.state.showModal} onHide={this.toggleModal} size="xl">
+      <Modal show={this.state.showModal} onHide={this.toggleModal}>
         <Modal.Body>Are you sure you want to delete {serviceName}?</Modal.Body>
         <Modal.Footer>
           <Button variant="danger" onClick={this.deleteActiveService}>
@@ -76,30 +76,42 @@ class ManageServicesView extends Component {
     return (
       <div className="card mng-srvc-form-card">
         {this.confirmDeleteModal(this.state.activeService.servName)}
-
-        <h3>Service Information</h3>
-        <form>
-          {Object.keys(this.state.activeService).map((field) => (
-            <div>
-              <label>{fieldDisplayNames[field]}: </label>
-              <input
-                type="text"
-                name={field}
-                key={field}
-                value={this.state.activeService[field]}
-                onChange={this.handleChange}
-              ></input>
+        <div>
+          <h3>Service Information</h3>
+          <form>
+            {Object.keys(this.state.activeService).map((field) => (
+              <div>
+                <div>
+                  <label>{fieldDisplayNames[field]}: </label>
+                </div>
+                {field !== "servDescr" ? (
+                  <input
+                    type="text"
+                    name={field}
+                    key={field}
+                    value={this.state.activeService[field]}
+                    onChange={this.handleChange}
+                  />
+                ) : (
+                  <textarea
+                    name={field}
+                    key={field}
+                    value={this.state.activeService[field]}
+                    onChange={this.handleChange}
+                  />
+                )}
+              </div>
+            ))}
+            <div className="form-btns">
+              <Button variant="primary" onClick={this.saveService}>
+                Save
+              </Button>
+              <Button variant="danger" onClick={this.toggleModal}>
+                Delete
+              </Button>
             </div>
-          ))}
-          <div className="form-btns">
-            <Button variant="primary" onClick={this.saveService}>
-              Save
-            </Button>
-            <Button variant="danger" onClick={this.toggleModal}>
-              Delete
-            </Button>
-          </div>
-        </form>
+          </form>
+        </div>
       </div>
     );
   }
