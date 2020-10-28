@@ -1,0 +1,6 @@
+venv*/
+.idea/
+__pycache__/
+express_cut/express_service/migrations/
+!express_cut/express_service/migrations/__init__.py
+
