@@ -12,7 +12,11 @@ function TimeSlot(props) {
   };
   return (
     <div className={"time-slot " + (props.active && "active")}>
-      <a href="/#" className="stretched-link time-slot-link" onClick={handleClick}>
+      <a
+        href="/#"
+        className="stretched-link time-slot-link"
+        onClick={handleClick}
+      >
         <Row>
           <Col>
             <div className="time-slot-header">

@@ -128,7 +128,7 @@ CustomerReservationSummary.propTypes = {
   handleSubmit: PropTypes.func,
   selectedServices: PropTypes.array,
   selectedStylist: PropTypes.string,
-  selectedTimeSlot: PropTypes.number,
+  selectedTimeSlot: PropTypes.object,
 };
 
 export default CustomerReservationSummary;
