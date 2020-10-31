@@ -4,6 +4,13 @@ class HeaderBarClock extends Component {
   state = { time: "", seconds: "", showSeconds: false, meridian: "" };
 
   componentDidMount() {
+    // Get time from localStorage if available to prevent
+    // clock not displaying anything on mounting.
+    this.setState({
+      time: localStorage.getItem("time") || "",
+      meridian: localStorage.getItem("meridian") || "",
+    });
+
     this.intervalID = setInterval(() => this.tick(), 1000);
   }
 
@@ -22,18 +29,20 @@ class HeaderBarClock extends Component {
 
     this.setState({ time: base12Hour + ":" + min });
     this.setState({ meridian: hours < 12 ? "AM" : "PM" });
+    localStorage.setItem("time", base12Hour + ":" + min);
+    localStorage.setItem("meridian", hours < 12 ? "AM" : "PM");
 
-    if (this.state.showSeconds) {
-      this.setState({ seconds: new Date().getSeconds() });
-    }
+    // if (this.state.showSeconds) {
+    //   this.setState({ seconds: new Date().getSeconds() });
+    // }
   }
   render() {
     return (
-      <a className="navbar-brand text-light">
+      <div className="clock-time">
         {this.state.time}
-        {this.state.showSeconds && <a>{":" + this.state.seconds}</a>}{" "}
+        {this.state.showSeconds && <span>{":" + this.state.seconds}</span>}{" "}
         {this.state.meridian}
-      </a>
+      </div>
     );
   }
 }

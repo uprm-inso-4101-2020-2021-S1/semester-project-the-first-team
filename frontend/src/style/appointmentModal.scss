@@ -15,10 +15,11 @@
   }
 
   .modal-body .row div[class^="col"] {
-    text a,
+    .boxed-txt,
     ul li {
       color: black;
       background-color: white;
+      max-width: 30vw;
     }
   }
 }
