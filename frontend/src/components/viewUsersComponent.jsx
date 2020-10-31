@@ -1,8 +1,19 @@
 import React, { Component } from "react";
 import DropdownButton from "react-bootstrap/DropdownButton";
 import DropdownItem from "react-bootstrap/DropdownItem";
+import axios from "axios";
 
 const dropdownFilters = ["Name", "Type"];
+const token = new Buffer("Manager:Manager").toString("base64");
+
+const userkeys = [
+  "username",
+  "first_name",
+  "last_name",
+  "pk",
+  "role",
+  "username",
+];
 
 class ViewUsersComponent extends Component {
   state = { userlist: [], filterTitle: "Filter" };
@@ -11,12 +22,21 @@ class ViewUsersComponent extends Component {
     this.getUsers();
   }
 
-  getUsers() {
-    //   TODO: GET USERS FROM BACKEND.
-    var usrlst = TEMPUSERS;
-    this.setState({ userlist: usrlst });
-    console.log("got users.");
-  }
+  getUsers = () => {
+    // TODO: HANDLE ERRORS, USERS WITHOUT PHOTOS, ETC.
+    axios
+      .get("http://localhost:8000/user", {
+        headers: { Authorization: `basic ${token}` },
+      })
+      .then((response) => {
+        console.log(response);
+        this.setState({ userlist: response.data });
+      })
+      .catch((error) => {
+        console.warn(error);
+      });
+  };
+
   filterUsers = (filter) => {
     //   TODO: implement filters either front or backend.
     console.log("filtered by " + filter);
@@ -68,12 +88,12 @@ class ViewUsersComponent extends Component {
                 </picture>
                 <div className="usr-info-div">
                   <p>
-                    <strong>{usr.username}</strong>
+                    <strong>{usr.first_name + " " + usr.last_name}</strong>
                   </p>
                   <p>
                     <i>{usr.type}</i>
                   </p>
-                  <p>{usr.usrSince.toString()}</p>
+                  <p>{usr.email}</p>
                 </div>
               </div>
             </div>

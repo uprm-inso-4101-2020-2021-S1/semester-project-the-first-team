@@ -6,9 +6,9 @@ RUN apk update && apk add curl postgresql-dev gcc python3-dev musl-dev
 # Django Variables
 ENV DJANGO_ALLOWED_HOSTS *
 ENV DJANGO_SECRET_KEY "mim-1fbk4#ih!%awlxv17s_a835bpc&djw0y$4@c%&h-*eovba"
-ENV DJANGO_CORS_ORIGIN_WHITELIST "localhost 127.0.0.1"
+ENV DJANGO_CORS_ORIGIN_WHITELIST "localhost 127.0.0.1 localhost:3000"
 ENV DEBUG false
-ENV CORS_ALLOW_ALL false
+ENV CORS_ALLOW_ALL true
 
 # Connection settings
 ENV DATABASE_NAME express_cuts_db
