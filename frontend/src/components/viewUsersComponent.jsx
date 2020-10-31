@@ -4,8 +4,8 @@ import DropdownItem from "react-bootstrap/DropdownItem";
 import axios from "axios";
 
 const dropdownFilters = ["Name", "Type"];
-const token = new Buffer("Manager:Manager").toString("base64");
-
+const defaultProfileImg =
+  "https://images.pexels.com/photos/194446/pexels-photo-194446.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940";
 const userkeys = [
   "username",
   "first_name",
@@ -23,10 +23,11 @@ class ViewUsersComponent extends Component {
   }
 
   getUsers = () => {
-    // TODO: HANDLE ERRORS, USERS WITHOUT PHOTOS, ETC.
     axios
-      .get("http://localhost:8000/user", {
-        headers: { Authorization: `basic ${token}` },
+      .get(this.props.backendDomain + "user", {
+        headers: {
+          Authorization: `basic ${sessionStorage.getItem("authToken")}`,
+        },
       })
       .then((response) => {
         console.log(response);
@@ -81,10 +82,10 @@ class ViewUsersComponent extends Component {
         {this.displayFilterBtn()}
         <div className="usr-card-container">
           {this.state.userlist.map((usr) => (
-            <div className="usr-card">
+            <div className="usr-card" key={usr.email}>
               <div className="usr-card-body">
                 <picture>
-                  <img src={usr.photo} />
+                  <img src={usr.photo ? usr.photo : defaultProfileImg} />
                 </picture>
                 <div className="usr-info-div">
                   <p>

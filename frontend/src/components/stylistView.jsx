@@ -49,12 +49,14 @@ class StylistView extends Component {
         <StylistHeaderBar
           headerCard={this.state.headerCard}
           changeHeaderCard={this.changeHeaderCard.bind(this)}
+          backendDomain={this.props.backendDomain}
         />
         <StylistViewBody
           changeHeaderCard={this.changeHeaderCard.bind(this)}
           setActiveAppointment={this.setActiveAppointment.bind(this)}
           activeAppointment={this.state.activeAppointment}
           headerCard={this.state.headerCard}
+          backendDomain={this.props.backendDomain}
         />
       </div>
     );

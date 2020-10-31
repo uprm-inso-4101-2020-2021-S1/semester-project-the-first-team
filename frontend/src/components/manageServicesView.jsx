@@ -1,68 +1,182 @@
 import React, { Component } from "react";
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
+import axios from "axios";
 
 const emptyService = {
-  servName: "emptyname",
-  servDescr: "emptydesc",
-  avgDur: 0,
+  serviceName: "",
+  description: "",
+  defaultDuration: 0,
 };
 
 const fieldDisplayNames = {
-  servName: "Service Name",
-  servDescr: "Service Description",
-  avgDur: "Service Duration",
+  serviceName: "Service Name",
+  description: "Service Description",
+  defaultDuration: "Service Duration",
 };
 class ManageServicesView extends Component {
-  state = { serviceList: [], activeService: {} };
+  state = { serviceList: [], activeService: emptyService };
 
   componentDidMount() {
-    //  TODO: GET SERVICES FROM BACKEND.
-    this.setState({
-      serviceList: tempservices,
-      activeService: emptyService,
-      showModal: false,
-    });
+    this.getServices();
   }
+
+  getServices() {
+    axios
+      .get(this.props.backendDomain + "service", {
+        headers: {
+          Authorization: `basic ${sessionStorage.getItem("authToken")}`,
+        },
+      })
+      .then((response) => {
+        let actServ = JSON.parse(JSON.stringify(emptyService));
+
+        // Sort services by pk.
+        response.data.sort(function (a, b) {
+          return a.pk - b.pk;
+        });
+
+        this.setState({
+          serviceList: response.data,
+          activeService: actServ,
+          showModal: false,
+        });
+      })
+      .catch((error) => {
+        console.warn(error);
+      });
+  }
+
   handleChange = (event) => {
     const target = event.target;
     const name = target.name;
     var tempActServ = this.state.activeService;
-    tempActServ[name] = event.target.value;
 
+    tempActServ[name] =
+      name === "defaultDuration"
+        ? parseInt(event.target.value)
+        : event.target.value;
+    console.log(tempActServ);
     this.setState({
       activeService: tempActServ,
     });
   };
 
   setActiveService = (srvc) => {
-    this.setState({ activeService: srvc });
+    this.setState({ activeService: JSON.parse(JSON.stringify(srvc)) });
   };
 
+  isEmtpy(str) {
+    return !str || 0 === str.length || /^\s*$/.test(str) || !str.trim();
+  }
+
   saveService = () => {
-    // TODO: ADD TO BACKEND.
-    alert("saved Service.");
-    this.setActiveService(emptyService);
+    // TODO: CONSIDER RED INPUT BAR TEXT INSTEAD OF ALERTS.
+    let actServ = this.state.activeService;
+
+    if (this.isEmtpy(actServ.serviceName)) {
+      window.alert(
+        "You must provide a name for the current service before saving."
+      );
+    } else if (this.isEmtpy(actServ.description)) {
+      window.alert(
+        "You must provide a description for the current service before saving."
+      );
+    } else if (
+      !Number.isInteger(actServ.defaultDuration) ||
+      actServ.defaultDuration <= 0
+    ) {
+      window.alert(
+        "You must provide an estimated service duration greater than 0."
+      );
+    } else {
+      // Service Fields deemed valid; proceed with creating service.
+      actServ.pk ? this.putActiveService() : this.postActiveService();
+    }
+  };
+
+  postActiveService() {
+    console.log("POST-ing active service...");
+    axios
+      .post(this.props.backendDomain + "service", this.state.activeService, {
+        headers: {
+          Authorization: `basic ${sessionStorage.getItem("authToken")}`,
+        },
+      })
+      .then((response) => {
+        this.getServices();
+        console.log("Service Successfully POST-ed.");
+        alert("Service created successfully!");
+      })
+      .catch((error) => {
+        console.warn(error);
+      });
+  }
+
+  putActiveService() {
+    console.log("PUT-ing active Service...");
+    axios
+      .put(
+        this.props.backendDomain + "service/" + this.state.activeService.pk,
+        this.state.activeService,
+        {
+          headers: {
+            Authorization: `basic ${sessionStorage.getItem("authToken")}`,
+          },
+        }
+      )
+      .then((response) => {
+        this.getServices();
+        console.log("Service Successfully PUT.");
+        alert("Service updated successfully!");
+      })
+      .catch((error) => {
+        console.warn(error);
+      });
+  }
+
+  deleteActiveService = () => {
+    console.log("DELETE-ing active Service...");
+    if (!this.state.activeService.pk) {
+      console.log(
+        "Cannot delete service that is not created; resetting form..."
+      );
+      this.setActiveService(emptyService);
+      this.toggleModal();
+    } else {
+      axios
+        .delete(
+          this.props.backendDomain + "service/" + this.state.activeService.pk,
+
+          {
+            headers: {
+              Authorization: `basic ${sessionStorage.getItem("authToken")}`,
+            },
+          }
+        )
+        .then((response) => {
+          this.getServices();
+          this.toggleModal();
+          console.log("Service Successfully DELETE-d.");
+          alert("Service deleted successfully.");
+        })
+        .catch((error) => {
+          console.warn(error);
+        });
+    }
   };
 
   toggleModal = () => {
     this.setState({ showModal: !this.state.showModal });
   };
 
-  deleteActiveService = () => {
-    // todo: delete in backend.
-    var templist = this.state.serviceList.filter(
-      (service) => service !== this.state.activeService
-    );
-    this.setState({ serviceList: templist });
-    this.setActiveService(emptyService);
-    this.toggleModal();
-  };
-
   confirmDeleteModal(serviceName) {
     return (
       <Modal show={this.state.showModal} onHide={this.toggleModal}>
-        <Modal.Body>Are you sure you want to delete {serviceName}?</Modal.Body>
+        <Modal.Body>
+          Are you sure you want to delete{" "}
+          {this.isEmtpy(serviceName) ? "this service" : serviceName}?
+        </Modal.Body>
         <Modal.Footer>
           <Button variant="danger" onClick={this.deleteActiveService}>
             Delete
@@ -75,35 +189,56 @@ class ManageServicesView extends Component {
   manageServiceForm() {
     return (
       <div className="card mng-srvc-form-card">
-        {this.confirmDeleteModal(this.state.activeService.servName)}
+        {this.confirmDeleteModal(this.state.activeService.serviceName)}
         <div>
           <h3>Service Information</h3>
           <form>
-            {Object.keys(this.state.activeService).map((field) => (
-              <div>
-                <div>
-                  <label>{fieldDisplayNames[field]}: </label>
-                </div>
-                {field !== "servDescr" ? (
-                  <input
-                    type="text"
-                    name={field}
-                    key={field}
-                    value={this.state.activeService[field]}
-                    onChange={this.handleChange}
-                  />
-                ) : (
-                  <textarea
-                    name={field}
-                    key={field}
-                    value={this.state.activeService[field]}
-                    onChange={this.handleChange}
-                  />
-                )}
-              </div>
-            ))}
+            <div>
+              <label>
+                Service ID:{" "}
+                {this.state.activeService.pk
+                  ? this.state.activeService.pk
+                  : "N/A"}
+              </label>
+            </div>
+            <div>
+              <label>Service Name: </label>
+            </div>
+            <input
+              name="serviceName"
+              value={this.state.activeService.serviceName}
+              onChange={this.handleChange}
+            />
+            <div>
+              <label>Service Duration: </label>
+            </div>
+            <input
+              type="number"
+              min="1"
+              max="500"
+              name="defaultDuration"
+              value={this.state.activeService.defaultDuration}
+              onChange={this.handleChange}
+            />
+            <div>
+              <label>Service Description: </label>
+            </div>
+            <textarea
+              name="description"
+              value={this.state.activeService.description}
+              onChange={this.handleChange}
+            />
+
             <div className="form-btns">
-              <Button variant="primary" onClick={this.saveService}>
+              <Button
+                variant="primary"
+                disabled={
+                  this.isEmtpy(this.state.activeService.serviceName) ||
+                  this.isEmtpy(this.state.activeService.description) ||
+                  this.state.activeService.defaultDuration < 1
+                }
+                onClick={this.saveService}
+              >
                 Save
               </Button>
               <Button variant="danger" onClick={this.toggleModal}>
@@ -120,26 +255,30 @@ class ManageServicesView extends Component {
     return (
       <div className="mng-srvc-view-container">
         <div className="service-lst-container">
-          {this.state.serviceList.map((srvc) => (
-            <div
-              className="service-lst-card card"
-              key={srvc}
-              onClick={() => this.setActiveService(srvc)}
-            >
-              <div className="service-lst-card-header">
-                {/* TODO: IMPROVE CSS AND CONTINUE IMPLEMENTATION. */}
-                <strong>{srvc.servName}</strong>
-              </div>
-              <div className="service-lst-card-body">
-                <div>
-                  <p>{srvc.servDescr}</p>
+          {this.state.serviceList.length <= 0 ? (
+            <h3 style={{ color: "white" }}>No Services Available.</h3>
+          ) : (
+            this.state.serviceList.map((srvc) => (
+              <div
+                className="service-lst-card card"
+                key={srvc.pk}
+                onClick={() => this.setActiveService(srvc)}
+              >
+                <div className="service-lst-card-header">
+                  {/* TODO: IMPROVE CSS; possibly add "create" button */}
+                  <strong>{srvc.serviceName}</strong>
                 </div>
-                <div>
-                  <p>{srvc.avgDur}</p>
+                <div className="service-lst-card-body">
+                  <div>
+                    <p>{srvc.description}</p>
+                  </div>
+                  <div>
+                    <p>{srvc.defaultDuration}</p>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            ))
+          )}
         </div>
         <div className="mng-srvc-form-container">
           {this.manageServiceForm()}
@@ -150,46 +289,3 @@ class ManageServicesView extends Component {
 }
 
 export default ManageServicesView;
-
-const tempservices = [
-  {
-    servName: "trim",
-    servDescr: "a quick cut of hair",
-    avgDur: 23,
-  },
-  {
-    servName: "blower",
-    servDescr: "Dry your hair after washing",
-    avgDur: 10,
-  },
-  {
-    servName: "Iron",
-    servDescr: "Straigten or curl your hair using a hot iron.",
-    avgDur: 42,
-  },
-  {
-    servName: "shampoo",
-    servDescr: "washing your hair with shampoo and water.",
-    avgDur: 8,
-  },
-  {
-    servName: "trim",
-    servDescr: "a quick cut of hair",
-    avgDur: 23,
-  },
-  {
-    servName: "blower",
-    servDescr: "Dry your hair after washing",
-    avgDur: 10,
-  },
-  {
-    servName: "Iron",
-    servDescr: "Straigten or curl your hair using a hot iron.",
-    avgDur: 42,
-  },
-  {
-    servName: "shampoo",
-    servDescr: "washing your hair with shampoo and water.",
-    avgDur: 8,
-  },
-];
