@@ -5,3 +5,168 @@
   justify-content: center;
   padding: 20px;
 }
+
+.active-appointment-container {
+  display: flex;
+  flex-wrap: nowrap;
+  width: 100%;
+
+  h3 {
+    color: white;
+  }
+
+  .service-container {
+    width: 75%;
+
+    .service-card-container {
+      display: flex;
+      flex-direction: row;
+      height: 71vh;
+      align-content: space-between;
+      justify-content: center;
+      flex-wrap: wrap;
+      overflow-x: hidden;
+      overflow-y: auto;
+    }
+  }
+
+  .comment-completion-container {
+    @extend %flexcolnowrap;
+
+    .comment-section {
+      height: 70%;
+
+      h4 {
+        color: white;
+      }
+      .comments-card {
+        height: 40vh;
+        width: 20vw;
+        border-radius: 5px;
+        overflow-x: hidden;
+        overflow-y: auto;
+
+        text {
+          padding: 0.5rem;
+        }
+      }
+    }
+
+    .btn-div {
+      @extend %flexcolnowrap;
+      align-items: center;
+      button {
+        width: 13rem;
+        height: 4rem;
+        margin: 5px;
+        border-radius: 6px;
+        font-size: x-large;
+
+        &.hidden {
+          display: none;
+        }
+        &.finish {
+          background-color: green;
+        }
+        &.cancel {
+          background-color: red;
+        }
+      }
+    }
+  }
+}
+
+.mng-srvc-view-container {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  width: 100%;
+  height: 79vh;
+  margin-bottom: 0px;
+  padding-bottom: 0px;
+
+  .card {
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.4);
+    transition: 0.3s;
+    margin: 0.7rem;
+    padding: px;
+    border-radius: 10px;
+    background-color: $cardGray;
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    padding: 12px;
+    color: white;
+    &:hover {
+      box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.7);
+    }
+  }
+
+  .service-lst-container {
+    width: 60%;
+    // height: 80vh;
+    overflow-x: hidden;
+    overflow-y: auto;
+
+    .service-lst-card {
+      height: 6rem;
+
+      .service-lst-card-header {
+        border-bottom-width: 10px;
+        border-bottom-color: $bgGray;
+      }
+
+      .service-lst-card-body {
+        p {
+          height: 1.6rem;
+          margin-bottom: 3px;
+          overflow-x: hidden;
+          overflow-y: auto;
+        }
+      }
+    }
+  }
+
+  .mng-srvc-form-container {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: center;
+    width: 100%;
+    .mng-srvc-form-card {
+      padding: 2rem;
+      width: 30vw;
+      display: flex;
+      flex-direction: row;
+      flex-wrap: nowrap;
+      justify-content: center;
+
+      form {
+        overflow-x: hidden;
+        overflow-y: auto;
+      }
+
+      label {
+        margin-bottom: 5px;
+      }
+      input,
+      textarea {
+        margin-bottom: 1rem;
+        width: 20vw;
+
+        &.servDescr {
+          min-height: 20vh;
+        }
+      }
+      .form-btns {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        justify-content: center;
+        Button {
+          margin: 1rem;
+        }
+      }
+    }
+  }
+}

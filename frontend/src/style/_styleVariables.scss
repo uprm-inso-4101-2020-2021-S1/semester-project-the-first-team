@@ -2,3 +2,15 @@ $sidebarGray: #434761;
 $cardGray: #565d76;
 $bgGray: #2b2d44;
 $deepPurple: #633e96;
+
+%centered-flex-column {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+%flexcolnowrap {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+}

@@ -1,7 +1,6 @@
 import React from "react";
 import Sidebar from "./components/Sidebar";
-import StylistHeaderBar from "./components/stylistHeaderBar";
-import StylistViewBody from "./components/stylistViewBody";
+import StylistView from "./components/stylistView";
 import Customer from "./components/Customer";
 
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
@@ -15,20 +14,56 @@ function App() {
       title: "Appointments",
       path: "/stylists/appointments",
       icon: faConciergeBell,
-      cName: "nav-text"
+      cName: "nav-text",
+    },
+    {
+      title: "Active Appointment",
+      path: "/stylists/activeappointment",
+      icon: faConciergeBell,
+      cName: "nav-text",
     },
     {
       title: "New Stylist",
       path: "/stylists/form/newstylist",
       icon: faConciergeBell,
-      cName: "nav-text"
+      cName: "nav-text",
     },
     {
       title: "Edit Stylist",
       path: "/stylists/form/editstylist",
       icon: faConciergeBell,
-      cName: "nav-text"
-    }
+      cName: "nav-text",
+    },
+    {
+      title: "Manage Schedules",
+      path: "/stylists/schedule/manage",
+      icon: faConciergeBell,
+      cName: "nav-text",
+    },
+    {
+      title: "View Schedule",
+      path: "/stylists/schedule",
+      icon: faConciergeBell,
+      cName: "nav-text",
+    },
+    {
+      title: "Statistics",
+      path: "/stylists/stats",
+      icon: faConciergeBell,
+      cName: "nav-text",
+    }, 
+    {
+      title: "View Users",
+      path: "/stylists/userlist",
+      icon: faConciergeBell,
+      cName: "nav-text",
+    },
+    {
+      title: "Manage Services",
+      path: "/stylists/manageservices",
+      icon: faConciergeBell,
+      cName: "nav-text",
+    },
   ];
 
   return (
@@ -37,10 +72,7 @@ function App() {
         <Switch>
           <Route path="/stylists">
             <Sidebar items={temp} />
-            <div className="body-container">
-              <StylistHeaderBar currentView="new-stylist-view" />
-              <StylistViewBody />
-            </div>
+            <StylistView />
           </Route>
           <Route path="/customers" component={Customer} />
         </Switch>

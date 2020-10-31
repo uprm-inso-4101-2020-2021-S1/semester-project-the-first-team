@@ -10,43 +10,30 @@ class StylistViewForm extends Component {
       email: "",
       pswd: "",
       confirmPswd: "",
+      utype: "",
+      usertypes: ["customer", "stylist", "manager"],
     };
     this.handleChange = this.handleChange.bind(this);
   }
 
-  componentDidMount() {
-    console.log(window.location.href);
-    if (!window.location.href.includes("/form/editstylist")) {
-      this.setState({
-        fname: "",
-        lname: "",
-        email: "",
-        pswd: "",
-        confirmPswd: "",
-      });
-    } else {
-      this.setState({
-        fname: "Miranda",
-        lname: "Wrightes",
-        email: "courtoflaw@compuserv.org",
-        pswd: "@m@zingGr@c3",
-        confirmPswd: "@m@zingGr@c3",
-      });
-    }
-  }
-  handleChange(event) {
+  handleChange = (event) => {
     const target = event.target;
     const name = target.name;
 
     this.setState({
       [name]: event.target.value,
     });
-  }
+  };
 
-  handleSubmit(event) {
+  handleSubmit = (event) => {
     event.preventDefault();
-    alert("A name was submitted: " + this.state.fname);
-  }
+    alert(
+      "A name was submitted: " +
+        this.state.fname +
+        " and the header card says: " +
+        (this.props.headerCard.username ? this.props.headerCard.username : "")
+    );
+  };
 
   render() {
     return (
@@ -97,21 +84,28 @@ class StylistViewForm extends Component {
                 value={this.state.confirmPswd}
                 onChange={this.handleChange}
               />
+
+              <label>Select a user type: </label>
+              <select
+                className="form-control "
+                name="utype"
+                onChange={this.handleChange}
+              >
+                {this.state.usertypes.map((type) => (
+                  <option value={type} key={type}>
+                    {type}
+                  </option>
+                ))}
+              </select>
+
               <div className="form-btns">
                 <input
                   className="submit-btn"
                   type="submit"
                   value="Submit"
-                  onSubmit={this.handleSubmit}
+                  onClick={this.handleSubmit}
                 />
-                <Route path="/form/editstylist">
-                  <input
-                    className="delete-btn"
-                    type="submit"
-                    value="Delete"
-                    onSubmit={this.handleSubmit}
-                  />
-                </Route>
+                <FormDeleteBtn />
               </div>
             </form>
           </div>
@@ -124,7 +118,7 @@ class StylistViewForm extends Component {
 export default StylistViewForm;
 
 function FormTitle() {
-  let { path, url } = useRouteMatch();
+  let { path } = useRouteMatch();
 
   return (
     <Switch>
@@ -142,7 +136,7 @@ function FormDeleteBtn() {
         className="delete-btn"
         type="submit"
         value="Delete"
-        onSubmit={this.handleSubmit}
+        // onSubmit={this.handleSubmit}
       />
     </Route>
   );

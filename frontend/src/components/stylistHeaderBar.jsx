@@ -2,8 +2,6 @@ import React, { Component } from "react";
 import HeaderBarClock from "./headerBarClock";
 import HeaderBarCard from "./headerBarCard";
 import { Switch, Route, useRouteMatch } from "react-router";
-import { faHome, faConciergeBell } from "@fortawesome/free-solid-svg-icons";
-
 import "./../style/stylistHeaderBar.scss";
 
 class StylistHeaderBar extends Component {
@@ -18,7 +16,10 @@ class StylistHeaderBar extends Component {
         <HeaderBarTitle />
         <div className="headerbar-card-div">
           <span>
-            <HeaderBarCard />
+            <HeaderBarCard
+              headerCard={this.props.headerCard}
+              changeHeaderCard={this.props.changeHeaderCard}
+            />
           </span>
         </div>
         <div className="headerbar-clock-div">
@@ -34,16 +35,22 @@ class StylistHeaderBar extends Component {
 export default StylistHeaderBar;
 
 function HeaderBarTitle() {
-  // let { path } = useRouteMatch();
+  let { path } = useRouteMatch();
   return (
-    <div>
-      <a className="navbar-brand" href="#">
-        <Switch>
-          <Route path="/stylists/appointments">Next Appointment:</Route>
-          <Route path="/stylists/form/newstylist">Add New Stylist:</Route>
-          <Route path="/stylists/form/editstylist">Edit Stylist:</Route>
-        </Switch>
-      </a>
+    <div className="navbar-brand">
+      <Switch>
+        <Route path={`${path}/appointments`}>Next Appointment:</Route>
+        <Route path={`${path}/activeappointment`}>Active Appointment:</Route>
+        <Route path={`${path}/schedule/manage`}>
+          Manage Stylist Schedules:
+        </Route>
+        <Route path={`${path}/schedule`}>View Schedule For:</Route>
+        <Route path={`${path}/stats`}>Statistics:</Route>
+        <Route path={`${path}/form/newstylist`}>Add New Stylist:</Route>
+        <Route path={`${path}/form/editstylist`}>Edit Stylist:</Route>
+        <Route path={`${path}/userlist`}>View Users in System:</Route>
+        <Route path={`${path}/manageservices`}>Manage Services Provided:</Route>
+      </Switch>
     </div>
   );
 }

@@ -1,31 +1,34 @@
 @import "styleVariables";
 
-%centered-flex-column {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
+.queue-div {
+  width: 90%;
 }
-
 .appointment-queue-container {
-  min-width: 60%;
+  height: 69vh;
+  // align-content: space-between;
+  // justify-content: center;
+  // flex-wrap: nowrap;
+  // overflow-x: hidden;
+  overflow-y: auto;
+  margin: 0px;
 
   .appointment-container {
     display: flex;
     flex-wrap: nowrap;
     margin: 1rem;
+
     min-height: 20%;
 
     .appointment-time-container {
       padding-right: 1rem;
 
-      card {
+      .card {
         height: 100%;
         padding: 1rem;
         width: 11rem;
         @extend %centered-flex-column;
         background-color: $deepPurple;
         border-radius: 10px;
-        @extend %centered-flex-column;
         box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.4);
 
         div {
@@ -40,7 +43,7 @@
             width: 2em;
             color: white;
           }
-          a {
+          p {
             color: white;
             text-align: center;
             font-size: 1.5em;
@@ -50,7 +53,7 @@
     }
 
     .appointment-card {
-      min-width: 85%;
+      width: 85%;
       box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.4);
       transition: 0.3s;
 
@@ -66,7 +69,7 @@
         justify-content: space-evenly;
         border-radius: 10px;
 
-        a {
+        p {
           color: white;
           padding-right: 5px;
           word-wrap: break-word;
@@ -89,7 +92,7 @@
         .username-div {
           @extend %centered-flex-column;
           width: 50%;
-          a {
+          p {
             font-size: 1.3em;
           }
         }
@@ -101,9 +104,7 @@
         }
 
         .appointment-info-div {
-          display: flex;
-          flex-direction: column;
-          flex-wrap: nowrap;
+          @extend %flexcolnowrap;
         }
       }
     }
