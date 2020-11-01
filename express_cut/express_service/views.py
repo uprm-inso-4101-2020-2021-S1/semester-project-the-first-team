@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse
-from .models import Stylist, User, Reservation, DailySchedule
+from .models import User, Reservation, DailySchedule
 from .serializers import UserSerializer, ReservationSerializer, DailyScheduleSerializer
 from rest_framework.response import Response
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
@@ -87,7 +87,6 @@ def users_views(request, pk):
             return Response(status=status.HTTP_403_FORBIDDEN)
         usr_obj.delete()
         return Response(status=status.HTTP_200_OK)
-
     return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 

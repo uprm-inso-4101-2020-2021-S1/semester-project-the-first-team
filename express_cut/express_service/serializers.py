@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Stylist, User, Service, DailySchedule, Reservation
+from .models import User, Service, DailySchedule, Reservation
 from django.contrib.auth.hashers import make_password
 
 

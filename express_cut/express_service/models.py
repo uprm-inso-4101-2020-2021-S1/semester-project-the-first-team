@@ -28,15 +28,6 @@ class Service(models.Model):
         return self.serviceName
 
 
-class Stylist(User):
-    available = models.BooleanField()
-    profile_details = models.CharField(max_length=200)
-    services = models.ManyToManyField(Service)
-
-
-class Customer(User):
-    prefer_stylist = models.ForeignKey(Stylist, on_delete=models.CASCADE)
-
 class DailySchedule(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True)
     date = models.DateField()
@@ -52,7 +43,7 @@ class TimeSlot(models.Model):
 
 class StylistOfferServices(models.Model):
     EstimatedTime = models.IntegerField()
-    stylist = models.ForeignKey(Stylist, on_delete=models.CASCADE)
+    stylist = models.ForeignKey(User, on_delete=models.CASCADE, limit_choices_to={'role': User.STYLIST})
     service = models.ForeignKey(Service, on_delete=models.CASCADE)
 
 
