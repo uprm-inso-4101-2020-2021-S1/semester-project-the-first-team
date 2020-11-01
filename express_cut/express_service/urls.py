@@ -20,6 +20,9 @@ urlpatterns = [
     path('user/', views.all_users),
     path('user/<int:pk>', views.users_views),
     path('user/signup', views.user_signup_view),
+
+    path('reservation/', views.reservation_general),
+    path('reservation/<int:pk>', views.reservation_views),
 ]
 
 # Stylist_urlpatterns = [

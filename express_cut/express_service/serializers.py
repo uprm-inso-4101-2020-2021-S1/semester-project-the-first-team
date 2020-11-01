@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Stylist, User
+from .models import Stylist, User, Reservation
 from django.contrib.auth.hashers import make_password
 
 
@@ -19,3 +19,9 @@ class UserSerializer(serializers.ModelSerializer):
         validated_data['password'] = make_password(validated_data.get('password'))
         return User.objects.create(**validated_data)
 
+
+class ReservationSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Reservation
+        fields = "__all__"

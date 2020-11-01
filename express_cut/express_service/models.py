@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from django.core.validators import MinValueValidator, MaxValueValidator
 
 
 class User(AbstractUser):
@@ -36,33 +37,54 @@ class Service(models.Model):
         return self.name
 
 
-class Schedule(models.Model):
-    timestamp = models.DateTimeField()
-    stylist = models.ForeignKey(Stylist, on_delete=models.CASCADE)
+class DailySchedule(models.Model):
+    timestamp = models.DateTimeField(auto_now_add=True)
+    date = models.DateField()
+    stylist = models.ForeignKey(User, on_delete=models.CASCADE, limit_choices_to={'role': User.STYLIST},)
 
 
 class TimeSlot(models.Model):
     start_time = models.TimeField()
     end_time = models.TimeField()
-    schedule = models.ForeignKey(Schedule, on_delete=models.CASCADE)
+    dailySchedule = models.ForeignKey(DailySchedule, on_delete=models.CASCADE)
     # TODO: Add Duration
 
 
 class Reservation(models.Model):
+    PENDING = 'P'
+    IN_PROCESS = 'IP'
+    DONE = 'D'
+    CANCELED = 'C'
+    STATUS = [
+        ('P', 'Pending'),
+        ('IP', 'In Process'),
+        ('D', 'Done'),
+        ('C', 'Canceled')
+    ]
     timestamp = models.DateTimeField()
-    client = models.ForeignKey(Customer, on_delete=models.CASCADE)
-    stylist = models.ForeignKey(Stylist, on_delete=models.CASCADE)
+    date = models.DateField()
+    startTime = models.TimeField()
+    endTime = models.TimeField()
+    note = models.CharField(max_length=150)
+    customer = models.ForeignKey(User, on_delete=models.CASCADE,  limit_choices_to={'role': User.CUSTOMER},
+                                 related_name='customer_reservations')
+    stylist = models.ForeignKey(User, on_delete=models.CASCADE,  limit_choices_to={'role': User.STYLIST},
+                                related_name='stylist_reservations')
     service = models.ManyToManyField(Service)
-    time_slot = models.ForeignKey(TimeSlot, on_delete=models.CASCADE)
+    status = models.CharField(max_length=2, choices=STATUS, default=PENDING)
+
+
+class Feedback(models.Model):
+    rating = models.SmallIntegerField(validators=[MinValueValidator(0), MaxValueValidator(5)])
+    comments = models.CharField(max_length=200)
+    reservation = models.ForeignKey(Reservation, on_delete=models.CASCADE)
 
 
 class Notification(models.Model):
-
     STATUS = [
         ('P', 'Pending'),
         ('R', 'Read'),
     ]
-
     message = models.CharField(max_length=100)
     timestamp = models.DateTimeField()
     status = models.CharField(max_length=1, choices=STATUS)

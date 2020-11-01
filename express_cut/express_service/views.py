@@ -1,11 +1,11 @@
 from django.shortcuts import render
 from django.http import HttpResponse
-from .models import Stylist, User
-from .serializers import UserSerializer
+from .models import Stylist, User, Reservation
+from .serializers import UserSerializer, ReservationSerializer
 from rest_framework.response import Response
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 from rest_framework.permissions import IsAuthenticated
-from .permissions import Permissions, SignUpPermissions, UserViewPermissions
+from .permissions import Permissions, SignUpPermissions, UserViewPermissions, ReservationPermissions
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from drf_yasg.utils import swagger_auto_schema
@@ -91,5 +91,57 @@ def users_views(request, pk):
     return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
+@swagger_auto_schema(methods=['PUT'], request_body=ReservationSerializer,
+                     responses={**swagResp.commonResponses, **swagResp.getResponse(ReservationSerializer)}, tags=['reservation'], )
+@swagger_auto_schema(methods=['GET', 'DELETE'], responses={**swagResp.commonResponses, **swagResp.getResponse(ReservationSerializer)},)
+@api_view(['GET', 'PUT', 'DELETE'])
+@authentication_classes([SessionAuthentication, BasicAuthentication])
+@permission_classes([IsAuthenticated])
+def reservation_views(request, pk):
+    try:
+        obj = Reservation.objects.get(pk=pk)
+    except Reservation.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+    if request.method == 'PUT':
+        if not ReservationPermissions().PUT_permissions(request, obj):
+            return Response(status=status.HTTP_403_FORBIDDEN)
+        serializer = ReservationSerializer(obj, data=request.data)
+        if serializer.is_valid(): #TODO: Handle if this fails
+            serializer.save() #TODO: Handle if this fails
+            return Response(serializer.data)
+    elif request.method == 'GET':
+        if not ReservationPermissions().GET_permissions(request, obj):
+            return Response(status=status.HTTP_403_FORBIDDEN)
+
+    elif request.method == 'DELETE':
+        if not ReservationPermissions().DELETE_permissions(request, obj):
+            return Response(status=status.HTTP_403_FORBIDDEN)
+
+
+@swagger_auto_schema(methods=['POST'], request_body=ReservationSerializer, responses=swagResp.commonPOSTResponses,
+                     tags=['reservation'], )
+@api_view(['POST'])
+@authentication_classes([SessionAuthentication, BasicAuthentication])
+@permission_classes([IsAuthenticated])
+def reservation_general(request):
+    if request.method == 'POST':
+        if not ReservationPermissions().POST_permissions(request, request.data):
+            return Response(status=status.HTTP_403_FORBIDDEN)
+        serializer = ReservationSerializer(data=request.data)
+        if serializer.is_valid(): #TODO: Handle if this fails
+            serializer.save() #TODO: Handle if this fails
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    elif request.method == 'GET':
+        if not Permissions.has_manager_permission(request):
+            return Response(status=status.HTTP_403_FORBIDDEN)
+        reservation = Reservation.objects.all()
+        serializer = ReservationSerializer(reservation, many=True)
+        return Response(serializer.data)
+    return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
 def index(request):
     return HttpResponse("Welcome to Express Cuts")
+

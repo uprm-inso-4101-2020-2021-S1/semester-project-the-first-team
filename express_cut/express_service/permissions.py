@@ -64,3 +64,32 @@ class SignUpPermissions(Permissions):
         elif data.get('role') == User.CUSTOMER and (not request.user.is_authenticated or (request.user.is_authenticated and self.has_manager_permission(request))):
             return True
         return False
+
+
+class ReservationPermissions(Permissions):
+    def POST_permissions(self, request, data):
+        if request.user.is_authenticated and self.has_manager_permission(request):
+            return True
+        elif request.user.is_authenticated and self.has_client_permission(request) and data.get('customer') == request.user.pk:
+            return True
+        return False
+
+    def GET_permissions(self, request, obj):
+        if request.user.is_authenticated and self.has_manager_permission(request):
+            return True
+        elif request.user.is_authenticated and self.has_client_permission(request) and request.user.pk == obj.customer.pk:
+            return True
+        elif request.user.is_authenticated and self.has_manager_permission(request) and request.user.pk == obj.stylist.pk:
+            return True
+        return False
+
+    def PUT_permissions(self, request, obj):
+        if request.user.is_authenticated and self.has_manager_permission(request):
+            return True
+        elif request.user.is_authenticated and self.has_client_permission(request) and obj.customer.pk == request.user.pk:
+            return True
+        return False
+
+    def DELETE_permissions(self, request, obj):
+        return self.has_manager_permission(request)
+
