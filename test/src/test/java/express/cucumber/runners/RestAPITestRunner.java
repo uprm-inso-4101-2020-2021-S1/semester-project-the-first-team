@@ -7,7 +7,8 @@ import cucumber.api.testng.AbstractTestNGCucumberTests;
 
 @RunWith(Cucumber.class)
 @CucumberOptions(
-		features = { "src/test/resources/restApiFeatures"
+		features = { 
+			"src/test/resources/restApiFeatures/"
 		},
 		glue = "express.cucumber.steps.restApi",
 		tags = {},
