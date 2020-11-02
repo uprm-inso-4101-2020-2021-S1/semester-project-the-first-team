@@ -1,7 +1,6 @@
 from rest_framework import serializers
-from .models import Stylist, User, Service, DailySchedule
+from .models import User, Service, DailySchedule, Reservation
 from django.contrib.auth.hashers import make_password
-
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -48,8 +47,8 @@ class DailyScheduleSerializer(serializers.ModelSerializer):
     class Meta:
         model = DailySchedule
         fields = ['date', 'stylist', 'pk']
-        
-        
+
+
 class ServiceSerializer(serializers.ModelSerializer):
     pk = serializers.PrimaryKeyRelatedField(read_only=True)
 
@@ -60,3 +59,14 @@ class ServiceSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         return Service.objects.create(**validated_data)
+
+
+class ReservationSerializer(serializers.ModelSerializer):
+    id = serializers.PrimaryKeyRelatedField(read_only=True)
+    timestamp = serializers.DateTimeField(read_only=True)
+    endTime = serializers.TimeField(read_only=True)
+    status = serializers.ChoiceField(choices=Reservation.STATUS, read_only=True)
+
+    class Meta:
+        model = Reservation
+        fields = "__all__"
