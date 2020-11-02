@@ -37,7 +37,7 @@ class DailySchedule(models.Model):
 class TimeSlot(models.Model):
     start_time = models.TimeField()
     end_time = models.TimeField()
-    dailySchedule = models.ForeignKey(DailySchedule, on_delete=models.CASCADE)
+    dailySchedule = models.ForeignKey(DailySchedule, on_delete=models.CASCADE, related_name='timeslots')
 
 
 class StylistOfferServices(models.Model):

@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import User, Service, DailySchedule, Reservation
+from .models import User, Service, DailySchedule, Reservation, TimeSlot
 from django.contrib.auth.hashers import make_password
 
 
@@ -18,6 +18,13 @@ class UserSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         validated_data['password'] = make_password(validated_data.get('password'))
         return User.objects.create(**validated_data)
+
+
+class TimeSlotSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = TimeSlot
+        fields = ['start_time', 'end_time']
 
 
 class StylistSerializer(UserSerializer):
@@ -43,10 +50,28 @@ class ManagerSerializer(UserSerializer):
 
 class DailyScheduleSerializer(serializers.ModelSerializer):
     pk = serializers.PrimaryKeyRelatedField(read_only=True)
+    timeslots = TimeSlotSerializer(many=True)
 
     class Meta:
         model = DailySchedule
-        fields = ['date', 'stylist', 'pk']
+        fields = ['date', 'stylist', 'pk', 'timeslots']
+
+    def create(self, validated_data):
+        timeslots_data = validated_data.pop('timeslots')
+        dailyschedule = DailySchedule.objects.create(**validated_data)
+        for timeslot_data in timeslots_data:
+            TimeSlot.objects.create(dailySchedule=dailyschedule, **timeslot_data)
+        return dailyschedule
+
+    def update(self, instance, validated_data):
+        timeslots_data = validated_data.pop('timeslots')
+        instance.timeslots.all().delete()
+        instance.date = validated_data.get('date', instance.date)
+        instance.save()
+
+        for timeslot_data in timeslots_data:
+            TimeSlot.objects.create(dailySchedule=instance, **timeslot_data)
+        return instance
 
 
 class ServiceSerializer(serializers.ModelSerializer):

@@ -28,7 +28,7 @@ def user_signup_view(request):
         return Response(status=status.HTTP_403_FORBIDDEN)
     if request.method == 'POST':
         user = serializer.save()
-        return Response(data = {'pk': user.pk},status=status.HTTP_201_CREATED)
+        return Response(data = {'pk': user.pk}, status=status.HTTP_201_CREATED)
     return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
@@ -159,14 +159,14 @@ def schedule_views(request):
         data = request.data
         serializer = DailyScheduleSerializer(data=data)
         # Checks if the user logged in is a manager & if it's logged in.
-        if not DailySchedulePermissions().POST_permissions(request):
+        if not DailySchedulePermissions().POST_PUT_DELETE_permissions(request):
             return Response(status=status.HTTP_403_FORBIDDEN)
         # Checks if you have both a date and a stylist id.
         if not serializer.is_valid():
             return Response({"message": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
         try:
             schedule = serializer.save()
-            return Response(data={'pk': schedule.pk}, status=status.HTTP_201_CREATED)
+            return Response(data={"pk": schedule.pk}, status=status.HTTP_201_CREATED)
         except:
             return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
@@ -185,7 +185,7 @@ def schedule_views_put(request, pk):
 
     if request.method == 'GET':
         serializer = DailyScheduleSerializer(schedule)
-        return Response(serializer.data, status=status.HTTP_302_FOUND)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     elif request.method == 'PUT':
         if not DailySchedulePermissions().POST_PUT_DELETE_permissions(request):
@@ -201,7 +201,7 @@ def schedule_views_put(request, pk):
         if not DailySchedulePermissions().POST_PUT_DELETE_permissions(request):
             return Response(status=status.HTTP_403_FORBIDDEN)
         schedule.delete()
-        return Response({'message': 'Daily Schedule was deleted successfully.'}, status.HTTP_204_NO_CONTENT)
+        return Response({'message': 'Daily Schedule was deleted successfully.'}, status.HTTP_200_OK)
 
     else:
         return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
