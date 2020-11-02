@@ -20,6 +20,27 @@ class UserSerializer(serializers.ModelSerializer):
         return User.objects.create(**validated_data)
 
 
+class StylistSerializer(UserSerializer):
+
+    class Meta:
+        model = User
+        fields = ['pk', 'first_name', 'last_name']
+
+
+class CustomerSerializer(UserSerializer):
+
+    class Meta:
+        model = User
+        fields = ['pk', 'first_name', 'last_name']
+
+
+class ManagerSerializer(UserSerializer):
+
+    class Meta:
+        model = User
+        fields = ['pk', 'first_name', 'last_name']
+
+
 class DailyScheduleSerializer(serializers.ModelSerializer):
     pk = serializers.PrimaryKeyRelatedField(read_only=True)
 
