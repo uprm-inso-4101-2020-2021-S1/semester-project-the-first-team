@@ -36,6 +36,7 @@ class Stylist(User):
 class Customer(User):
     prefer_stylist = models.ForeignKey(Stylist, on_delete=models.CASCADE)
 
+
 class DailySchedule(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True)
     date = models.DateField()
