@@ -71,7 +71,7 @@ def users_views(request, pk):
         if not UserViewPermissions().GET_permissions(request, usr_obj):
             return Response(status=status.HTTP_403_FORBIDDEN)
         serializer = UserSerializer(usr_obj)
-        return Response(serializer.data, status=status.HTTP_302_FOUND)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     elif request.method == 'PUT':
         if not UserViewPermissions().PUT_permissions(request, usr_obj):
@@ -105,21 +105,29 @@ def reservation_views(request, pk):
         if not ReservationPermissions().PUT_permissions(request, obj):
             return Response(status=status.HTTP_403_FORBIDDEN)
         serializer = ReservationSerializer(obj, data=request.data)
-        if serializer.is_valid(): #TODO: Handle if this fails
+        if serializer.is_valid():
             serializer.save() #TODO: Handle if this fails
-            return Response(serializer.data)
+            return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
     elif request.method == 'GET':
         if not ReservationPermissions().GET_permissions(request, obj):
             return Response(status=status.HTTP_403_FORBIDDEN)
-
+        serializer = ReservationSerializer(obj)
+        return Response(serializer.data, status=status.HTTP_200_OK)
     elif request.method == 'DELETE':
         if not ReservationPermissions().DELETE_permissions(request, obj):
             return Response(status=status.HTTP_403_FORBIDDEN)
+        obj.delete()
+        return Response(status=status.HTTP_200_OK)
+    return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 @swagger_auto_schema(methods=['POST'], request_body=ReservationSerializer, responses=swagResp.commonPOSTResponses,
                      tags=['reservation'], )
-@api_view(['POST'])
+@swagger_auto_schema(methods=['GET'], responses={**swagResp.commonResponses,
+                                                           **swagResp.getResponse(ReservationSerializer)},)
+@api_view(['POST', 'GET'])
 @authentication_classes([SessionAuthentication, BasicAuthentication])
 @permission_classes([IsAuthenticated])
 def reservation_general(request):
@@ -127,9 +135,9 @@ def reservation_general(request):
         if not ReservationPermissions().POST_permissions(request, request.data):
             return Response(status=status.HTTP_403_FORBIDDEN)
         serializer = ReservationSerializer(data=request.data)
-        if serializer.is_valid(): #TODO: Handle if this fails
-            serializer.save() #TODO: Handle if this fails
-            return Response(serializer.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     elif request.method == 'GET':

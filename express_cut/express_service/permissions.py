@@ -86,7 +86,7 @@ class ReservationPermissions(Permissions):
             return True
         elif request.user.is_authenticated and self.has_client_permission(request) and request.user.pk == obj.customer.pk:
             return True
-        elif request.user.is_authenticated and self.has_manager_permission(request) and request.user.pk == obj.stylist.pk:
+        elif request.user.is_authenticated and self.has_stylist_permission(request) and request.user.pk == obj.stylist.pk:
             return True
         return False
 

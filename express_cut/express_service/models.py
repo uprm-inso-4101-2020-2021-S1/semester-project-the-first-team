@@ -38,7 +38,6 @@ class TimeSlot(models.Model):
     start_time = models.TimeField()
     end_time = models.TimeField()
     dailySchedule = models.ForeignKey(DailySchedule, on_delete=models.CASCADE)
-    # TODO: Add Duration
 
 
 class StylistOfferServices(models.Model):
@@ -58,11 +57,12 @@ class Reservation(models.Model):
         ('D', 'Done'),
         ('C', 'Canceled')
     ]
-    timestamp = models.DateTimeField()
+    timestamp = models.DateTimeField(auto_now_add=True)
     date = models.DateField()
     startTime = models.TimeField()
-    endTime = models.TimeField()
-    note = models.CharField(max_length=150)
+    # estimatedDuration = models.IntegerField()
+    endTime = models.TimeField(null=True)
+    note = models.CharField(max_length=150, null=True)
     customer = models.ForeignKey(User, on_delete=models.CASCADE,  limit_choices_to={'role': User.CUSTOMER},
                                  related_name='customer_reservations')
     stylist = models.ForeignKey(User, on_delete=models.CASCADE,  limit_choices_to={'role': User.STYLIST},
@@ -80,7 +80,7 @@ class Feedback(models.Model):
 class Notification(models.Model):
     STATUS = [
         ('P', 'Pending'),
-        ('R', 'Read'),
+        ('S', 'Seen'),
     ]
     message = models.CharField(max_length=100)
     timestamp = models.DateTimeField()
