@@ -13,6 +13,12 @@ body {
   background-color: #2b2d44;
 }
 
+h3 {
+  color: white;
+  font-weight: 500;
+}
+
+
 /*** App.js Divs ***/
 .main-container {
   display: flex;
@@ -35,13 +41,14 @@ body {
   display: flex;
   position: absolute;
   left: 15px;
+  margin-left: 2rem;
   top: 30px;
   transition: 350ms;
 }
 
 .menu-bars {
-  margin-left: 2rem;
   font-size: 1.6rem;
+  position: relative;
   background: none;
   color: #8e8e8e;
   transition: 0.25s ease-in-out;
@@ -66,7 +73,7 @@ body {
 .nav-menu {
   background-color: #434761;
   width: 280px;
-  height: 100vh;
+  min-height: 100vh;
   display: flex;
   // justify-content: center;
 
