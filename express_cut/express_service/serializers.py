@@ -1,7 +1,6 @@
 from rest_framework import serializers
-from .models import Stylist, User, Service, DailySchedule, TimeSlot
+from .models import User, Service, DailySchedule, Reservation, TimeSlot
 from django.contrib.auth.hashers import make_password
-
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -26,6 +25,27 @@ class TimeSlotSerializer(serializers.ModelSerializer):
     class Meta:
         model = TimeSlot
         fields = ['start_time', 'end_time']
+
+
+class StylistSerializer(UserSerializer):
+
+    class Meta:
+        model = User
+        fields = ['pk', 'first_name', 'last_name']
+
+
+class CustomerSerializer(UserSerializer):
+
+    class Meta:
+        model = User
+        fields = ['pk', 'first_name', 'last_name']
+
+
+class ManagerSerializer(UserSerializer):
+
+    class Meta:
+        model = User
+        fields = ['pk', 'first_name', 'last_name']
 
 
 class DailyScheduleSerializer(serializers.ModelSerializer):
@@ -54,7 +74,6 @@ class DailyScheduleSerializer(serializers.ModelSerializer):
         return instance
 
 
-
 class ServiceSerializer(serializers.ModelSerializer):
     pk = serializers.PrimaryKeyRelatedField(read_only=True)
 
@@ -65,3 +84,14 @@ class ServiceSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         return Service.objects.create(**validated_data)
+
+
+class ReservationSerializer(serializers.ModelSerializer):
+    id = serializers.PrimaryKeyRelatedField(read_only=True)
+    timestamp = serializers.DateTimeField(read_only=True)
+    endTime = serializers.TimeField(read_only=True)
+    status = serializers.ChoiceField(choices=Reservation.STATUS, read_only=True)
+
+    class Meta:
+        model = Reservation
+        fields = "__all__"
