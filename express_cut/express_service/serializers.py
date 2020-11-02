@@ -43,7 +43,6 @@ class ServiceSerializer(serializers.ModelSerializer):
 class ReservationSerializer(serializers.ModelSerializer):
     id = serializers.PrimaryKeyRelatedField(read_only=True)
     timestamp = serializers.DateTimeField(read_only=True)
-    estimatedDuration = serializers.IntegerField(read_only=True)
     endTime = serializers.TimeField(read_only=True)
     status = serializers.ChoiceField(choices=Reservation.STATUS, read_only=True)
 

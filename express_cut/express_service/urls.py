@@ -28,7 +28,7 @@ urlpatterns = [
     path('service/<int:pk>', service_view.service_views),
 
 
-    path('reservation/', views.reservation_general),
+    path('reservation', views.reservation_general),
     path('reservation/<int:pk>', views.reservation_views),
 ]
 

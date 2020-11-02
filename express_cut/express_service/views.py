@@ -79,7 +79,7 @@ def users_views(request, pk):
         serializer = UserSerializer(usr_obj, data=request.data)
         if serializer.is_valid():
             serializer.save()
-            return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
+            return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     elif request.method == 'DELETE':
@@ -107,7 +107,7 @@ def reservation_views(request, pk):
         serializer = ReservationSerializer(obj, data=request.data)
         if serializer.is_valid():
             serializer.save() #TODO: Handle if this fails
-            return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
+            return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     elif request.method == 'GET':

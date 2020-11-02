@@ -50,12 +50,12 @@ class Reservation(models.Model):
     PENDING = 'P'
     IN_PROCESS = 'IP'
     DONE = 'D'
-    CANCELED = 'C'
+    CANCELLED = 'C'
     STATUS = [
         ('P', 'Pending'),
         ('IP', 'In Process'),
         ('D', 'Done'),
-        ('C', 'Canceled')
+        ('C', 'Cancelled')
     ]
     timestamp = models.DateTimeField(auto_now_add=True)
     date = models.DateField()
