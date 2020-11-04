@@ -83,6 +83,11 @@ function App() {
             <StylistView backendDomain={backendDomain} />
           </Route>
           <Route path="/customers" component={Customer} />
+          {/* TEMP FOR QUICKER NAVIGATION TO LINKS FROM INITIAL COMPILE. REPLACE LATER. */}
+          <Route path="/" exact>
+            <a href="/stylists">Stylists</a>
+            <a href="/cusomters">Cusotmers</a>
+          </Route>
         </Switch>
       </div>
     </Router>
