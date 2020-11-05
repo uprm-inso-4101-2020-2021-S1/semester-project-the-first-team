@@ -42,6 +42,19 @@ class ViewUsersComponent extends Component {
     //   TODO: implement filters either front or backend.
     console.log("filtered by " + filter);
     this.setState({ filterTitle: filter });
+    if (filter === "Name") {
+      this.setState({
+        userlist: this.state.userlist.sort((a, b) =>
+          a.first_name.toUpperCase() < b.first_name.toUpperCase() ? -1 : 1
+        ),
+      });
+    } else if (filter === "Type") {
+      this.setState({
+        userlist: this.state.userlist.sort((a, b) =>
+          a.role < b.role ? -1 : 1
+        ),
+      });
+    }
   };
 
   displayFilterBtn() {

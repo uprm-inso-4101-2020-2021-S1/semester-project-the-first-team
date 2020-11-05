@@ -4,28 +4,14 @@ import DropdownItem from "react-bootstrap/DropdownItem";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faClock } from "@fortawesome/free-solid-svg-icons";
 import { Switch, Route } from "react-router";
-
+import axios from "axios";
 import "./../style/card.scss";
+
+const defaultProfileImg =
+  "https://images.pexels.com/photos/194446/pexels-photo-194446.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940";
+
 class HeaderBarCard extends Component {
   state = {};
-
-  getStylistsForDropdown = () => {
-    // TODO: GET DATA FROM BACKEND
-    return [
-      {
-        profilePic:
-          "https://images.pexels.com/photos/2552130/pexels-photo-2552130.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
-        username: "Miranda Wrightes",
-        appTime: null,
-      },
-      {
-        profilePic:
-          "https://images.pexels.com/photos/1841819/pexels-photo-1841819.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
-        username: "Tris Everdeen",
-        appTime: null,
-      },
-    ];
-  };
 
   // TODO: Rework route-dependent components into functions.
   // Create dropdown for various stylist views.
@@ -37,7 +23,9 @@ class HeaderBarCard extends Component {
             <picture>
               <img
                 src={
-                  this.props.headerCard ? this.props.headerCard.profilePic : ""
+                  this.props.headerCard && this.props.headerCard.profilePic
+                    ? this.props.headerCard.profilePic
+                    : defaultProfileImg
                 }
                 alt="Header Bar Card."
               ></img>
@@ -45,7 +33,11 @@ class HeaderBarCard extends Component {
           </div>
           <div>
             <div className="card-text">
-              {this.props.headerCard ? this.props.headerCard.username : ""}
+              {this.props.headerCard
+                ? this.props.headerCard.first_name +
+                  " " +
+                  this.props.headerCard.last_name
+                : ""}
             </div>
           </div>
           {this.props.headerCard && this.props.headerCard.appTime && (
@@ -59,6 +51,7 @@ class HeaderBarCard extends Component {
           >
             <HeaderCardDropRight
               changeHeaderCard={this.props.changeHeaderCard}
+              backendDomain={this.props.backendDomain}
             />
           </Route>
         </div>
@@ -85,42 +78,50 @@ function HeaderCardAppointmentTime(appTime) {
   );
 }
 
-const tempstylists = [
-  {
-    profilePic:
-      "https://images.pexels.com/photos/2552130/pexels-photo-2552130.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
-    username: "Miranda Wrightes",
-  },
-  {
-    profilePic:
-      "https://images.pexels.com/photos/1841819/pexels-photo-1841819.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
-    username: "Tris Everdeen",
-  },
-  {
-    profilePic:
-      "https://images.pexels.com/photos/1382731/pexels-photo-1382731.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
-    username: "Robin Moneypenny",
-  },
-];
-
 class HeaderCardDropRight extends Component {
   state = { dropdownOptions: [] };
   componentDidMount() {
-    this.setState({ dropdownOptions: tempstylists });
+    this.getStylistsForDropdown();
   }
+
+  getStylistsForDropdown = () => {
+    // TODO: ADD ROUTE TO GET USERS THAT ARE STYLISTS ONLY.
+    console.log("getting stylists from backend...");
+    console.log("from " + this.props.backendDomain + "user");
+    axios
+      .get(this.props.backendDomain + "user", {
+        headers: {
+          Authorization: `basic ${sessionStorage.getItem("authToken")}`,
+        },
+      })
+      .then((response) => {
+        console.log(response);
+        // temp fix: filter out users not stylist.
+        let stylistList = response.data.filter((user) => user.role === 1);
+        console.log(stylistList);
+        this.setState({ dropdownOptions: stylistList });
+        this.props.changeHeaderCard(stylistList[0]);
+      })
+      .catch((error) => {
+        if (error.response) {
+          console.log(error.response.data.message);
+        }
+      });
+  };
 
   render() {
     return (
       <div className="btn-group dropdown">
         <DropdownButton className="btn dropdown-toggle" drop="down" title="">
-          {this.state.dropdownOptions.map((cardoption) => (
-            <DropdownItem
-              onClick={() => this.props.changeHeaderCard(cardoption)}
-              key={cardoption.username}
-            >
-              {cardoption.username}
-            </DropdownItem>
-          ))}
+          {this.state.dropdownOptions.length > 0 &&
+            this.state.dropdownOptions.map((cardoption) => (
+              <DropdownItem
+                onClick={() => this.props.changeHeaderCard(cardoption)}
+                key={cardoption.username}
+              >
+                {cardoption.first_name + " " + cardoption.last_name}
+              </DropdownItem>
+            ))}
         </DropdownButton>
       </div>
     );

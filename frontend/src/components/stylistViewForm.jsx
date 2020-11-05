@@ -1,8 +1,11 @@
 import React, { Component } from "react";
 import { Switch, Route, useRouteMatch } from "react-router";
+import Modal from "react-bootstrap/Modal";
+import Button from "react-bootstrap/Button";
 import axios from "axios";
 
 const roleMappings = { Manager: 0, Stylist: 1, Customer: 2, Admin: 3 };
+
 class StylistViewForm extends Component {
   constructor(props) {
     super(props);
@@ -15,10 +18,21 @@ class StylistViewForm extends Component {
       confirmPswd: "",
       role: 0,
       usernameTaken: false,
+      showModal: false,
     };
     this.handleChange = this.handleChange.bind(this);
   }
 
+  componentDidUpdate(prevProps) {
+    if (
+      prevProps.headerCard &&
+      this.props.headerCard &&
+      prevProps.headerCard.pk !== this.props.headerCard.pk &&
+      this.props.headerCard.pk > 0
+    ) {
+      this.preFillState();
+    }
+  }
   resetState = () => {
     this.setState({
       first_name: "",
@@ -27,7 +41,17 @@ class StylistViewForm extends Component {
       email: "",
       password: "",
       confirmPswd: "",
-      role: 0,
+    });
+  };
+
+  preFillState = () => {
+    this.setState({
+      first_name: this.props.headerCard.first_name,
+      last_name: this.props.headerCard.last_name,
+      username: this.props.headerCard.username,
+      email: this.props.headerCard.email,
+      password: "",
+      confirmPswd: "",
     });
   };
 
@@ -38,6 +62,7 @@ class StylistViewForm extends Component {
     if (name === "username") {
       this.setState({ usernameTaken: false });
     }
+    console.log(value);
     this.setState({
       [name]: value,
     });
@@ -69,21 +94,48 @@ class StylistViewForm extends Component {
   handleSubmit = (event) => {
     event.preventDefault();
     console.log(this.userJSONBuilder());
+    let body = this.userJSONBuilder();
 
-    if (this.state.pk) {
+    if (this.props.headerCard.pk && window.location.pathname.includes("edit")) {
       // handle edit stylist.
-    } else {
-      // handle new stylist
+      console.log("updating stylist with pk: " + this.props.headerCard.pk);
+
+      body.pk = this.props.headerCard.pk;
       axios
-        .post(
-          this.props.backendDomain + "user/signup",
-          this.userJSONBuilder(),
+        .put(
+          this.props.backendDomain + "user/" + this.props.headerCard.pk,
+          body,
           {
             headers: {
               Authorization: `basic ${sessionStorage.getItem("authToken")}`,
             },
           }
         )
+        .then((response) => {
+          console.log(response);
+          alert("User successfully updated! pk: " + response.data.pk);
+        })
+        .catch((error) => {
+          if (error.response) {
+            console.log(error.response.data.message);
+
+            for (const key in error.response.data.message) {
+              if (key === "username") {
+                this.setState({ usernameTaken: true });
+              }
+              console.log(error.response.data.message[key]);
+              alert(error.response.data.message[key][0]);
+            }
+          }
+        });
+    } else {
+      // handle new stylist
+      axios
+        .post(this.props.backendDomain + "user/signup", body, {
+          headers: {
+            Authorization: `basic ${sessionStorage.getItem("authToken")}`,
+          },
+        })
         .then((response) => {
           console.log(response);
           alert("User successfully registered! pk: " + response.data.pk);
@@ -107,7 +159,12 @@ class StylistViewForm extends Component {
 
   areFieldsEmpty = () => {
     for (const field in this.state) {
-      if (field !== "role" && field !== "pk" && field !== "usernameTaken") {
+      if (
+        field !== "role" &&
+        field !== "pk" &&
+        field !== "usernameTaken" &&
+        field !== "showModal"
+      ) {
         if (this.state[field].length === 0 || !this.state[field].trim()) {
           return true;
         }
@@ -117,16 +174,71 @@ class StylistViewForm extends Component {
     return this.state.password === this.state.confirmPswd ? false : true;
   };
 
+  deleteStylist = () => {
+    console.log("deleting stylist...");
+    axios
+      .delete(this.props.backendDomain + "user/" + this.props.headerCard.pk, {
+        headers: {
+          Authorization: `basic ${sessionStorage.getItem("authToken")}`,
+        },
+      })
+      .then((response) => {
+        console.log(response);
+        alert("User deleted.");
+        this.resetState();
+      })
+      .catch((error) => {
+        if (error.response) {
+          console.log(error.response.data.message);
+
+          for (const key in error.response.data.message) {
+            if (key === "username") {
+              this.setState({ usernameTaken: true });
+            }
+            console.log(error.response.data.message[key]);
+            alert(error.response.data.message[key][0]);
+          }
+        }
+      });
+    this.toggleModal();
+  };
+
+  toggleModal = () => {
+    console.log("toggling modal...");
+    this.setState({ showModal: !this.state.showModal });
+  };
+
+  confirmDeleteModal = () => {
+    return (
+      <Modal show={this.state.showModal} onHide={this.toggleModal}>
+        <Modal.Body>
+          Are you sure you want to delete{" "}
+          {this.props.headerCard &&
+            this.props.headerCard.first_name +
+              " " +
+              this.props.headerCard.last_name}
+          ?
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="danger" onClick={this.deleteStylist}>
+            Delete
+          </Button>
+        </Modal.Footer>
+      </Modal>
+    );
+  };
+
   render() {
     return (
       <card className="stylist-body-card">
+        {this.confirmDeleteModal()}
+
         <div className="card-body stylist-body-card-body">
           <h2 className="card-header">
             <FormTitle />
           </h2>
           <div className="card-header-div">
             <form>
-              {/* TODO: SIMPLIFY WITH A MAP FROM STATE */}
               <label>First Name:</label>
               <input
                 type="text"
@@ -213,7 +325,8 @@ class StylistViewForm extends Component {
                   disabled={this.areFieldsEmpty()}
                   onClick={this.handleSubmit}
                 />
-                <FormDeleteBtn />
+                {/* TODO: CHECK IF SELECTED HEADERCARD IS CURRENT USER AND PREVENT DELETINO. */}
+                <FormDeleteBtn toggleModal={this.toggleModal} />
               </div>
             </form>
           </div>
@@ -236,15 +349,15 @@ function FormTitle() {
   );
 }
 
-function FormDeleteBtn() {
+function FormDeleteBtn({ toggleModal }) {
   let { path } = useRouteMatch();
   return (
     <Route path={`${path}/editstylist`}>
       <input
         className="delete-btn"
-        type="submit"
+        type="button"
         value="Delete"
-        // onSubmit={this.handleSubmit}
+        onClick={() => toggleModal()}
       />
     </Route>
   );
