@@ -1,10 +1,11 @@
-import React from "react";
+import React,{useState, useEffect} from "react";
 import Sidebar from "./components/Sidebar";
 import StylistView from "./components/stylistView";
 import Customer from "./components/Customer";
 
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import { faHome, faConciergeBell } from "@fortawesome/free-solid-svg-icons";
+import axios from "axios";
 
 function App() {
   // TODO: UPDATE THIS DURING DEPLOYMENT OR GET FROM OTHER FILE.
@@ -14,6 +15,30 @@ function App() {
     "authToken",
     new Buffer("Manager:Manager").toString("base64")
   );
+
+  useEffect(()=>{
+    logInUser();
+  },[])
+
+  const logInUser=async()=>{
+    //  todo: implement actual log in to get requests.
+    // todo: update this to not run every refresh.
+    // Getting hardcoded user from backend.
+    try{
+      console.log("Logging in")
+      const userPk=2;
+      let userInfoResponse = await axios.get(backendDomain+"user/"+userPk, {
+        headers: {
+          Authorization: `basic ${sessionStorage.getItem("authToken")}`,
+        },});
+      sessionStorage.setItem("user", JSON.stringify(userInfoResponse.data))
+      
+    }catch(error){
+      console.log(error)
+      window.alert("Could not sign in.")
+    }
+  }
+
 
   //Delete this later on
   const temp = [

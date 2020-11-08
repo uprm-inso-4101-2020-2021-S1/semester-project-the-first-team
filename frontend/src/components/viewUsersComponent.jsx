@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Fragment } from "react";
 import DropdownButton from "react-bootstrap/DropdownButton";
 import DropdownItem from "react-bootstrap/DropdownItem";
 import axios from "axios";
@@ -21,7 +21,7 @@ const defaultProfileImg =
 
 const defaultFilterString = "Filter";
 const emptyUser = {
-  pk: null,
+  id: null,
   first_name: "",
   last_name: "",
   username: "",
@@ -30,13 +30,13 @@ const emptyUser = {
   password: "",
 };
 
-// TODO: IMPLEMENT CREATE BUTTON + EDIT/DELETE MODAL.
 function ViewUsersComponent(backendDomain) {
   const [userList, setUserList] = useState([]);
   const [filter, setFilter] = useState(defaultFilterString);
   const [modalUser, setModalUser] = useState(emptyUser);
   const [showModal, setShowModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [createUser, setCreateUser] = useState(false);
 
   useEffect(() => {
     updateUserList(filter);
@@ -74,13 +74,39 @@ function ViewUsersComponent(backendDomain) {
     return tempData;
   };
 
+  const validateEmail = () => {
+    return /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+\.([a-zA-Z0-9-])+([a-zA-Z0-9-])+$/.test(
+      modalUser.email
+    );
+  };
+  const areFieldsFilled = () => {
+    if (createUser) {
+      return (
+        modalUser.username.length > 0 &&
+        modalUser.first_name.length > 0 &&
+        modalUser.last_name.length > 0 &&
+        modalUser.email.length > 0 &&
+        modalUser.password.length > 0
+      );
+    } else {
+      return (
+        modalUser.first_name.length > 0 &&
+        modalUser.last_name.length > 0 &&
+        modalUser.email.length > 0
+      );
+    }
+  };
+
   const toggleModal = async (user) => {
     let tempUser = user;
     if (showModal) {
       updateUserList(filter);
     }
-    if (user.pk) {
-      tempUser = await getUser(user.pk);
+    if (user.id) {
+      tempUser = await getUser(user.id);
+      setCreateUser(false);
+    } else {
+      setCreateUser(true);
     }
     if (tempUser) {
       setModalUser(tempUser);
@@ -113,14 +139,13 @@ function ViewUsersComponent(backendDomain) {
     }
   };
 
-  const getUser = async (pk) => {
+  const getUser = async (id) => {
     try {
-      const user = await axios.get(backendDomain.backendDomain + "user/" + pk, {
+      const user = await axios.get(backendDomain.backendDomain + "user/" + id, {
         headers: {
           Authorization: `basic ${sessionStorage.getItem("authToken")}`,
         },
       });
-      console.log(user);
       return user.data;
     } catch (error) {
       let errorMsg =
@@ -136,9 +161,9 @@ function ViewUsersComponent(backendDomain) {
 
   const deleteModalUser = async () => {
     try {
-      if (modalUser.pk) {
+      if (modalUser.id) {
         let result = await axios.delete(
-          backendDomain.backendDomain + "user/" + modalUser.pk,
+          backendDomain.backendDomain + "user/" + modalUser.id,
           {
             headers: {
               Authorization: `basic ${sessionStorage.getItem("authToken")}`,
@@ -157,11 +182,10 @@ function ViewUsersComponent(backendDomain) {
 
   const submitUser = async () => {
     try {
-      if (modalUser.pk) {
+      if (modalUser.id) {
         // PUTTING
-        // TODO: GET PASSWORDS FOR USERS.
         let response = await axios.put(
-          backendDomain.backendDomain + "user/" + modalUser.pk,
+          backendDomain.backendDomain + "user/" + modalUser.id,
           modalUser,
           {
             headers: {
@@ -207,7 +231,7 @@ function ViewUsersComponent(backendDomain) {
 
   const displayFilterBtn = () => {
     return (
-      <div style={{ display: "flex", alignContent: "space-evenly" }}>
+      <div>
         <div className="btn-group dropdown" style={{ paddingBottom: "5px" }}>
           <span
             style={{ color: "white", marginRight: "5px", paddingTop: "5px" }}
@@ -237,10 +261,11 @@ function ViewUsersComponent(backendDomain) {
             </button>
           )}
         </div>
+        {/* todo: fix buttons placement. */}
         <Button
           variant="primary"
           onClick={() => toggleModal(emptyUser)}
-          style={{ marginLeft: "5rem" }}
+          style={{ marginLeft: "30rem" }}
         >
           Create User
         </Button>
@@ -252,16 +277,20 @@ function ViewUsersComponent(backendDomain) {
     return (
       <Modal show={showModal} onHide={() => toggleModal(emptyUser)} size="xl">
         <Modal.Header closeButton>
-          <h3>{modalUser.pk ? "Edit User" : "Create User"}</h3>
+          <h3>{!createUser ? "Edit User" : "Create User"}</h3>
         </Modal.Header>
         <Modal.Body>
           <form style={{ display: "flex", flexDirection: "column" }}>
-            <label>User Name:</label>
-            <input
-              name="username"
-              value={modalUser.username}
-              onChange={(e) => updateModalUser(e)}
-            />
+            {createUser && (
+              <Fragment>
+                <label>User Name:</label>
+                <input
+                  name="username"
+                  value={modalUser.username}
+                  onChange={(e) => updateModalUser(e)}
+                />
+              </Fragment>
+            )}
             <label>First Name:</label>
             <input
               name="first_name"
@@ -280,24 +309,34 @@ function ViewUsersComponent(backendDomain) {
               value={modalUser.email}
               onChange={(e) => updateModalUser(e)}
             />
-            <label>Password:</label>
-            <input
-              name="password"
-              type="password"
-              value={modalUser.password}
-              onChange={(e) => updateModalUser(e)}
-            />
-            <label>Role:</label>
-            {/* TODO: make this a dropdown. */}
-            <input
-              name="role"
-              type="number"
-              min="0"
-              max="3"
-              value={modalUser.role}
-              onChange={(e) => updateModalUser(e)}
-            />
-            <i>0: "Manager", 1: "Stylist", 2: "Customer", 3: "Admin"</i>
+
+            {createUser && (
+              <Fragment>
+                <label>Password:</label>
+                <input
+                  name="password"
+                  type="password"
+                  value={modalUser.password}
+                  onChange={(e) => updateModalUser(e)}
+                />
+              </Fragment>
+            )}
+            {/* SHOULD ROLE BE CHANGEABLE FOR EXISTING USERS? */}
+            {createUser && (
+              <Fragment>
+                <label>Role:</label>
+                {/* TODO: make this a dropdown. */}
+                <input
+                  name="role"
+                  type="number"
+                  min="0"
+                  max="3"
+                  value={modalUser.role}
+                  onChange={(e) => updateModalUser(e)}
+                />
+                <i>0: "Manager", 1: "Stylist", 2: "Customer", 3: "Admin"</i>
+              </Fragment>
+            )}
           </form>
         </Modal.Body>
         <Modal.Footer>
@@ -305,7 +344,11 @@ function ViewUsersComponent(backendDomain) {
             Delete
           </Button>
 
-          <Button variant="primary" onClick={submitUser}>
+          <Button
+            variant="primary"
+            onClick={submitUser}
+            disabled={!validateEmail() || !areFieldsFilled()}
+          >
             Submit
           </Button>
         </Modal.Footer>
@@ -323,7 +366,7 @@ function ViewUsersComponent(backendDomain) {
           userList.map((usr) => (
             <div
               className="usr-card"
-              key={usr.pk}
+              key={usr.id}
               onClick={() => toggleModal(usr)}
             >
               <div className="usr-card-body">
