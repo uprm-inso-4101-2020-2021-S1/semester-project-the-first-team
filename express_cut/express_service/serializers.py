@@ -3,17 +3,32 @@ from .models import User, Service, DailySchedule, Reservation, TimeSlot
 from django.contrib.auth.hashers import make_password
 
 
-class UserSerializer(serializers.ModelSerializer):
-    role = serializers.ChoiceField(choices=User.ROLE_CHOICES)
-    pk = serializers.PrimaryKeyRelatedField(read_only=True)
-    password = serializers.CharField(write_only=True, required=True)
+class GeneralUserSerializer(serializers.ModelSerializer):
+    id = serializers.PrimaryKeyRelatedField(read_only=True)
+    role = serializers.ChoiceField(choices=User.ROLE_CHOICES, read_only=True)
+    username = serializers.CharField(read_only=True)
+    password = serializers.CharField(write_only=True, required=False)
 
-    # TODO: For PUT HTTP methods fields don't need to be required
-    # TODO: Roles cant be updated to other roles on put.
-    
     class Meta:
         model = User
-        fields = ['pk', 'username', 'first_name', 'last_name', 'email', 'role', 'password']
+        fields = ['id', 'username', 'password', 'first_name', 'last_name', 'email', 'role']
+
+    def update(self, instance, validated_data):
+        new_password = validated_data.get('password')
+        if new_password:
+            validated_data['password'] = make_password(new_password)
+        instance.password = validated_data.get('password', instance.password)
+        instance.first_name = validated_data.get('first_name', instance.first_name)
+        instance.last_name = validated_data.get('last_name', instance.last_name)
+        instance.email = validated_data.get('email', instance.email)
+        instance.save()
+        return instance
+
+
+class SingUpUserSerializer(GeneralUserSerializer):
+    role = serializers.ChoiceField(choices=User.ROLE_CHOICES)
+    password = serializers.CharField(write_only=True, required=True)
+    username = serializers.CharField(required=True)
 
     def create(self, validated_data):
         validated_data['password'] = make_password(validated_data.get('password'))
@@ -27,34 +42,34 @@ class TimeSlotSerializer(serializers.ModelSerializer):
         fields = ['start_time', 'end_time']
 
 
-class StylistSerializer(UserSerializer):
+class StylistSerializer(GeneralUserSerializer):
 
     class Meta:
         model = User
-        fields = ['pk', 'first_name', 'last_name']
+        fields = ['id', 'first_name', 'last_name']
 
 
-class CustomerSerializer(UserSerializer):
-
-    class Meta:
-        model = User
-        fields = ['pk', 'first_name', 'last_name']
-
-
-class ManagerSerializer(UserSerializer):
+class CustomerSerializer(GeneralUserSerializer):
 
     class Meta:
         model = User
-        fields = ['pk', 'first_name', 'last_name']
+        fields = ['id', 'first_name', 'last_name']
+
+
+class ManagerSerializer(GeneralUserSerializer):
+
+    class Meta:
+        model = User
+        fields = ['id', 'first_name', 'last_name']
 
 
 class DailyScheduleSerializer(serializers.ModelSerializer):
-    pk = serializers.PrimaryKeyRelatedField(read_only=True)
+    id = serializers.PrimaryKeyRelatedField(read_only=True)
     timeslots = TimeSlotSerializer(many=True)
 
     class Meta:
         model = DailySchedule
-        fields = ['date', 'stylist', 'pk', 'timeslots']
+        fields = ['id', 'date', 'stylist', 'timeslots']
 
     def create(self, validated_data):
         timeslots_data = validated_data.pop('timeslots')
@@ -75,12 +90,11 @@ class DailyScheduleSerializer(serializers.ModelSerializer):
 
 
 class ServiceSerializer(serializers.ModelSerializer):
-    pk = serializers.PrimaryKeyRelatedField(read_only=True)
+    id = serializers.PrimaryKeyRelatedField(read_only=True)
 
     class Meta:
         model = Service
-        # fields = "__all__"
-        fields = ['pk', 'serviceName', 'defaultDuration', 'description']
+        fields = ['id', 'serviceName', 'defaultDuration', 'description']
 
     def create(self, validated_data):
         return Service.objects.create(**validated_data)
