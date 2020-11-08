@@ -1,0 +1,19 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: express-cuts-backend
+  labels:
+    app: rest-api
+    role: backend
+    group: express-cuts
+spec:
+  type: NodePort 
+  ports:
+  - port: 8000
+    protocol: TCP
+    name: http
+  selector:
+    app: rest-api
+    role: backend
+    group: express-cuts
