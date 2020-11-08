@@ -52,7 +52,7 @@ def all_users(request):
         elif role == User.MANAGER:
             users.filter(role=User.MANAGER)
         serializer = GeneralUserSerializer(users, many=True)
-        return Response(serializer.data, status=status.HTTP_302_FOUND)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 @swagger_auto_schema(methods=['PUT'], request_body=GeneralUserSerializer, responses={**swagResp.commonResponses, **swagResp.getResponse(GeneralUserSerializer)},
