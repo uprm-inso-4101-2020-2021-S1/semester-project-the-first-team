@@ -5,19 +5,30 @@ from django.contrib.auth.hashers import make_password
 
 class GeneralUserSerializer(serializers.ModelSerializer):
     id = serializers.PrimaryKeyRelatedField(read_only=True)
+    role = serializers.ChoiceField(choices=User.ROLE_CHOICES, read_only=True)
+    username = serializers.CharField(read_only=True)
+    password = serializers.CharField(write_only=True, required=False)
 
     class Meta:
         model = User
-        fields = ['id', 'username', 'first_name', 'last_name', 'email', 'role']
+        fields = ['id', 'username', 'password', 'first_name', 'last_name', 'email', 'role']
+
+    def update(self, instance, validated_data):
+        new_password = validated_data.get('password')
+        if new_password:
+            validated_data['password'] = make_password(new_password)
+        instance.password = validated_data.get('password', instance.password)
+        instance.first_name = validated_data.get('first_name', instance.first_name)
+        instance.last_name = validated_data.get('last_name', instance.last_name)
+        instance.last_name = validated_data.get('email', instance.email)
+        instance.save()
+        return instance
 
 
 class SingUpUserSerializer(GeneralUserSerializer):
     role = serializers.ChoiceField(choices=User.ROLE_CHOICES)
     password = serializers.CharField(write_only=True, required=True)
-    
-    class Meta:
-        model = User
-        fields = ['id', 'username', 'first_name', 'last_name', 'email', 'role', 'password']
+    username = serializers.CharField(required=True)
 
     def create(self, validated_data):
         validated_data['password'] = make_password(validated_data.get('password'))
@@ -53,7 +64,7 @@ class ManagerSerializer(GeneralUserSerializer):
 
 
 class DailyScheduleSerializer(serializers.ModelSerializer):
-    pk = serializers.PrimaryKeyRelatedField(read_only=True)
+    id = serializers.PrimaryKeyRelatedField(read_only=True)
     timeslots = TimeSlotSerializer(many=True)
 
     class Meta:
