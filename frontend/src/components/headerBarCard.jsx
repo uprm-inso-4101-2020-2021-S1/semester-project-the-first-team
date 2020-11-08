@@ -1,4 +1,4 @@
-import React, { Component, Fragment } from "react";
+import React, { Component, Fragment, useState, useEffect } from "react";
 import DropdownButton from "react-bootstrap/DropdownButton";
 import DropdownItem from "react-bootstrap/DropdownItem";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -78,53 +78,50 @@ function HeaderCardAppointmentTime(appTime) {
   );
 }
 
-class HeaderCardDropRight extends Component {
-  state = { dropdownOptions: [] };
-  componentDidMount() {
-    this.getStylistsForDropdown();
-  }
+function HeaderCardDropRight(props) {
+  // state = { dropdownOptions: [] };
+  const [dropdownOptions, setDropdownOptions] = useState([]);
 
-  getStylistsForDropdown = () => {
+  useEffect(() => {
+    getStylistsForDropdown();
+  }, []);
+
+  const getStylistsForDropdown = async () => {
     // TODO: ADD ROUTE TO GET USERS THAT ARE STYLISTS ONLY.
     console.log("getting stylists from backend...");
-    axios
-      .get(this.props.backendDomain + "stylist", {
+    try {
+      console.log(props);
+      let response = await axios.get(props.backendDomain + "stylist", {
         headers: {
           Authorization: `basic ${sessionStorage.getItem("authToken")}`,
         },
-      })
-      .then((response) => {
-        console.log(response);
-        // temp fix: filter out users not stylist.
-        // let stylistList = response.data.filter((user) => user.role === 1);
-        console.log(response.data);
-        this.setState({ dropdownOptions: response.data });
-        this.props.changeHeaderCard(response.data[0]);
-      })
-      .catch((error) => {
-        if (error.response) {
-          console.log(error.response.data.message);
-        }
       });
+
+      console.log(response);
+      setDropdownOptions(response.data);
+      props.changeHeaderCard(response.data[0]);
+    } catch (error) {
+      if (error.response) {
+        console.log(error.response.data.message);
+      }
+    }
   };
 
-  render() {
-    return (
-      <div className="btn-group dropdown">
-        <DropdownButton className="btn dropdown-toggle" drop="down" title="">
-          {this.state.dropdownOptions.length > 0 &&
-            this.state.dropdownOptions.map((cardoption) => (
-              <DropdownItem
-                onClick={() => this.props.changeHeaderCard(cardoption)}
-                key={cardoption.pk}
-              >
-                {cardoption.first_name + " " + cardoption.last_name}
-              </DropdownItem>
-            ))}
-        </DropdownButton>
-      </div>
-    );
-  }
+  return (
+    <div className="btn-group dropdown">
+      <DropdownButton className="btn dropdown-toggle" drop="down" title="">
+        {dropdownOptions.length > 0 &&
+          dropdownOptions.map((cardoption) => (
+            <DropdownItem
+              onClick={() => props.changeHeaderCard(cardoption)}
+              key={cardoption.pk}
+            >
+              {cardoption.first_name + " " + cardoption.last_name}
+            </DropdownItem>
+          ))}
+      </DropdownButton>
+    </div>
+  );
 }
 
 // TODO: CONSOLIDATE THIS WITH SAME FUNCT IN APPOINTMENTS QUEUE VIEW.
