@@ -20,7 +20,7 @@ class GeneralUserSerializer(serializers.ModelSerializer):
         instance.password = validated_data.get('password', instance.password)
         instance.first_name = validated_data.get('first_name', instance.first_name)
         instance.last_name = validated_data.get('last_name', instance.last_name)
-        instance.last_name = validated_data.get('email', instance.email)
+        instance.email = validated_data.get('email', instance.email)
         instance.save()
         return instance
 
@@ -94,7 +94,6 @@ class ServiceSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Service
-        # fields = "__all__"
         fields = ['id', 'serviceName', 'defaultDuration', 'description']
 
     def create(self, validated_data):
