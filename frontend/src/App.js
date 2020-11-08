@@ -30,18 +30,18 @@ function App() {
       icon: faConciergeBell,
       cName: "nav-text",
     },
-    {
-      title: "New Stylist",
-      path: "/stylists/form/newstylist",
-      icon: faConciergeBell,
-      cName: "nav-text",
-    },
-    {
-      title: "Edit Stylist",
-      path: "/stylists/form/editstylist",
-      icon: faConciergeBell,
-      cName: "nav-text",
-    },
+    // {
+    //   title: "New Stylist",
+    //   path: "/stylists/form/newstylist",
+    //   icon: faConciergeBell,
+    //   cName: "nav-text",
+    // },
+    // {
+    //   title: "Edit Stylist",
+    //   path: "/stylists/form/editstylist",
+    //   icon: faConciergeBell,
+    //   cName: "nav-text",
+    // },
     {
       title: "Manage Schedules",
       path: "/stylists/schedule/manage",
@@ -86,7 +86,7 @@ function App() {
           {/* TEMP FOR QUICKER NAVIGATION TO LINKS FROM INITIAL COMPILE. REPLACE LATER. */}
           <Route path="/" exact>
             <a href="/stylists">Stylists</a>
-            <a href="/cusomters">Cusotmers</a>
+            <a href="/customers">Cusotmers</a>
           </Route>
         </Switch>
       </div>

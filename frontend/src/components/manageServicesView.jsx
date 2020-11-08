@@ -195,10 +195,9 @@ class ManageServicesView extends Component {
           <form>
             <div>
               <label>
-                Service ID:{" "}
                 {this.state.activeService.pk
-                  ? this.state.activeService.pk
-                  : "N/A"}
+                  ? "Edit Existing Service"
+                  : "Create New Service"}
               </label>
             </div>
             <div>

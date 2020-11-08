@@ -1,7 +1,6 @@
 version: "3.1"
 
 services:
-
   db:
     image: postgres:12.4
     container_name: database
@@ -33,7 +32,7 @@ services:
     environment:
       - DJANGO_ALLOWED_HOSTS=*
       # - DJANGO_SECRET_KEY="mim-1fbk4#ih!%awlxv17s_a835bpc&djw0y#4@c%&h-*eovba"
-      - DJANGO_CORS_ORIGIN_WHITELIST=*
+      - DJANGO_CORS_ORIGIN_WHITELIST=http://*
       - DEBUG=true
       - CORS_ALLOW_ALL=true
 
@@ -41,7 +40,7 @@ services:
       - DATABASE_NAME=test-db
       - DATABASE_USER=admin
       - DATABASE_PASSWORD=password
-      - DATABASE_HOST=db
+      - DATABASE_HOST=database
       - DATABASE_PORT=5432
 
       # For initial populating DB
@@ -50,7 +49,7 @@ services:
   # ui:
   #   image: node
   #   container_name: User-Interface
-    
+
   tester:
     # Create image from Dockerfile if image not created.
     # In script we should delete the image after testing
@@ -63,9 +62,9 @@ services:
     environment:
       - REST_API_URL=http://rest:8000
     volumes:
-        - "./docker-test-out:/output/reports/"
+      - "./docker-test-out:/output/reports/"
 
-#### SELENIUM Containers
+  #### SELENIUM Containers
 
   chrome:
     image: selenium/node-chrome:4.0.0

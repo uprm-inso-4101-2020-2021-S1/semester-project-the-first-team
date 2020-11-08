@@ -87,9 +87,8 @@ class HeaderCardDropRight extends Component {
   getStylistsForDropdown = () => {
     // TODO: ADD ROUTE TO GET USERS THAT ARE STYLISTS ONLY.
     console.log("getting stylists from backend...");
-    console.log("from " + this.props.backendDomain + "user");
     axios
-      .get(this.props.backendDomain + "user", {
+      .get(this.props.backendDomain + "stylist", {
         headers: {
           Authorization: `basic ${sessionStorage.getItem("authToken")}`,
         },
@@ -97,10 +96,10 @@ class HeaderCardDropRight extends Component {
       .then((response) => {
         console.log(response);
         // temp fix: filter out users not stylist.
-        let stylistList = response.data.filter((user) => user.role === 1);
-        console.log(stylistList);
-        this.setState({ dropdownOptions: stylistList });
-        this.props.changeHeaderCard(stylistList[0]);
+        // let stylistList = response.data.filter((user) => user.role === 1);
+        console.log(response.data);
+        this.setState({ dropdownOptions: response.data });
+        this.props.changeHeaderCard(response.data[0]);
       })
       .catch((error) => {
         if (error.response) {
@@ -117,7 +116,7 @@ class HeaderCardDropRight extends Component {
             this.state.dropdownOptions.map((cardoption) => (
               <DropdownItem
                 onClick={() => this.props.changeHeaderCard(cardoption)}
-                key={cardoption.username}
+                key={cardoption.pk}
               >
                 {cardoption.first_name + " " + cardoption.last_name}
               </DropdownItem>
