@@ -14,7 +14,7 @@ const dropdownFilters = [
   "Customer",
 ];
 
-const roleMapping = { Managers: 0, Stylists: 1, Customers: 2, Admins: 3 };
+const roleMapping = { 0: "Manager", 1: "Stylist", 2: "Customer", 3: "Admin" };
 
 const defaultProfileImg =
   "https://images.pexels.com/photos/194446/pexels-photo-194446.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940";
@@ -248,11 +248,8 @@ function ViewUsersComponent(backendDomain) {
     );
   };
 
-  return (
-    <div>
-      {displayFilterBtn()}
-
-      {delModal()}
+  const editUserModal = () => {
+    return (
       <Modal show={showModal} onHide={() => toggleModal(emptyUser)} size="xl">
         <Modal.Header closeButton>
           <h3>{modalUser.pk ? "Edit User" : "Create User"}</h3>
@@ -295,9 +292,12 @@ function ViewUsersComponent(backendDomain) {
             <input
               name="role"
               type="number"
+              min="0"
+              max="3"
               value={modalUser.role}
               onChange={(e) => updateModalUser(e)}
             />
+            <i>0: "Manager", 1: "Stylist", 2: "Customer", 3: "Admin"</i>
           </form>
         </Modal.Body>
         <Modal.Footer>
@@ -310,6 +310,14 @@ function ViewUsersComponent(backendDomain) {
           </Button>
         </Modal.Footer>
       </Modal>
+    );
+  };
+
+  return (
+    <div>
+      {displayFilterBtn()}
+      {delModal()}
+      {editUserModal()}
       <div className="usr-card-container">
         {userList &&
           userList.map((usr) => (
@@ -327,7 +335,7 @@ function ViewUsersComponent(backendDomain) {
                     <strong>{usr.first_name + " " + usr.last_name}</strong>
                   </p>
                   <p>
-                    <i>{usr.type}</i>
+                    <i>{roleMapping[usr.role]}</i>
                   </p>
                   <p>{usr.email}</p>
                 </div>
