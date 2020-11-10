@@ -5,7 +5,6 @@ services:
   db:
     image: postgres:12.4
     container_name: database
-    restart: always
     healthcheck:
       test: pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB
       interval: 5s

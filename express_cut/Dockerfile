@@ -22,6 +22,9 @@ ENV GENERATE_TEST_DATA false
 
 COPY . /app
 
+# Delete previous migrations
+RUN rm -rfv /app/express_service/migrations && mkdir /app/express_service/migrations && touch /app/express_service/migrations/__init__.py
+
 RUN pip install --no-cache-dir -r /app/requirements.txt
 
 EXPOSE 8000

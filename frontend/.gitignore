@@ -27,3 +27,6 @@ debug.log
 
 .eslintrc.json
 .prettierrc.json
+package-lock.json
+debug.log
+.vscode/settings.json
