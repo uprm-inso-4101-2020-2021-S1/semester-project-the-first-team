@@ -1,0 +1,112 @@
+@import "styleVariables";
+
+.queue-div {
+  width: 90%;
+}
+.appointment-queue-container {
+  height: 69vh;
+  // align-content: space-between;
+  // justify-content: center;
+  // flex-wrap: nowrap;
+  // overflow-x: hidden;
+  overflow-y: auto;
+  margin: 0px;
+
+  .appointment-container {
+    display: flex;
+    flex-wrap: nowrap;
+    margin: 1rem;
+
+    min-height: 20%;
+
+    .appointment-time-container {
+      padding-right: 1rem;
+
+      .card {
+        height: 100%;
+        padding: 1rem;
+        width: 11rem;
+        @extend %centered-flex-column;
+        background-color: $deepPurple;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.4);
+
+        div {
+          display: flex;
+          flex-direction: row;
+          flex-wrap: nowrap;
+          justify-content: center;
+          align-content: space-between;
+          svg {
+            margin-right: 5px;
+            height: 2em;
+            width: 2em;
+            color: white;
+          }
+          p {
+            color: white;
+            text-align: center;
+            font-size: 1.5em;
+          }
+        }
+      }
+    }
+
+    .appointment-card {
+      width: 85%;
+      box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.4);
+      transition: 0.3s;
+
+      &:hover {
+        box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.7);
+      }
+
+      .card-body {
+        background-color: $cardGray;
+        display: flex;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        justify-content: space-evenly;
+        border-radius: 10px;
+
+        p {
+          color: white;
+          padding-right: 5px;
+          word-wrap: break-word;
+          text-align: left;
+        }
+
+        picture {
+          @extend %centered-flex-column;
+          padding-left: 0px;
+          padding-right: 10px;
+
+          img {
+            height: 70px;
+            width: 70px;
+            object-fit: cover;
+            border-radius: 50%;
+          }
+        }
+
+        .username-div {
+          @extend %centered-flex-column;
+          width: 50%;
+          p {
+            font-size: 1.3em;
+          }
+        }
+
+        .card-div {
+          height: 100%;
+          border-left: 3px solid white;
+          padding-right: 5px;
+        }
+
+        .appointment-info-div {
+          @extend %flexcolnowrap;
+        }
+      }
+    }
+  }
+}

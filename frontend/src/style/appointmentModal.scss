@@ -1,0 +1,25 @@
+@import "styleVariables";
+
+.modal-content {
+  background-color: $cardGray;
+  color: white;
+  .modal-header .container .row {
+    justify-content: center;
+  }
+
+  picture img {
+    height: 60px;
+    width: 60px;
+    object-fit: cover;
+    border-radius: 50%;
+  }
+
+  .modal-body .row div[class^="col"] {
+    .boxed-txt,
+    ul li {
+      color: black;
+      background-color: white;
+      max-width: 30vw;
+    }
+  }
+}
