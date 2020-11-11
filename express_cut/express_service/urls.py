@@ -29,6 +29,8 @@ urlpatterns = [
 
     path('reservation', views.reservation_general),
     path('reservation/<int:pk>', views.reservation_views),
+    path('stylist/<int:stylist_id>/reservation', views.reservations_by_stylist),
+
   
     path('stylist', role_view.all_stylists),
     path('stylist/available', role_view.all_available_stylists),
