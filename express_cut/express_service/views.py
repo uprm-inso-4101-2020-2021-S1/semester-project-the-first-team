@@ -4,6 +4,7 @@ from .models import User, DailySchedule
 from .serializers import GeneralUserSerializer, SingUpUserSerializer, DailyScheduleSerializer
 from rest_framework.response import Response
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
+from rest_framework_jwt.authentication import JSONWebTokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from .permissions import Permissions, SignUpPermissions, UserViewPermissions, DailySchedulePermissions
 from rest_framework import status
@@ -11,9 +12,14 @@ from rest_framework.decorators import api_view, permission_classes, authenticati
 from drf_yasg.utils import swagger_auto_schema
 from .swagger_models import SwagResponses as swagResp
 
+def jwt_response_payload_handler(token, user=None, request=None):
+    return {
+        'token': token,
+        'user': GeneralUserSerializer(user, context={'request': request}).data
+    }
 
 @swagger_auto_schema(methods=['POST'], request_body=SingUpUserSerializer, responses=swagResp.commonPOSTResponses,
-                     tags=['user'], )
+                     tags=['user'], operation_summary="Sign up users for Express Cuts")
 @api_view(['POST'])
 @authentication_classes([SessionAuthentication, BasicAuthentication])
 def user_signup_view(request):
@@ -32,9 +38,10 @@ def user_signup_view(request):
     return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-@swagger_auto_schema(methods=['GET'], responses={**swagResp.commonResponses, **swagResp.getResponse(GeneralUserSerializer)}, tags=['user'], )
+@swagger_auto_schema(methods=['GET'], responses={**swagResp.commonResponses, **swagResp.getResponse(GeneralUserSerializer)}, 
+                    tags=['user'], operation_summary="Get all Users of Express Cuts")
 @api_view(['GET', ])
-@authentication_classes([SessionAuthentication, BasicAuthentication])
+@authentication_classes([JSONWebTokenAuthentication, SessionAuthentication, BasicAuthentication])
 @permission_classes([IsAuthenticated])
 def all_users(request):
     """
@@ -56,10 +63,13 @@ def all_users(request):
 
 
 @swagger_auto_schema(methods=['PUT'], request_body=GeneralUserSerializer, responses={**swagResp.commonResponses, **swagResp.getResponse(GeneralUserSerializer)},
-                     tags=['user'], )
-@swagger_auto_schema(methods=['GET', 'DELETE'], responses={**swagResp.commonResponses, **swagResp.getResponse(GeneralUserSerializer)},)
+                     tags=['user'], operation_summary="Update Express Cuts Users")
+@swagger_auto_schema(methods=['GET'], responses={**swagResp.commonResponses, **swagResp.getResponse(GeneralUserSerializer)},
+                     tags=['user'], operation_summary="Get Users of Express Cuts")
+@swagger_auto_schema(methods=['DELETE'], responses={**swagResp.commonResponses, **swagResp.getResponse(GeneralUserSerializer)},
+                     tags=['user'], operation_summary="Delete Users of Express Cuts")
 @api_view(['GET', 'PUT', 'DELETE'])
-@authentication_classes([SessionAuthentication, BasicAuthentication])
+@authentication_classes([JSONWebTokenAuthentication, SessionAuthentication, BasicAuthentication])
 @permission_classes([IsAuthenticated])
 def users_views(request, pk):
     try:
@@ -93,9 +103,9 @@ def users_views(request, pk):
 
 
 @swagger_auto_schema(methods=['POST'], request_body=DailyScheduleSerializer, responses=swagResp.commonPOSTResponses,
-                     tags=['dailySchedule'], )
+                     tags=['dailySchedule'], operation_summary="Create an Express Cuts Schedule")
 @api_view(['POST'])
-@authentication_classes([SessionAuthentication, BasicAuthentication])
+@authentication_classes([JSONWebTokenAuthentication, SessionAuthentication, BasicAuthentication])
 @permission_classes([IsAuthenticated])
 def schedule_views(request):
     if request.method == 'POST':
@@ -114,11 +124,14 @@ def schedule_views(request):
             return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-@swagger_auto_schema(methods=['GET', 'DELETE'], responses={**swagResp.commonResponses, **swagResp.getResponse(DailyScheduleSerializer)},tags=['dailySchedule'],)
+@swagger_auto_schema(methods=['GET'], responses={**swagResp.commonResponses, **swagResp.getResponse(DailyScheduleSerializer)},
+                     tags=['dailySchedule'], operation_summary="Get an Express Cuts Schedule")
+@swagger_auto_schema(methods=['DELETE'], responses={**swagResp.commonResponses, **swagResp.getResponse(DailyScheduleSerializer)},
+                     tags=['dailySchedule'], operation_summary="Delete an Express Cuts Schedule")
 @swagger_auto_schema(methods=['PUT'], request_body=DailyScheduleSerializer, responses=swagResp.commonPOSTResponses,
-                     tags=['dailySchedule'], )
+                     tags=['dailySchedule'], operation_summary="Update an Express Cuts Schedule")
 @api_view(['GET', 'PUT', 'DELETE'])
-@authentication_classes([SessionAuthentication, BasicAuthentication])
+@authentication_classes([JSONWebTokenAuthentication, SessionAuthentication, BasicAuthentication])
 @permission_classes([IsAuthenticated])
 def schedule_views_put(request, pk):
     try:

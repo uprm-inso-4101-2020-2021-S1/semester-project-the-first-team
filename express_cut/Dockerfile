@@ -9,6 +9,7 @@ ENV DJANGO_SECRET_KEY "mim-1fbk4#ih!%awlxv17s_a835bpc&djw0y$4@c%&h-*eovba"
 ENV DJANGO_CORS_ORIGIN_WHITELIST "localhost 127.0.0.1"
 ENV DEBUG false
 ENV CORS_ALLOW_ALL false
+ENV JWT_EXPIRATION_TIME 300
 
 # Connection settings
 ENV DATABASE_NAME express_cuts_db
