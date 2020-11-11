@@ -100,12 +100,12 @@ def reservations_by_stylist(request, stylist_id):
 @api_view(['DELETE'])
 def cancel_reservation(request, pk):
     if request.method == 'DELETE':
-        if not ReservationPermissions().CANCEL_permissions(request):
-            return Response(status=status.HTTP_403_FORBIDDEN)
         try:
             obj = Reservation.objects.get(pk=pk)
         except Reservation.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
+        if not ReservationPermissions().CANCEL_permissions(request, obj):
+            return Response(status=status.HTTP_403_FORBIDDEN)
         if obj.status == Reservation.PENDING or obj.status == Reservation.IN_PROCESS:
             obj.status = Reservation.CANCELLED
             obj.save()
