@@ -107,3 +107,6 @@ class ReservationPermissions(Permissions):
             return True
         return False
 
+    def CANCEL_permissions(self, request):
+        return self.has_manager_permission(request)
+
