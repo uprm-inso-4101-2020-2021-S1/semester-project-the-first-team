@@ -33,7 +33,7 @@ services:
     environment:
       - DJANGO_ALLOWED_HOSTS=*
       # - DJANGO_SECRET_KEY="mim-1fbk4#ih!%awlxv17s_a835bpc&djw0y#4@c%&h-*eovba"
-      - DJANGO_CORS_ORIGIN_WHITELIST=*
+      - DJANGO_CORS_ORIGIN_WHITELIST=http://localhost http://*
       - DEBUG=true
       - CORS_ALLOW_ALL=true
 
