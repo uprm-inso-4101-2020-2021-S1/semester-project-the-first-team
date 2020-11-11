@@ -109,3 +109,7 @@ class ReservationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Reservation
         fields = "__all__"
+
+# class ReservationContainsServicesSerializer(serializers.ModelSerializer):
+
+
