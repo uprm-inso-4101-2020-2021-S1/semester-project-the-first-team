@@ -4,6 +4,7 @@ from .models import Service
 from .serializers import ServiceSerializer
 from rest_framework.response import Response
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
+from rest_framework_jwt.authentication import JSONWebTokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from .permissions import Permissions
 from rest_framework import status
@@ -12,13 +13,14 @@ from drf_yasg.utils import swagger_auto_schema
 from .swagger_models import SwagResponses as swagResp
 
 
-@swagger_auto_schema(methods=['GET'], responses={**swagResp.commonResponses, **swagResp.getResponse(ServiceSerializer)}, tags=['service'], )
+@swagger_auto_schema(methods=['GET'], responses={**swagResp.commonResponses, **swagResp.getResponse(ServiceSerializer)}, 
+                    tags=['service'], operation_summary="Get All Services of Express Cuts")
 @swagger_auto_schema(methods=['POST'], request_body=ServiceSerializer, responses=swagResp.commonPOSTResponses,
-                     tags=['service'], )
+                     tags=['service'], operation_summary="Create a New Express Cuts Service")
 @api_view(['GET','POST' ])
-@authentication_classes([SessionAuthentication, BasicAuthentication])
+@authentication_classes([JSONWebTokenAuthentication, SessionAuthentication, BasicAuthentication])
 @permission_classes([IsAuthenticated])
-def all_services(request):
+def get_all_services(request):
     if request.method == 'GET':
         services = Service.objects.all()
         serializer = ServiceSerializer(services, many=True)
@@ -34,19 +36,22 @@ def all_services(request):
             return Response({"message": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
         try:
             service = serializer.save()
-            return Response(data = {'pk': service.pk},status=status.HTTP_201_CREATED)
+            return Response(data = {'id': service.pk},status=status.HTTP_201_CREATED)
         except:
             return Response(serializer.errors, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 @swagger_auto_schema(methods=['PUT'], request_body=ServiceSerializer, responses={**swagResp.commonResponses, **swagResp.getResponse(ServiceSerializer)},
-                     tags=['service'], )
-@swagger_auto_schema(methods=['GET', 'DELETE'], responses={**swagResp.commonResponses, **swagResp.getResponse(ServiceSerializer)},)
+                     tags=['service'], operation_summary="Update an Express Cuts Service")
+@swagger_auto_schema(methods=['GET'], responses={**swagResp.commonResponses, **swagResp.getResponse(ServiceSerializer)},
+                    tags=['service'], operation_summary="Get an Express Cuts Service")
+@swagger_auto_schema(methods=['DELETE'], responses={**swagResp.commonResponses, **swagResp.getResponse(ServiceSerializer)},
+                    tags=['service'], operation_summary="Delete an Express Cuts Service")
 @api_view(['GET', 'PUT', 'DELETE'])
-@authentication_classes([SessionAuthentication, BasicAuthentication])
+@authentication_classes([JSONWebTokenAuthentication, SessionAuthentication, BasicAuthentication])
 @permission_classes([IsAuthenticated])
-def service_views(request, pk):
+def get_service_views(request, pk):
     try:
         service_obj = Service.objects.get(pk=pk)
     except Service.DoesNotExist:

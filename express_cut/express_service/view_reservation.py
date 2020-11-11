@@ -2,6 +2,7 @@ from .models import User, Reservation
 from .serializers import  ReservationSerializer
 from rest_framework.response import Response
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
+from rest_framework_jwt.authentication import JSONWebTokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from .permissions import Permissions, ReservationPermissions
 from rest_framework import status
@@ -12,10 +13,14 @@ from .swagger_models import SwagParmDef
 
 
 @swagger_auto_schema(methods=['PUT'], request_body=ReservationSerializer,
-                     responses={**swagResp.commonResponses, **swagResp.getResponse(ReservationSerializer)}, tags=['reservation'], )
-@swagger_auto_schema(methods=['GET', 'DELETE'], responses={**swagResp.commonResponses, **swagResp.getResponse(ReservationSerializer)},)
+                     responses={**swagResp.commonResponses, **swagResp.getResponse(ReservationSerializer)}, 
+                     tags=['reservation'], operation_summary="Update an Express Cuts Reservation")
+@swagger_auto_schema(methods=['GET'], responses={**swagResp.commonResponses, **swagResp.getResponse(ReservationSerializer)},
+                     tags=['reservation'], operation_summary="Get an Express Cuts Reservation")
+@swagger_auto_schema(methods=['DELETE'], responses={**swagResp.commonResponses, **swagResp.getResponse(ReservationSerializer)},
+                     tags=['reservation'], operation_summary="Delete an Express Cuts Reservation")
 @api_view(['GET', 'PUT', 'DELETE'])
-@authentication_classes([SessionAuthentication, BasicAuthentication])
+@authentication_classes([JSONWebTokenAuthentication, SessionAuthentication, BasicAuthentication])
 @permission_classes([IsAuthenticated])
 def reservation_views(request, pk):
     try:
@@ -45,11 +50,11 @@ def reservation_views(request, pk):
 
 
 @swagger_auto_schema(methods=['POST'], request_body=ReservationSerializer, responses=swagResp.commonPOSTResponses,
-                     tags=['reservation'], )
-@swagger_auto_schema(methods=['GET'], responses={**swagResp.commonResponses,
-                                                           **swagResp.getResponse(ReservationSerializer)},)
+                     tags=['reservation'], operation_summary="Create an Express Cuts Reservation")
+@swagger_auto_schema(methods=['GET'], responses={**swagResp.commonResponses, **swagResp.getResponse(ReservationSerializer)},
+                     tags=['reservation'], operation_summary="Get an Express Cuts Reservation")
 @api_view(['POST', 'GET'])
-@authentication_classes([SessionAuthentication, BasicAuthentication])
+@authentication_classes([JSONWebTokenAuthentication, SessionAuthentication, BasicAuthentication])
 @permission_classes([IsAuthenticated])
 def reservation_general(request):
     if request.method == 'POST':
@@ -57,8 +62,8 @@ def reservation_general(request):
             return Response(status=status.HTTP_403_FORBIDDEN)
         serializer = ReservationSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status.HTTP_201_CREATED)
+            reservation = serializer.save()
+            return Response(data = {'id': reservation.pk}, status = status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     elif request.method == 'GET':
@@ -72,9 +77,9 @@ def reservation_general(request):
 
 @swagger_auto_schema(methods=['GET'], responses={**swagResp.commonResponses,
                                                            **swagResp.getResponse(ReservationSerializer)},
-                     tags=['reservation'], manual_parameters=[SwagParmDef.reservation_status])
+                     tags=['stylist'], manual_parameters=[SwagParmDef.reservation_status], operation_summary="Get all Reservations on a Stylist by Status")
 @api_view(['GET'])
-@authentication_classes([SessionAuthentication, BasicAuthentication])
+@authentication_classes([JSONWebTokenAuthentication, SessionAuthentication, BasicAuthentication])
 @permission_classes([IsAuthenticated])
 def reservations_by_stylist(request, stylist_id):
     if request.method == 'GET':
@@ -94,8 +99,8 @@ def reservations_by_stylist(request, stylist_id):
 
 
 @swagger_auto_schema(methods=['DELETE'],
-                     responses={**swagResp.commonResponses,}, tags=['reservation'], )
-@authentication_classes([SessionAuthentication, BasicAuthentication])
+                     responses={**swagResp.commonResponses,}, tags=['reservation'], operation_summary="Cancel an Express Cuts Reservation")
+@authentication_classes([JSONWebTokenAuthentication, SessionAuthentication, BasicAuthentication])
 @permission_classes([IsAuthenticated])
 @api_view(['DELETE'])
 def cancel_reservation(request, pk):
