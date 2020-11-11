@@ -3,9 +3,10 @@
 # Path params
 
 # Responses go here
+from drf_yasg import openapi
 
 
-class SwagResponses():
+class SwagResponses:
     createResponse = {201: 'Successfully created.'}
 
     @staticmethod
@@ -25,3 +26,6 @@ class SwagResponses():
     commonPOSTResponses = {**createResponse, **invalidResponse, **unAuthorizedResponse, **notPermittedResponse,
                            **internalErrorResponse}
 
+
+class SwagParmDef:
+    reservation_status = openapi.Parameter('status', openapi.IN_QUERY, description="Status of the reservation", type=openapi.TYPE_STRING)

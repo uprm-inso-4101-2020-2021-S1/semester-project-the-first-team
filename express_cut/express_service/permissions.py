@@ -100,3 +100,18 @@ class ReservationPermissions(Permissions):
     def DELETE_permissions(self, request, obj):
         return self.has_manager_permission(request)
 
+    def GET_all_by_stylist(self, request, stylist_id):
+        if request.user.is_authenticated and self.has_manager_permission(request):
+            return True
+        elif request.user.is_authenticated and self.has_stylist_permission(request) and request.user.pk == stylist_id.pk:
+            return True
+        return False
+
+    def CANCEL_permissions(self, request, obj):
+        if request.user.is_authenticated and self.has_manager_permission(request):
+            return True
+        elif request.user.is_authenticated and self.has_client_permission(request) and \
+                request.user.pk == obj.customer.pk:
+            return True
+        return self.has_manager_permission(request)
+
