@@ -1,0 +1,85 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: express-cuts-backend
+  labels:
+    app: rest-api
+    role: backend
+    group: express-cuts
+spec:
+  selector:
+    matchLabels:
+      app: rest-api
+      role: backend
+      group: express-cuts
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: rest-api
+        role: backend
+        group: express-cuts
+    spec:
+      restartPolicy: Always
+      containers:
+      - name: express-api
+        image: isaacrivriv/express-cuts-rest-api:phase2
+        imagePullPolicy: Always
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "250m"
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+        ports:
+        - containerPort: 8000
+        env:
+        - name: DATABASE_NAME
+          valueFrom:
+            secretKeyRef:
+              name:  db-creds
+              key: POSTGRES_DB
+        - name: DATABASE_USER
+          valueFrom:
+            secretKeyRef:
+              name: db-creds
+              key: POSTGRES_USER
+        - name: DATABASE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name:  db-creds
+              key: POSTGRES_PASSWORD
+        - name: DATABASE_HOST
+          valueFrom:
+            secretKeyRef:
+              name: express-secret
+              key: DATABASE_HOST
+        - name: DATABASE_PORT
+          valueFrom:
+            secretKeyRef:
+              name: express-secret
+              key: DATABASE_PORT
+        - name: DJANGO_SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              name: express-secret
+              key: DJANGO_SECRET_KEY
+        - name: DJANGO_ALLOWED_HOSTS
+          valueFrom:
+            secretKeyRef:
+              name: express-secret
+              key: DJANGO_ALLOWED_HOSTS
+        - name: DJANGO_CORS_ORIGIN_WHITELIST
+          valueFrom:
+            secretKeyRef:
+              name: express-secret
+              key: DJANGO_CORS_ORIGIN_WHITELIST
+        - name: GENERATE_TEST_DATA
+          value: "true"
+        - name: CORS_ALLOW_ALL
+          value: "true"
+        - name: DEBUG
+          value: "true"
+        
