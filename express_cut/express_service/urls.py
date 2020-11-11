@@ -19,7 +19,7 @@ schema_view = get_schema_view(
 
 urlpatterns = [
     path('', views.index, name='index'),
-    path('user', views.all_users),
+    path('user', views.get_all_users),
     path('user/<int:pk>', views.users_views),
     path('user/signup', views.user_signup_view),
     path('user/login', obtain_jwt_token),
@@ -34,11 +34,11 @@ urlpatterns = [
     path('reservation/<int:pk>', view_reservation.reservation_views),
     path('reservation/<int:pk>/cancel', view_reservation.cancel_reservation),
 
-    path('stylist', role_view.get_all_stylists),
+    path('stylist', view_role.get_all_stylists),
     path('stylist/<int:stylist_id>/reservation', view_reservation.reservations_by_stylist),
-    path('stylist/available', role_view.get_all_available_stylists),
-    path('customer', role_view.get_all_customers),
-    path('manager', role_view.get_all_managers),
+    path('stylist/available', view_role.get_all_available_stylists),
+    path('customer', view_role.get_all_customers),
+    path('manager', view_role.get_all_managers),
 ]
 
 # Stylist_urlpatterns = [

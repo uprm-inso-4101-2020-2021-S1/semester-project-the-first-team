@@ -128,7 +128,7 @@ SWAGGER_SETTINGS = {
 }
 
 JWT_AUTH = {
-    'JWT_EXPIRATION_DELTA': datetime.timedelta(seconds=min(60*10,int(os.getenv("JWT_EXPIRATION_TIME")))),
+    'JWT_EXPIRATION_DELTA': datetime.timedelta(seconds=int(os.getenv("JWT_EXPIRATION_TIME"))),
     'JWT_RESPONSE_PAYLOAD_HANDLER':
     'express_service.views.jwt_response_payload_handler',
 }

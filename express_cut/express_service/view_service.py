@@ -36,7 +36,7 @@ def get_all_services(request):
             return Response({"message": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
         try:
             service = serializer.save()
-            return Response(data = {'pk': service.pk},status=status.HTTP_201_CREATED)
+            return Response(data = {'id': service.pk},status=status.HTTP_201_CREATED)
         except:
             return Response(serializer.errors, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)

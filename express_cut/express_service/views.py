@@ -34,7 +34,7 @@ def user_signup_view(request):
         return Response(status=status.HTTP_403_FORBIDDEN)
     if request.method == 'POST':
         user = serializer.save()
-        return Response(data = {'pk': user.pk}, status=status.HTTP_201_CREATED)
+        return Response(data = {'id': user.pk}, status=status.HTTP_201_CREATED)
     return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
@@ -43,7 +43,7 @@ def user_signup_view(request):
 @api_view(['GET', ])
 @authentication_classes([JSONWebTokenAuthentication, SessionAuthentication, BasicAuthentication])
 @permission_classes([IsAuthenticated])
-def all_users(request):
+def get_all_users(request):
     """
     Return a list of all users in the system.
     """
@@ -119,7 +119,7 @@ def schedule_views(request):
             return Response({"message": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
         try:
             schedule = serializer.save()
-            return Response(data={"pk": schedule.pk}, status=status.HTTP_201_CREATED)
+            return Response(data={"id": schedule.pk}, status=status.HTTP_201_CREATED)
         except:
             return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
