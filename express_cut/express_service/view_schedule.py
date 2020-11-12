@@ -76,7 +76,7 @@ def schedule_views_put(request, pk):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     elif request.method == 'PUT':
-        if not DailySchedule().POST_PUT_DELETE_permissions(request):
+        if not DailySchedulePermissions().POST_PUT_DELETE_permissions(request):
             return Response(status=status.HTTP_403_FORBIDDEN)
         data = request.data
         serializer = DailyScheduleSerializer(schedule, data)
