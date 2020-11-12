@@ -27,7 +27,7 @@ function App() {
     // Getting hardcoded user from backend.
     try {
       console.log("Logging in");
-      const userPk = 2;
+      const userPk = 3;
       console.log("current domain: " + backendDomain);
       console.log("Sending REquest: " + backendDomain + "user/" + userPk);
       let userInfoResponse = await axios.get(backendDomain + "user/" + userPk, {

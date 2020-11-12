@@ -23,7 +23,7 @@ function ScheduleManagementView(props) {
 
   useEffect(() => {
     if (stylists) {
-      getSchedules();
+      getSchedules(todayAt7);
     }
   }, [stylists]);
 
@@ -33,6 +33,20 @@ function ScheduleManagementView(props) {
     setShowModal(true);
     setShowEditModal(false);
     setActiveEvent({ start, end, title: "" });
+  };
+
+  const getLastSundayAndSaturday = (date) => {
+    var lastSun = new Date(
+      date.getFullYear(),
+      date.getMonth(),
+      date.getDate() - date.getDay()
+    );
+    var nextSat = new Date(
+      lastSun.getFullYear(),
+      lastSun.getMonth(),
+      lastSun.getDate() + 6
+    );
+    return [lastSun, nextSat];
   };
 
   const showEditBlockModal = (event) => {
@@ -49,7 +63,7 @@ function ScheduleManagementView(props) {
   ) => {
     return (
       newDate.toDateString() === existingDate.toDateString() &&
-      newUserID == existingUserID
+      newUserID === existingUserID
     );
   };
 
@@ -84,40 +98,49 @@ function ScheduleManagementView(props) {
     return [dateString, startTimeString, endTimeString];
   };
 
-  const getSchedules = async () => {
-    let keepLooping = true;
-    let scheduleNum = 1;
-    let schedulesArray = [];
-
+  const getSchedules = async (date) => {
     if (!stylists) {
       return;
     }
-    while (keepLooping) {
-      try {
-        let response = await axios.get(
-          props.backendDomain + "schedule/" + scheduleNum,
-          {
-            headers: {
-              Authorization: `basic ${sessionStorage.getItem("authToken")}`,
-            },
-          }
-        );
-        schedulesArray.push(response.data);
 
-        // TODO: UPDATE THIS WHEN WE GET BETTER ERROR HANDLING.
-        if (response.data.message) {
-          keepLooping = false;
-        } else if (stylists) {
-          scheduleNum = scheduleNum + 1;
+    let [sunday, saturday] = getLastSundayAndSaturday(date);
+    let sundayDateString =
+      sunday.getFullYear() +
+      "-" +
+      (sunday.getMonth() > 8
+        ? sunday.getMonth() + 1
+        : "0" + sunday.getMonth() + 1) +
+      "-" +
+      (sunday.getDate() > 9 ? sunday.getDate() : "0" + sunday.getDate());
+
+    let saturdayDateString =
+      saturday.getFullYear() +
+      "-" +
+      (saturday.getMonth() > 8
+        ? saturday.getMonth() + 1
+        : "0" + saturday.getMonth() + 1) +
+      "-" +
+      (saturday.getDate() > 9 ? saturday.getDate() : "0" + saturday.getDate());
+
+    try {
+      let response = await axios.get(
+        props.backendDomain +
+          "schedule?start_date=" +
+          sundayDateString +
+          "&end_date=" +
+          saturdayDateString,
+        {
+          headers: {
+            Authorization: `basic ${sessionStorage.getItem("authToken")}`,
+          },
         }
-      } catch (error) {
-        keepLooping = false;
-        console.log(error);
-        // window.alert("Something went wrong fetching the schedule.");
+      );
+      if (stylists) {
+        await addScheduleToEvents(response.data);
       }
-    }
-    if (stylists) {
-      await addScheduleToEvents(schedulesArray);
+    } catch (error) {
+      console.log(error);
+      window.alert("Something went wrong fetching the schedule.");
     }
   };
 
@@ -126,7 +149,7 @@ function ScheduleManagementView(props) {
     let eventEnd = null;
     let selectedStylist = null;
     let tempEvent = {};
-    let tempEvents = Array.from(events);
+    let tempEvents = [];
 
     // Build and Push every timeslot for every schedule object in provided array.
     for (const scheduleObjKey in schedulesArray) {
@@ -164,7 +187,6 @@ function ScheduleManagementView(props) {
             parentID: scheduleObj.id,
           };
           tempEvents.push(tempEvent);
-          console.log(tempEvent);
         }
       }
     }
@@ -203,7 +225,6 @@ function ScheduleManagementView(props) {
       // display blocks after successfull post...
       if (responseData.id) {
         tempEvent.parentID = responseData.id;
-        console.log(tempEvent);
         let tempEvents = events;
         tempEvents.push(tempEvent);
       }
@@ -224,7 +245,6 @@ function ScheduleManagementView(props) {
     let responseData = null;
     if (checkEventsArr.length === 0) {
       // POST event
-      console.log("POSTING new event.");
       // todo: return new schedule object id
       responseData = await postNewEvent(
         dateString,
@@ -234,7 +254,6 @@ function ScheduleManagementView(props) {
       );
     } else {
       // PUT EVENT WITH OTHERS.
-      console.log("PUTTING new event.");
       responseData = await putNewEvent(
         dateString,
         startTimeString,
@@ -242,14 +261,6 @@ function ScheduleManagementView(props) {
         userID,
         checkEventsArr[0].parentID
       );
-
-      // // Until proper route is added for above commented method, using existing method.
-      // responseData = await postNewEvent(
-      //   dateString,
-      //   startTimeString,
-      //   endTimeString,
-      //   userID
-      // );
     }
     return responseData;
   };
@@ -266,7 +277,6 @@ function ScheduleManagementView(props) {
       setStylists(
         Array.isArray(response.data) ? response.data : [response.data]
       );
-      console.log(response.data);
     } catch (error) {
       console.log(error);
       window.alert("Could not fetch stylists from backend.");
@@ -281,8 +291,6 @@ function ScheduleManagementView(props) {
     userID,
     parentID
   ) => {
-    console.log("Need to implement complicated Putting logic.");
-    let success = false;
     try {
       // First, get schedule object that matches the event.
       let response = await axios.get(
@@ -294,6 +302,7 @@ function ScheduleManagementView(props) {
         }
       );
 
+      // Ensure schedule received is the proper one.
       let scheduleObj = response.data;
       if (!scheduleObj.stylist === userID || !scheduleObj.date === dateString) {
         window.alert(
@@ -301,13 +310,15 @@ function ScheduleManagementView(props) {
         );
         return null;
       }
-      // Then, add the strings to the timeslots
+
+      // Then, add the new timeslot
       let tempTimeslot = {
         start_time: startTimeString,
         end_time: endTimeString,
       };
       scheduleObj.timeslots.push(tempTimeslot);
 
+      // Issue PUT request.
       let putResponse = await axios.put(
         props.backendDomain + "schedule/" + parentID,
         scheduleObj,
@@ -317,18 +328,14 @@ function ScheduleManagementView(props) {
           },
         }
       );
-      console.log("response from PUT: " + putResponse.data);
-      return parentID;
 
-      // Finally, issue PUT.
-      success = true;
+      return { id: parentID };
     } catch (error) {
       console.log(error);
       window.alert(
         "Something went wrong updating the schedules for the selected day."
       );
     }
-    return success;
   };
 
   const postNewEvent = async (
@@ -353,7 +360,6 @@ function ScheduleManagementView(props) {
           },
         }
       );
-      // console.log(response.data);
       return response.data;
     } catch (error) {
       console.log(error);
@@ -374,6 +380,7 @@ function ScheduleManagementView(props) {
           },
         }
       );
+
       response.data.timeslots = response.data.timeslots.filter(
         (timeslot) =>
           !activeEvent.start.toString().includes(timeslot.start_time) &&
@@ -381,9 +388,19 @@ function ScheduleManagementView(props) {
       );
 
       if (response.data.timeslots.length > 0) {
-        // TODO: ISSUE PUT TO BACKEND.
+        // ISSUE PUT TO BACKEND.
+        let putResponse = await axios.put(
+          props.backendDomain + "schedule/" + response.data.id,
+          response.data,
+          {
+            headers: {
+              Authorization: `basic ${sessionStorage.getItem("authToken")}`,
+            },
+          }
+        );
       } else {
-        console.log("deleting from backend...");
+        // Issue DELETE to backend.
+
         let response = await axios.delete(
           props.backendDomain + "schedule/" + activeEvent.parentID,
           {
@@ -393,12 +410,13 @@ function ScheduleManagementView(props) {
           }
         );
       }
-
+      // Remove event object from those being displayed.
       setEvents(events.filter((event) => event !== activeEvent));
     } catch (error) {
       console.log(error);
       window.alert("Could not delete the selected event.");
     }
+    // Disable modal.
     setShowModal(false);
   };
 
@@ -422,6 +440,7 @@ function ScheduleManagementView(props) {
         events={events}
         defaultView={Views.WEEK}
         scrollToTime={todayAt7}
+        onNavigate={getSchedules}
         // TODO: add componenets of diff colors for all stylists.
         onSelectEvent={(event) => showEditBlockModal(event)}
         onSelectSlot={showStylistSelectionModal}
