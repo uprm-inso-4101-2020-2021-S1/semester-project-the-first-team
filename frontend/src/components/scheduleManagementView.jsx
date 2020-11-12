@@ -161,8 +161,10 @@ function ScheduleManagementView(props) {
               " " +
               selectedStylist[0].last_name,
             stylist: selectedStylist[0].id,
+            parentID: scheduleObj.id,
           };
           tempEvents.push(tempEvent);
+          console.log(tempEvent);
         }
       }
     }
@@ -191,6 +193,7 @@ function ScheduleManagementView(props) {
         selectedStylist[0].first_name + " " + selectedStylist[0].last_name;
       tempEvent.stylist = userID;
 
+      // TODO: ADD PARENTID FROM RESPONSE.
       let success = await createEventInBackend(
         tempEvent.start,
         tempEvent.end,
@@ -219,6 +222,7 @@ function ScheduleManagementView(props) {
     if (checkEventsArr.length === 0) {
       // POST event
       console.log("POSTING new event.");
+      // todo: return new schedule object id
       return postNewEvent(dateString, startTimeString, endTimeString, userID);
     } else {
       // PUT EVENT WITH OTHERS.
@@ -298,6 +302,7 @@ function ScheduleManagementView(props) {
           },
         }
       );
+      console.log(response.data);
       return true;
     } catch (error) {
       console.log(error);
