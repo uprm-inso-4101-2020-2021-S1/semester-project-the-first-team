@@ -8,7 +8,7 @@ import Col from "react-bootstrap/Col";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faClock } from "@fortawesome/free-solid-svg-icons";
 
-import "./../style/appointmentModal.scss";
+import "../../style/appointmentModal.scss";
 
 const AppointmentModal = ({
   show,
