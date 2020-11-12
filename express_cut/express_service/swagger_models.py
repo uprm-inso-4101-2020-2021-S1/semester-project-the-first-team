@@ -28,4 +28,10 @@ class SwagResponses:
 
 
 class SwagParmDef:
-    reservation_status = openapi.Parameter('status', openapi.IN_QUERY, description="Status of the reservation", type=openapi.TYPE_STRING)
+    reservation_status = openapi.Parameter('status', openapi.IN_QUERY, description="Status of the reservation",
+                                           type=openapi.TYPE_STRING)
+    schedule_start_date = openapi.Parameter('start_date', openapi.IN_QUERY,
+                                            description="Date of the youngest schedule possible.",
+                                            type=openapi.FORMAT_DATE)
+    schedule_end_date = openapi.Parameter('end_date', openapi.IN_QUERY,
+                                          description="Date of the oldest schedule possible.", type=openapi.FORMAT_DATE)

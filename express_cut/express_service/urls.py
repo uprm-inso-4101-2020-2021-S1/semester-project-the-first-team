@@ -1,5 +1,5 @@
 from django.urls import path
-from . import views, view_service, view_role, view_reservation
+from . import views, view_service, view_role, view_reservation, view_schedule
 from django.conf.urls import url
 from rest_framework.urlpatterns import format_suffix_patterns
 from rest_framework import permissions
@@ -24,8 +24,9 @@ urlpatterns = [
     path('user/signup', views.user_signup_view),
     path('user/login', obtain_jwt_token),
     
-    path('schedule', views.schedule_views),
-    path('schedule/<int:pk>', views.schedule_views_put),
+    path('schedule', view_schedule.schedule_views),
+    path('schedule/<int:pk>', view_schedule.schedule_views_put),
+    path('stylist/<int:stylist_id>/schedule', view_schedule.get_all_schedule_by_stylist),
 
     path('service', view_service.get_all_services),
     path('service/<int:pk>', view_service.get_service_views),
