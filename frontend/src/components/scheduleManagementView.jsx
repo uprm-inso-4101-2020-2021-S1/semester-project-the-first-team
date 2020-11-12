@@ -194,14 +194,16 @@ function ScheduleManagementView(props) {
       tempEvent.stylist = userID;
 
       // TODO: ADD PARENTID FROM RESPONSE.
-      let success = await createEventInBackend(
+      let responseData = await createEventInBackend(
         tempEvent.start,
         tempEvent.end,
         userID
       );
 
       // display blocks after successfull post...
-      if (success) {
+      if (responseData.id) {
+        tempEvent.parentID = responseData.id;
+        console.log(tempEvent);
         let tempEvents = events;
         tempEvents.push(tempEvent);
       }
@@ -219,19 +221,37 @@ function ScheduleManagementView(props) {
     let checkEventsArr = events.filter((event) =>
       doesStylistScheduleExist(startTime, event.start, userID, event.stylist)
     );
+    let responseData = null;
     if (checkEventsArr.length === 0) {
       // POST event
       console.log("POSTING new event.");
       // todo: return new schedule object id
-      return postNewEvent(dateString, startTimeString, endTimeString, userID);
+      responseData = await postNewEvent(
+        dateString,
+        startTimeString,
+        endTimeString,
+        userID
+      );
     } else {
       // PUT EVENT WITH OTHERS.
       console.log("PUTTING new event.");
-      // return putNewEvent(dateString, startTimeString, endTimeString, userID);
+      responseData = await putNewEvent(
+        dateString,
+        startTimeString,
+        endTimeString,
+        userID,
+        checkEventsArr[0].parentID
+      );
 
-      // Until proper route is added for above commented method, using existing method.
-      return postNewEvent(dateString, startTimeString, endTimeString, userID);
+      // // Until proper route is added for above commented method, using existing method.
+      // responseData = await postNewEvent(
+      //   dateString,
+      //   startTimeString,
+      //   endTimeString,
+      //   userID
+      // );
     }
+    return responseData;
   };
 
   // Requesting Methods ==============================================================
@@ -258,17 +278,48 @@ function ScheduleManagementView(props) {
     dateString,
     startTimeString,
     endTimeString,
-    userID
+    userID,
+    parentID
   ) => {
     console.log("Need to implement complicated Putting logic.");
     let success = false;
     try {
       // First, get schedule object that matches the event.
+      let response = await axios.get(
+        props.backendDomain + "schedule/" + parentID,
+        {
+          headers: {
+            Authorization: `basic ${sessionStorage.getItem("authToken")}`,
+          },
+        }
+      );
+
+      let scheduleObj = response.data;
+      if (!scheduleObj.stylist === userID || !scheduleObj.date === dateString) {
+        window.alert(
+          "Wrong schedule received from backend; cannot update schedule."
+        );
+        return null;
+      }
       // Then, add the strings to the timeslots
-      let tempTimelsot = {
+      let tempTimeslot = {
         start_time: startTimeString,
         end_time: endTimeString,
       };
+      scheduleObj.timeslots.push(tempTimeslot);
+
+      let putResponse = await axios.put(
+        props.backendDomain + "schedule/" + parentID,
+        scheduleObj,
+        {
+          headers: {
+            Authorization: `basic ${sessionStorage.getItem("authToken")}`,
+          },
+        }
+      );
+      console.log("response from PUT: " + putResponse.data);
+      return parentID;
+
       // Finally, issue PUT.
       success = true;
     } catch (error) {
@@ -302,8 +353,8 @@ function ScheduleManagementView(props) {
           },
         }
       );
-      console.log(response.data);
-      return true;
+      // console.log(response.data);
+      return response.data;
     } catch (error) {
       console.log(error);
       window.alert("Could not create the schedule. Please try again later.");
@@ -311,9 +362,43 @@ function ScheduleManagementView(props) {
     }
   };
 
-  const deleteEvent = () => {
+  const deleteEvent = async () => {
     // TODO: send data to backend.
-    setEvents(events.filter((event) => event !== activeEvent));
+    try {
+      // First, get schedule object that matches the event.
+      let response = await axios.get(
+        props.backendDomain + "schedule/" + activeEvent.parentID,
+        {
+          headers: {
+            Authorization: `basic ${sessionStorage.getItem("authToken")}`,
+          },
+        }
+      );
+      response.data.timeslots = response.data.timeslots.filter(
+        (timeslot) =>
+          !activeEvent.start.toString().includes(timeslot.start_time) &&
+          !activeEvent.end.toString().includes(timeslot.end_time)
+      );
+
+      if (response.data.timeslots.length > 0) {
+        // TODO: ISSUE PUT TO BACKEND.
+      } else {
+        console.log("deleting from backend...");
+        let response = await axios.delete(
+          props.backendDomain + "schedule/" + activeEvent.parentID,
+          {
+            headers: {
+              Authorization: `basic ${sessionStorage.getItem("authToken")}`,
+            },
+          }
+        );
+      }
+
+      setEvents(events.filter((event) => event !== activeEvent));
+    } catch (error) {
+      console.log(error);
+      window.alert("Could not delete the selected event.");
+    }
     setShowModal(false);
   };
 
