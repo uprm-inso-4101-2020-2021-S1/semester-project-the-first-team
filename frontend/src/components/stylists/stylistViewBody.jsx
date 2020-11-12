@@ -9,7 +9,7 @@ import StatsView from "./statsView";
 import ViewUsersComponent from "./viewUsersComponent";
 import ManageServicesView from "./manageServicesView";
 
-import "./../style/stylistViewBody.scss";
+import "../../style/stylistViewBody.scss";
 const path = "/stylists";
 
 class StylistViewBody extends Component {

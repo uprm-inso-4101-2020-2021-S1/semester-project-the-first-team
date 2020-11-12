@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Sidebar from "./components/Sidebar";
-import StylistView from "./components/stylistView";
-import Customer from "./components/Customer";
+import StylistView from "./components/stylists/stylistView";
+import Customer from "./components/customers/Customer";
 
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import { faHome, faConciergeBell } from "@fortawesome/free-solid-svg-icons";
@@ -10,8 +10,8 @@ import axios from "axios";
 
 function App() {
   // TODO: UPDATE THIS DURING DEPLOYMENT OR GET FROM OTHER FILE.
-  // const backendDomain = "http://localhost:8000/";
-  const backendDomain = window._env_.REST_API_URL.toString();
+   const backendDomain = "http://localhost:8000/";
+  //const backendDomain = window._env_.REST_API_URL.toString();
   // TODO: Get auth token (username:password) from login page and save here in session storage.
   sessionStorage.setItem(
     "authToken",

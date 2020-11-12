@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import ServiceCard from "./serviceCard";
-import "./../style/stylistViewBody.scss";
+import "../../style/stylistViewBody.scss";
 
 const tempappointment = {
   profilePic:

@@ -1,6 +1,6 @@
 import React, { Fragment, useState, useEffect } from "react";
 import AppointmentModal from "./appointmentModal";
-import "./../style/queue.scss";
+import "../../style/queue.scss";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faClock } from "@fortawesome/free-solid-svg-icons";

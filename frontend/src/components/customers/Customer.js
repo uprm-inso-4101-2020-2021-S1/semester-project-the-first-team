@@ -1,9 +1,9 @@
 import React, { useState } from "react";
-import Sidebar from "./Sidebar";
+import Sidebar from "../Sidebar";
 import { CustomerSidebarItems } from "./CustomerSidebarItems";
 import CustomerReservation from "./CustomerReservation";
 import { Route, useRouteMatch } from "react-router-dom";
-import "../style/customer.scss";
+import "../../style/customer.scss";
 
 function Customer() {
   const [sidebarItems] = useState(CustomerSidebarItems);
