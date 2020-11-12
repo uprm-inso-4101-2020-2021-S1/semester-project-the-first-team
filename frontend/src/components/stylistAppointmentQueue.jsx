@@ -41,9 +41,11 @@ function StylistAppointmentQueue(props) {
   const setNextAppointment = (appointments) => {
     // Sort elements by the soonest appointment time first.
     appointments.sort(function (a, b) {
-      return a.appTime.valueOf() - b.appTime.valueOf();
+      let aStart = new Date(a.date + "T" + a.startTime);
+      let bStart = new Date(b.date + "T" + b.startTime);
+      return aStart.valueOf() - bStart.valueOf();
     });
-    props.changeHeaderCard(appointments[0]);
+    props.changeHeaderCard(appointments[0].customer);
     return appointments;
   };
 
@@ -81,7 +83,10 @@ function StylistAppointmentQueue(props) {
         }
       );
       console.log(response.data);
-      setAppointments(response.data);
+      let appointmentsWithUsersInfo = await getUserInfo(response.data);
+      console.log("Got all user info!");
+      console.log(appointmentsWithUsersInfo);
+      setAppointments(setNextAppointment(appointmentsWithUsersInfo));
     } catch (error) {
       console.log(error);
       window.alert("Could not fetch appointments.");
@@ -93,6 +98,32 @@ function StylistAppointmentQueue(props) {
     //   username: "Fanola Winona",
     //   appTime: new Date(2020, 9, 12, 17, 0),
     // });
+  };
+
+  const getUserInfo = async (appointmentArr) => {
+    let customerID = null;
+    console.log("GEtting user info...");
+    for (const appIndex in appointmentArr) {
+      customerID = appointmentArr[appIndex].customer;
+      console.log("For user ", customerID);
+      try {
+        let response = await axios.get(
+          props.backendDomain + "user/" + customerID,
+          {
+            headers: {
+              Authorization: `basic ${sessionStorage.getItem("authToken")}`,
+            },
+          }
+        );
+        appointmentArr[appIndex].customer = response.data;
+      } catch (error) {
+        console.log(error);
+        window.alert(
+          "Could not fetch customer information for a received reservation."
+        );
+      }
+    }
+    return appointmentArr;
   };
 
   const selectStylistQueueDropdown = () => {
@@ -157,6 +188,7 @@ function StylistAppointmentQueue(props) {
     //                   : "Waiting"
     return "On Time";
   };
+
   return (
     <div className="queue-div">
       {selectStylistQueueDropdown()}
