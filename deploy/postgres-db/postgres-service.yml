@@ -1,0 +1,19 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: express-cuts-database
+  labels:
+    app: postgres
+    role: db
+    group: express-cuts
+spec:
+  type: NodePort 
+  ports:
+  - port: 5432
+    protocol: TCP
+    name: http
+  selector:
+    app: postgres
+    role: db
+    group: express-cuts

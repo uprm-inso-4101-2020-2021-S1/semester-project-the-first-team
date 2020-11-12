@@ -4,6 +4,7 @@ from .models import User
 from .serializers import StylistSerializer, CustomerSerializer, ManagerSerializer
 from rest_framework.response import Response
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
+from rest_framework_jwt.authentication import JSONWebTokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from .permissions import Permissions
 from rest_framework import status
@@ -12,11 +13,12 @@ from drf_yasg.utils import swagger_auto_schema
 from .swagger_models import SwagResponses as swagResp
 import datetime
 
-@swagger_auto_schema(methods=['GET'], responses={**swagResp.commonResponses, **swagResp.getResponse(StylistSerializer)}, tags=['stylist'], )
+@swagger_auto_schema(methods=['GET'], responses={**swagResp.commonResponses, **swagResp.getResponse(StylistSerializer)}, 
+                    tags=['stylist'], operation_summary="Get All Express Cuts Stylists")
 @api_view(['GET'])
-@authentication_classes([SessionAuthentication, BasicAuthentication])
+@authentication_classes([JSONWebTokenAuthentication, SessionAuthentication, BasicAuthentication])
 @permission_classes([IsAuthenticated])
-def all_stylists(request):
+def get_all_stylists(request):
     if request.method == 'GET':
         stylists = User.objects.filter(role__exact=User.STYLIST)
         serializer = StylistSerializer(stylists, many=True)
@@ -24,11 +26,12 @@ def all_stylists(request):
     return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-@swagger_auto_schema(methods=['GET'], responses={**swagResp.commonResponses, **swagResp.getResponse(StylistSerializer)}, tags=['stylist'], )
+@swagger_auto_schema(methods=['GET'], responses={**swagResp.commonResponses, **swagResp.getResponse(StylistSerializer)}, 
+                    tags=['stylist'], operation_summary="Get All Express Cuts Stylists Available Today")
 @api_view(['GET'])
-@authentication_classes([SessionAuthentication, BasicAuthentication])
+@authentication_classes([JSONWebTokenAuthentication, SessionAuthentication, BasicAuthentication])
 @permission_classes([IsAuthenticated])
-def all_available_stylists(request):
+def get_all_available_stylists(request):
     if request.method == 'GET':
         stylists = User.objects.filter(dailyschedule__date=datetime.date.today())
         serializer = StylistSerializer(stylists, many=True)
@@ -36,11 +39,12 @@ def all_available_stylists(request):
     return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-@swagger_auto_schema(methods=['GET'], responses={**swagResp.commonResponses, **swagResp.getResponse(CustomerSerializer)}, tags=['customer'], )
+@swagger_auto_schema(methods=['GET'], responses={**swagResp.commonResponses, **swagResp.getResponse(CustomerSerializer)}, 
+                    tags=['customer'], operation_summary="Get All Express Cuts Customers")
 @api_view(['GET'])
-@authentication_classes([SessionAuthentication, BasicAuthentication])
+@authentication_classes([JSONWebTokenAuthentication, SessionAuthentication, BasicAuthentication])
 @permission_classes([IsAuthenticated])
-def all_customers(request):
+def get_all_customers(request):
     if not Permissions.has_manager_permission(request):
         return Response(status=status.HTTP_403_FORBIDDEN)
 
@@ -51,11 +55,12 @@ def all_customers(request):
     return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-@swagger_auto_schema(methods=['GET'], responses={**swagResp.commonResponses, **swagResp.getResponse(ManagerSerializer)}, tags=['manager'], )
+@swagger_auto_schema(methods=['GET'], responses={**swagResp.commonResponses, **swagResp.getResponse(ManagerSerializer)}, 
+                    tags=['manager'], operation_summary="Get All Express Cuts Managers")
 @api_view(['GET'])
-@authentication_classes([SessionAuthentication, BasicAuthentication])
+@authentication_classes([JSONWebTokenAuthentication, SessionAuthentication, BasicAuthentication])
 @permission_classes([IsAuthenticated])
-def all_managers(request):
+def get_all_managers(request):
     if not Permissions.has_manager_permission(request):
         return Response(status=status.HTTP_403_FORBIDDEN)
 

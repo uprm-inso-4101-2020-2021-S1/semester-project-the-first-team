@@ -56,8 +56,8 @@ public class RestAPIUserSteps {
 	@Then("^the stylist (.*) should be added to the database$")
 	public void the_stylist_should_be_created_and_added_to_the_database(String stylistJsonData) throws Throwable {
 		ObjectMapper mapper = new ObjectMapper();
-		String pk = Integer.toString(++testStartUserNumber);
-		WebTarget localTarget = RestAPICommonSteps.target.path(userPath+"/"+pk);
+		String id = Integer.toString(++testStartUserNumber);
+		WebTarget localTarget = RestAPICommonSteps.target.path(userPath+"/"+id);
 		Response resp = localTarget
 			.request(MediaType.APPLICATION_JSON)
 			.accept(MediaType.APPLICATION_JSON)
@@ -67,7 +67,7 @@ public class RestAPIUserSteps {
 		HashMap<String,String> expected=mapper.readValue(stylistJsonData, new TypeReference<Map<String, String>>(){});
 		RestAPICommonSteps.client.close();
 		// Put expected next key created
-		expected.put("pk", pk);
+		expected.put("id", id);
 		// Remove unexpected things from data
 		expected.remove("password");
 		Assert.assertTrue(expected.equals(received));

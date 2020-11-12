@@ -78,8 +78,8 @@ public class RestAPIServiceSteps {
 	@Then("^the service (.*) should be added to the database$")
 	public void the_service_should_be_created_and_added_to_the_database(String serviceData) throws Throwable {
 		ObjectMapper mapper = new ObjectMapper();
-		String pk = Integer.toString(++testStartServiceNumber);
-		WebTarget localTarget = RestAPICommonSteps.target.path(servicePath+"/"+pk);
+		String id = Integer.toString(++testStartServiceNumber);
+		WebTarget localTarget = RestAPICommonSteps.target.path(servicePath+"/"+id);
 		Response resp = localTarget
 			.request(MediaType.APPLICATION_JSON)
 			.accept(MediaType.APPLICATION_JSON)
@@ -89,7 +89,7 @@ public class RestAPIServiceSteps {
 		HashMap<String,String> expected=mapper.readValue(serviceData, new TypeReference<Map<String, String>>(){});
 		RestAPICommonSteps.client.close();
 		// Put expected next key created
-		expected.put("pk", pk);
+		expected.put("id", id);
 		Assert.assertTrue(expected.equals(received));
     }
     
@@ -154,7 +154,7 @@ public class RestAPIServiceSteps {
 		HashMap<String,String> expected=mapper.readValue(serviceData, new TypeReference<Map<String, String>>(){});
 		RestAPICommonSteps.client.close();
 		// Put expected next key created
-		expected.put("pk", serviceId);
+		expected.put("id", serviceId);
 		Assert.assertTrue(expected.equals(received));
 	}
 
@@ -172,7 +172,7 @@ public class RestAPIServiceSteps {
 		HashMap<String,String> expected=mapper.readValue(serviceData, new TypeReference<Map<String, String>>(){});
 		RestAPICommonSteps.client.close();
 		// Put expected next key created
-		expected.put("pk", serviceId);
+		expected.put("id", serviceId);
 		Assert.assertFalse(expected.equals(received));
 	}
 
