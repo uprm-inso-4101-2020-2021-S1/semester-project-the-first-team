@@ -100,69 +100,6 @@ def users_views(request, pk):
     return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-
-
-@swagger_auto_schema(methods=['POST'], request_body=DailyScheduleSerializer, responses=swagResp.commonPOSTResponses,
-                     tags=['dailySchedule'], operation_summary="Create an Express Cuts Schedule")
-@api_view(['POST'])
-@authentication_classes([JSONWebTokenAuthentication, SessionAuthentication, BasicAuthentication])
-@permission_classes([IsAuthenticated])
-def schedule_views(request):
-    if request.method == 'POST':
-        data = request.data
-        serializer = DailyScheduleSerializer(data=data)
-        # Checks if the user logged in is a manager & if it's logged in.
-        if not DailySchedulePermissions().POST_PUT_DELETE_permissions(request):
-            return Response(status=status.HTTP_403_FORBIDDEN)
-        # Checks if you have both a date and a stylist id.
-        if not serializer.is_valid():
-            return Response({"message": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
-        try:
-            schedule = serializer.save()
-            return Response(data={"id": schedule.pk}, status=status.HTTP_201_CREATED)
-        except:
-            return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-
-@swagger_auto_schema(methods=['GET'], responses={**swagResp.commonResponses, **swagResp.getResponse(DailyScheduleSerializer)},
-                     tags=['dailySchedule'], operation_summary="Get an Express Cuts Schedule")
-@swagger_auto_schema(methods=['DELETE'], responses={**swagResp.commonResponses, **swagResp.getResponse(DailyScheduleSerializer)},
-                     tags=['dailySchedule'], operation_summary="Delete an Express Cuts Schedule")
-@swagger_auto_schema(methods=['PUT'], request_body=DailyScheduleSerializer, responses=swagResp.commonPOSTResponses,
-                     tags=['dailySchedule'], operation_summary="Update an Express Cuts Schedule")
-@api_view(['GET', 'PUT', 'DELETE'])
-@authentication_classes([JSONWebTokenAuthentication, SessionAuthentication, BasicAuthentication])
-@permission_classes([IsAuthenticated])
-def schedule_views_put(request, pk):
-    try:
-        schedule = DailySchedule.objects.get(pk=pk)
-    except DailySchedule.DoesNotExist:
-        return Response({'message': 'The daily schedule does not exist.'}, status=status.HTTP_404_NOT_FOUND)
-
-    if request.method == 'GET':
-        serializer = DailyScheduleSerializer(schedule)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-
-    elif request.method == 'PUT':
-        if not DailySchedulePermissions().POST_PUT_DELETE_permissions(request):
-            return Response(status=status.HTTP_403_FORBIDDEN)
-        data = request.data
-        serializer = DailyScheduleSerializer(schedule, data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    elif request.method == 'DELETE':
-        if not DailySchedulePermissions().POST_PUT_DELETE_permissions(request):
-            return Response(status=status.HTTP_403_FORBIDDEN)
-        schedule.delete()
-        return Response({'message': 'Daily Schedule was deleted successfully.'}, status.HTTP_200_OK)
-
-    else:
-        return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-
 def index(request):
     return HttpResponse("Welcome to Express Cuts")
 
