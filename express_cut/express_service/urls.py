@@ -1,10 +1,12 @@
 from django.urls import path
-from . import views, service_view, role_view
+from . import views, view_service, view_role, view_reservation, view_schedule
 from django.conf.urls import url
 from rest_framework.urlpatterns import format_suffix_patterns
 from rest_framework import permissions
+from rest_framework_jwt.views import obtain_jwt_token
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
+
 
 schema_view = get_schema_view(
    openapi.Info(
@@ -17,23 +19,27 @@ schema_view = get_schema_view(
 
 urlpatterns = [
     path('', views.index, name='index'),
-    path('user', views.all_users),
+    path('user', views.get_all_users),
     path('user/<int:pk>', views.users_views),
     path('user/signup', views.user_signup_view),
+    path('user/login', obtain_jwt_token),
+    
+    path('schedule', view_schedule.schedule_views),
+    path('schedule/<int:pk>', view_schedule.schedule_views_put),
+    path('stylist/<int:stylist_id>/schedule', view_schedule.get_all_schedule_by_stylist),
 
-    path('schedule', views.schedule_views),
-    path('schedule/<int:pk>', views.schedule_views_put),
+    path('service', view_service.get_all_services),
+    path('service/<int:pk>', view_service.get_service_views),
 
-    path('service', service_view.all_services),
-    path('service/<int:pk>', service_view.service_views),
+    path('reservation', view_reservation.reservation_general),
+    path('reservation/<int:pk>', view_reservation.reservation_views),
+    path('reservation/<int:pk>/cancel', view_reservation.cancel_reservation),
 
-    path('reservation', views.reservation_general),
-    path('reservation/<int:pk>', views.reservation_views),
-  
-    path('stylist', role_view.all_stylists),
-    path('stylist/available', role_view.all_available_stylists),
-    path('customer', role_view.all_customers),
-    path('manager', role_view.all_managers),
+    path('stylist', view_role.get_all_stylists),
+    path('stylist/<int:stylist_id>/reservation', view_reservation.reservations_by_stylist),
+    path('stylist/available', view_role.get_all_available_stylists),
+    path('customer', view_role.get_all_customers),
+    path('manager', view_role.get_all_managers),
 ]
 
 # Stylist_urlpatterns = [

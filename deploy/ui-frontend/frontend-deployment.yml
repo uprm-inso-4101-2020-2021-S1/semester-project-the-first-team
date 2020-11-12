@@ -1,0 +1,43 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: express-cuts-frontend
+  labels:
+    app: ui
+    role: frontend
+    group: express-cuts
+spec:
+  selector:
+    matchLabels:
+      app: ui
+      role: frontend
+      group: express-cuts
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: ui
+        role: frontend
+        group: express-cuts
+    spec:
+      restartPolicy: Always
+      containers:
+      - name: express-ui
+        image: isaacrivriv/express-cuts-ui:phase2
+        imagePullPolicy: Always
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "250m"
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+        ports:
+        - containerPort: 80
+        env:
+        - name: REST_API_URI
+          valueFrom:
+            secretKeyRef:
+              name:  express-secret-ui
+              key: REST_API_URI

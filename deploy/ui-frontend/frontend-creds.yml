@@ -1,0 +1,12 @@
+---
+apiVersion: v1
+kind: Secret
+stringData:
+  REST_API_URI: "http://express-cuts-backend:8000" # Could change if the stateful set or service is modified
+metadata:
+  name: express-secret-ui
+  labels:
+    app: ui
+    role: frontend
+    group: express-cuts
+type: Opaque

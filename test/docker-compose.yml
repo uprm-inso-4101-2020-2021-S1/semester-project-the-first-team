@@ -33,7 +33,7 @@ services:
     environment:
       - DJANGO_ALLOWED_HOSTS=*
       # - DJANGO_SECRET_KEY="mim-1fbk4#ih!%awlxv17s_a835bpc&djw0y#4@c%&h-*eovba"
-      - DJANGO_CORS_ORIGIN_WHITELIST=*
+      - DJANGO_CORS_ORIGIN_WHITELIST=http://localhost http://*
       - DEBUG=true
       - CORS_ALLOW_ALL=true
 
@@ -47,10 +47,19 @@ services:
       # For initial populating DB
       - GENERATE_TEST_DATA=true
 
-  # ui:
-  #   image: node
-  #   container_name: User-Interface
-    
+  ui:
+    image: express-cuts-ui:latest
+    build:
+      context: ../frontend
+    container_name: express-UI
+    ports:
+      - 8080:80
+    # depends_on:
+    #   rest:
+    #     condition: service_healthy
+    environment:
+      - REST_API_URL=http://rest:8000
+
   tester:
     # Create image from Dockerfile if image not created.
     # In script we should delete the image after testing
