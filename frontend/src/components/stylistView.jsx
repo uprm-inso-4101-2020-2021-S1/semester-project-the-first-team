@@ -12,21 +12,17 @@ class StylistView extends Component {
 
   componentDidMount() {
     this.setState({
-      currUser: {
-        profilePic:
-          "https://images.pexels.com/photos/2552130/pexels-photo-2552130.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
-        username: "Miranda Wrightes",
-        appTime: null,
-      },
+      currUser: JSON.parse(sessionStorage.getItem("user")),
     });
   }
 
   changeHeaderCard(cardInfo) {
+    console.log(cardInfo);
     this.setState({ headerCard: cardInfo });
   }
 
   componentDidUpdate() {
-    if (!this.state.headerCard || !this.state.headerCard.username) {
+    if (!this.state.headerCard || !this.state.headerCard.first_name) {
       this.changeHeaderCard(this.state.currUser);
     }
   }

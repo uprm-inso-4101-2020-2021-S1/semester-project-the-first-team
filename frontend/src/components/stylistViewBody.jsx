@@ -18,12 +18,12 @@ class StylistViewBody extends Component {
     return (
       <div className="stylist-view-container">
         <Switch>
-          <Route path={`${path}/form`}>
+          {/* <Route path={`${path}/form`}>
             <StylistViewForm
               headerCard={this.props.headerCard}
               backendDomain={this.props.backendDomain}
             />
-          </Route>
+          </Route> */}
           <Route path={`${path}/appointments`}>
             <StylistAppointmentQueue
               changeHeaderCard={this.props.changeHeaderCard}

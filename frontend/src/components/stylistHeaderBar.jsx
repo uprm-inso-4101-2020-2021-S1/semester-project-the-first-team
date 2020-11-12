@@ -19,6 +19,7 @@ class StylistHeaderBar extends Component {
             <HeaderBarCard
               headerCard={this.props.headerCard}
               changeHeaderCard={this.props.changeHeaderCard}
+              backendDomain={this.props.backendDomain}
             />
           </span>
         </div>

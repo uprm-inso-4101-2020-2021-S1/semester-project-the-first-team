@@ -31,9 +31,9 @@ class ManageServicesView extends Component {
       .then((response) => {
         let actServ = JSON.parse(JSON.stringify(emptyService));
 
-        // Sort services by pk.
+        // Sort services by id.
         response.data.sort(function (a, b) {
-          return a.pk - b.pk;
+          return a.id - b.id;
         });
 
         this.setState({
@@ -91,7 +91,7 @@ class ManageServicesView extends Component {
       );
     } else {
       // Service Fields deemed valid; proceed with creating service.
-      actServ.pk ? this.putActiveService() : this.postActiveService();
+      actServ.id ? this.putActiveService() : this.postActiveService();
     }
   };
 
@@ -117,7 +117,7 @@ class ManageServicesView extends Component {
     console.log("PUT-ing active Service...");
     axios
       .put(
-        this.props.backendDomain + "service/" + this.state.activeService.pk,
+        this.props.backendDomain + "service/" + this.state.activeService.id,
         this.state.activeService,
         {
           headers: {
@@ -137,7 +137,7 @@ class ManageServicesView extends Component {
 
   deleteActiveService = () => {
     console.log("DELETE-ing active Service...");
-    if (!this.state.activeService.pk) {
+    if (!this.state.activeService.id) {
       console.log(
         "Cannot delete service that is not created; resetting form..."
       );
@@ -146,7 +146,7 @@ class ManageServicesView extends Component {
     } else {
       axios
         .delete(
-          this.props.backendDomain + "service/" + this.state.activeService.pk,
+          this.props.backendDomain + "service/" + this.state.activeService.id,
 
           {
             headers: {
@@ -195,10 +195,9 @@ class ManageServicesView extends Component {
           <form>
             <div>
               <label>
-                Service ID:{" "}
-                {this.state.activeService.pk
-                  ? this.state.activeService.pk
-                  : "N/A"}
+                {this.state.activeService.id
+                  ? "Edit Existing Service"
+                  : "Create New Service"}
               </label>
             </div>
             <div>
@@ -261,7 +260,7 @@ class ManageServicesView extends Component {
             this.state.serviceList.map((srvc) => (
               <div
                 className="service-lst-card card"
-                key={srvc.pk}
+                key={srvc.id}
                 onClick={() => this.setActiveService(srvc)}
               >
                 <div className="service-lst-card-header">
