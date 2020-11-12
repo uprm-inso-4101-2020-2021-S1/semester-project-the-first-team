@@ -31,7 +31,6 @@ function ViewScheduleComponent(props) {
   };
 
   const fetchSchedule = async (date, view) => {
-    //   TODO: update backend calls when new routes implemented.
     if (!props.headerCard.id) {
       return;
     }
@@ -101,7 +100,6 @@ function ViewScheduleComponent(props) {
           },
         }
       );
-      console.log(response.data);
 
       addScheduleToEvents(response.data);
     } catch (error) {
