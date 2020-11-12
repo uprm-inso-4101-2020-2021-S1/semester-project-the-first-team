@@ -1,4 +1,4 @@
-import React, { Component, Fragment, useState, useEffect } from "react";
+import React, { Fragment, useState, useEffect } from "react";
 import { Calendar, momentLocalizer, Views } from "react-big-calendar";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import moment from "moment";
@@ -6,12 +6,9 @@ import ScheduleManagmentModal from "./scheduleManagementModal";
 import axios from "axios";
 
 const localizer = momentLocalizer(moment);
-const stylistNames = ["Eliza", "joanne murr", "Tiffany", "anne"];
-
 var todayAt7 = new Date();
 todayAt7.setHours(7);
 
-// Months in date start at 0-11. yyyy,m-1, dd, hh,mm,ss,ms
 function ScheduleManagementView(props) {
   const [events, setEvents] = useState([]);
   const [showModal, setShowModal] = useState(false);
@@ -19,6 +16,7 @@ function ScheduleManagementView(props) {
   const [activeEvent, setActiveEvent] = useState({});
   const [stylists, setStylists] = useState([]);
 
+  // EFFECTS ==================================================
   useEffect(() => {
     getStylistsFromBackend();
   }, []);
@@ -29,10 +27,62 @@ function ScheduleManagementView(props) {
     }
   }, [stylists]);
 
-  // useEffect(() => {
-  //   let tempEvents = Array.from(events);
-  //   setEvents(tempEvents);
-  // }, [events]);
+  // Non-Requesting Methods ==================================
+
+  const showStylistSelectionModal = ({ start, end }) => {
+    setShowModal(true);
+    setShowEditModal(false);
+    setActiveEvent({ start, end, title: "" });
+  };
+
+  const showEditBlockModal = (event) => {
+    setShowModal(true);
+    setShowEditModal(true);
+    setActiveEvent(event);
+  };
+
+  const doesStylistScheduleExist = (
+    newDate,
+    existingDate,
+    newUserID,
+    existingUserID
+  ) => {
+    return (
+      newDate.toDateString() === existingDate.toDateString() &&
+      newUserID == existingUserID
+    );
+  };
+
+  const extractDateStrings = (startTime, endTime) => {
+    let dateString =
+      startTime.getFullYear() +
+      "-" +
+      (startTime.getMonth() > 8
+        ? startTime.getMonth() + 1
+        : "0" + startTime.getMonth() + 1) +
+      "-" +
+      (startTime.getDate() > 9
+        ? startTime.getDate()
+        : "0" + startTime.getDate());
+    let startTimeString =
+      (startTime.getHours() > 9
+        ? startTime.getHours()
+        : "0" + startTime.getHours()) +
+      ":" +
+      (startTime.getMinutes() > 9
+        ? startTime.getMinutes()
+        : "0" + startTime.getMinutes()) +
+      ":00";
+    let endTimeString =
+      (endTime.getHours() > 9 ? endTime.getHours() : "0" + endTime.getHours()) +
+      ":" +
+      (endTime.getMinutes() > 9
+        ? endTime.getMinutes()
+        : "0" + endTime.getMinutes()) +
+      ":00";
+
+    return [dateString, startTimeString, endTimeString];
+  };
 
   const getSchedules = async () => {
     let keepLooping = true;
@@ -122,36 +172,6 @@ function ScheduleManagementView(props) {
     return true;
   };
 
-  const getStylistsFromBackend = async () => {
-    try {
-      let response = await axios.get(props.backendDomain + "stylist", {
-        headers: {
-          Authorization: `basic ${sessionStorage.getItem("authToken")}`,
-        },
-      });
-
-      setStylists(
-        Array.isArray(response.data) ? response.data : [response.data]
-      );
-      console.log(response.data);
-    } catch (error) {
-      console.log(error);
-      window.alert("Could not fetch stylists from backend.");
-    }
-  };
-
-  const showStylistSelectionModal = ({ start, end }) => {
-    setShowModal(true);
-    setShowEditModal(false);
-    setActiveEvent({ start, end, title: "" });
-  };
-
-  const showEditBlockModal = (event) => {
-    setShowModal(true);
-    setShowEditModal(true);
-    setActiveEvent(event);
-  };
-
   const createEvent = async (e) => {
     // Prevent Default submit/get stylist name.
     e.preventDefault();
@@ -171,8 +191,11 @@ function ScheduleManagementView(props) {
         selectedStylist[0].first_name + " " + selectedStylist[0].last_name;
       tempEvent.stylist = userID;
 
-      // TODO: SEND DATA TO BACKEND.
-      let success = await postEvent(tempEvent.start, tempEvent.end, userID);
+      let success = await createEventInBackend(
+        tempEvent.start,
+        tempEvent.end,
+        userID
+      );
 
       // display blocks after successfull post...
       if (success) {
@@ -183,44 +206,16 @@ function ScheduleManagementView(props) {
     }
   };
 
-  const postEvent = async (startTime, endTime, userID) => {
+  const createEventInBackend = async (startTime, endTime, userID) => {
     // first, separate date from timeslot
-    let dateString =
-      startTime.getFullYear() +
-      "-" +
-      (startTime.getMonth() > 8
-        ? startTime.getMonth() + 1
-        : "0" + startTime.getMonth() + 1) +
-      "-" +
-      (startTime.getDate() > 9
-        ? startTime.getDate()
-        : "0" + startTime.getDate());
-    let startTimeString =
-      (startTime.getHours() > 9
-        ? startTime.getHours()
-        : "0" + startTime.getHours()) +
-      ":" +
-      (startTime.getMinutes() > 9
-        ? startTime.getMinutes()
-        : "0" + startTime.getMinutes()) +
-      ":00";
-    let endTimeString =
-      (endTime.getHours() > 9 ? endTime.getHours() : "0" + endTime.getHours()) +
-      ":" +
-      (endTime.getMinutes() > 9
-        ? endTime.getMinutes()
-        : "0" + endTime.getMinutes()) +
-      ":00";
-    // console.log(dateString);
-    // console.log(startTimeString);
-    // console.log(endTimeString);
-    // then, see if there are other timeslots on this day for a given user, if so, build that request
-    // TODO: check locally received timeslots to see if there is a match.
-    // fist, check if there is any event on a given day for a given stylist.
+    let [dateString, startTimeString, endTimeString] = extractDateStrings(
+      startTime,
+      endTime
+    );
+    // Check the existing events in browser to determine if PUT or POST
     let checkEventsArr = events.filter((event) =>
       doesStylistScheduleExist(startTime, event.start, userID, event.stylist)
     );
-    console.log(checkEventsArr);
     if (checkEventsArr.length === 0) {
       // POST event
       console.log("POSTING new event.");
@@ -228,9 +223,57 @@ function ScheduleManagementView(props) {
     } else {
       // PUT EVENT WITH OTHERS.
       console.log("PUTTING new event.");
+      // return putNewEvent(dateString, startTimeString, endTimeString, userID);
+
+      // Until proper route is added for above commented method, using existing method.
+      return postNewEvent(dateString, startTimeString, endTimeString, userID);
     }
-    // then post or put timeslot.
-    // then get from backend.
+  };
+
+  // Requesting Methods ==============================================================
+  const getStylistsFromBackend = async () => {
+    try {
+      let response = await axios.get(props.backendDomain + "stylist", {
+        headers: {
+          Authorization: `basic ${sessionStorage.getItem("authToken")}`,
+        },
+      });
+
+      setStylists(
+        Array.isArray(response.data) ? response.data : [response.data]
+      );
+      console.log(response.data);
+    } catch (error) {
+      console.log(error);
+      window.alert("Could not fetch stylists from backend.");
+    }
+  };
+
+  // TODO: FINISH METHOD WHEN NEW ROUTE IS CREATED.
+  const putNewEvent = async (
+    dateString,
+    startTimeString,
+    endTimeString,
+    userID
+  ) => {
+    console.log("Need to implement complicated Putting logic.");
+    let success = false;
+    try {
+      // First, get schedule object that matches the event.
+      // Then, add the strings to the timeslots
+      let tempTimelsot = {
+        start_time: startTimeString,
+        end_time: endTimeString,
+      };
+      // Finally, issue PUT.
+      success = true;
+    } catch (error) {
+      console.log(error);
+      window.alert(
+        "Something went wrong updating the schedules for the selected day."
+      );
+    }
+    return success;
   };
 
   const postNewEvent = async (
@@ -255,7 +298,6 @@ function ScheduleManagementView(props) {
           },
         }
       );
-      console.log(response);
       return true;
     } catch (error) {
       console.log(error);
@@ -264,43 +306,15 @@ function ScheduleManagementView(props) {
     }
   };
 
-  const doesStylistScheduleExist = (
-    newDate,
-    existingDate,
-    newUserID,
-    existingUserID
-  ) => {
-    return (
-      newDate.toDateString() === existingDate.toDateString() &&
-      newUserID == existingUserID
-    );
-  };
-
-  const filterEvent = (event) => {
-    const keys1 = Object.keys(event);
-
-    for (let key of keys1) {
-      if (event[key] !== this.state.activeEvent[key]) {
-        // Return true if event being compared is not the currently active event.
-        return true;
-      }
-    }
-
-    return false;
-  };
-
   const deleteEvent = () => {
-    this.setState({
-      events: this.state.events.filter(this.filterEvent),
-    });
-    setShowModal(false);
     // TODO: send data to backend.
+    setEvents(events.filter((event) => event !== activeEvent));
+    setShowModal(false);
   };
 
   return (
     <Fragment>
       {/* Create Schedule Modal */}
-
       <ScheduleManagmentModal
         showModal={showModal}
         showEditModal={showEditModal}

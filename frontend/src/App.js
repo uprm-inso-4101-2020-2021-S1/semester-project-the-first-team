@@ -1,4 +1,4 @@
-import React,{useState, useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import Sidebar from "./components/Sidebar";
 import StylistView from "./components/stylistView";
 import Customer from "./components/Customer";
@@ -9,36 +9,38 @@ import axios from "axios";
 
 function App() {
   // TODO: UPDATE THIS DURING DEPLOYMENT OR GET FROM OTHER FILE.
-  const backendDomain = "http://localhost:8000/";
+  // const backendDomain = "http://localhost:8000/";
+  const backendDomain = window._env_.REST_API_URL.toString();
   // TODO: Get auth token (username:password) from login page and save here in session storage.
   sessionStorage.setItem(
     "authToken",
     new Buffer("Manager:Manager").toString("base64")
   );
 
-  useEffect(()=>{
+  useEffect(() => {
     logInUser();
-  },[])
+  }, [backendDomain]);
 
-  const logInUser=async()=>{
+  const logInUser = async () => {
     //  todo: implement actual log in to get requests.
     // todo: update this to not run every refresh.
     // Getting hardcoded user from backend.
-    try{
-      console.log("Logging in")
-      const userPk=2;
-      let userInfoResponse = await axios.get(backendDomain+"user/"+userPk, {
+    try {
+      console.log("Logging in");
+      const userPk = 2;
+      console.log("current domain: " + backendDomain);
+      console.log("Sending REquest: " + backendDomain + "user/" + userPk);
+      let userInfoResponse = await axios.get(backendDomain + "user/" + userPk, {
         headers: {
           Authorization: `basic ${sessionStorage.getItem("authToken")}`,
-        },});
-      sessionStorage.setItem("user", JSON.stringify(userInfoResponse.data))
-      
-    }catch(error){
-      console.log(error)
-      window.alert("Could not sign in.")
+        },
+      });
+      sessionStorage.setItem("user", JSON.stringify(userInfoResponse.data));
+    } catch (error) {
+      console.log(error);
+      window.alert("Could not sign in.");
     }
-  }
-
+  };
 
   //Delete this later on
   const temp = [

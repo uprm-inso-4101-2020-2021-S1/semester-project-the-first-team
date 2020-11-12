@@ -26,3 +26,7 @@ yarn-error.log*
 package-lock.json
 debug.log
 .vscode/settings.json
+
+# Temporary env files
+/public/env-config.js
+env-config.js
