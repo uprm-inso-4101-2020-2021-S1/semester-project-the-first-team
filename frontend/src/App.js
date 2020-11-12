@@ -5,6 +5,7 @@ import Customer from "./components/Customer";
 
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import { faHome, faConciergeBell } from "@fortawesome/free-solid-svg-icons";
+import Login from "./components/Login";
 
 function App() {
   // TODO: UPDATE THIS DURING DEPLOYMENT OR GET FROM OTHER FILE.
@@ -83,6 +84,7 @@ function App() {
             <StylistView backendDomain={backendDomain} />
           </Route>
           <Route path="/customers" component={Customer} />
+          <Route path="/login" component={Login} />
         </Switch>
       </div>
     </Router>
