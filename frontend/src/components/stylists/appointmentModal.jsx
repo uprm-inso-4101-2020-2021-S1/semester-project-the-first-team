@@ -104,7 +104,7 @@ const AppointmentModal = ({
         <Button variant="danger" onClick={showDelModal}>
           Delete
         </Button>
-        {!localStorage.getItem("activeAppointmentID") && (
+        {!localStorage.getItem("activeAppointment") && (
           <Button
             variant="primary"
             onClick={() => setActiveAppointment(appointment)}

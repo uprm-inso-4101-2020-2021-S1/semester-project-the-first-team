@@ -14,8 +14,10 @@ function StylistView(props) {
 
   const setActiveAppointment = async (appointment) => {
     // TODO: VERIFY THIS IS WORKING AFTER NEW ROUTE.
-    if (!appointment || appointment === "undefined") {
+    console.log(appointment);
+    if (!appointment) {
       sessionStorage.removeItem("activeAppointment");
+      sessionStorage.setItem("t", true);
     } else {
       try {
         let response = await axios.get(

@@ -11,7 +11,7 @@ import {
 import "../../style/card.scss";
 
 const SERVICEICONS = {
-  Shampoo: faSoap,
+  Wash: faSoap,
   Conditioner: faPumpSoap,
   Blower: faWind,
   Manicure: faHandSparkles,
@@ -19,7 +19,7 @@ const SERVICEICONS = {
 };
 
 const BUTTONSTATES = {
-  pending: ["Start", "Delete"],
+  pending: ["Start", ""],
   active: ["Finish", "Stop"],
   finished: ["", "Resume"],
   deleted: ["Restore", ""],
@@ -32,6 +32,9 @@ class ServiceCard extends Component {
     endTime: 0,
   };
 
+  componentDidMount() {
+    console.log(this.props);
+  }
   handlePositiveAction = () => {
     switch (this.state.serviceState) {
       case "pending":
@@ -60,8 +63,8 @@ class ServiceCard extends Component {
   handleNegativeAction = () => {
     switch (this.state.serviceState) {
       case "pending":
-        this.setState({ serviceState: "deleted" });
-        this.props.handleCulmination(this.props.service, 0);
+        // this.setState({ serviceState: "deleted" });
+        // this.props.handleCulmination(this.props.service, 0);
         break;
       case "active":
         this.setState({ serviceState: "pending", startTime: 0 });
@@ -94,8 +97,14 @@ class ServiceCard extends Component {
   render() {
     return (
       <card className={"service-card " + this.state.serviceState}>
-        <FontAwesomeIcon icon={SERVICEICONS[this.props.service]} />
-        <text>{this.props.service}</text>
+        <FontAwesomeIcon
+          icon={
+            SERVICEICONS[this.props.service.serviceName]
+              ? SERVICEICONS[this.props.service.serviceName]
+              : faHandScissors
+          }
+        />
+        <text>{this.props.service.serviceName}</text>
         <div className="btn-div">
           <button
             className={"pos-btn " + this.state.serviceState}

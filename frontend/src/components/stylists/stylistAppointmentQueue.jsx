@@ -80,9 +80,6 @@ function StylistAppointmentQueue(props) {
     setShowDeleteAppointmentModal(false);
   };
 
-  // const target = event.target;
-  //   const stylist = target.value;
-
   const fetchReservationsForUser = async (stylist) => {
     try {
       let response = await axios.get(
@@ -226,7 +223,6 @@ function StylistAppointmentQueue(props) {
   };
 
   const deleteAppointment = async () => {
-    // TODO: REMOVE FROM BACKEND.
     // Remove appointment in the active modal.
     try {
       let response = await axios.delete(
