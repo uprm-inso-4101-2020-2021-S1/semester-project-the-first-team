@@ -6,6 +6,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faClock } from "@fortawesome/free-solid-svg-icons";
 import { Modal, Button } from "react-bootstrap";
 import axios from "axios";
+const defaultProfileImg =
+  "https://images.pexels.com/photos/194446/pexels-photo-194446.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940";
 
 function StylistAppointmentQueue(props) {
   const [showModal, setShowModal] = useState(false);
@@ -20,7 +22,11 @@ function StylistAppointmentQueue(props) {
 
   useEffect(() => {
     if (activeUser.id) {
-      fetchReservationsForUser(activeUser.id);
+      fetchReservationsForUser(activeUser);
+    }
+    // TODO, CHANGE THIS FOR THE PROPER ROLES FOR STYLIST DROPDOWN.
+    if (activeUser.role === 1) {
+      fetchStylists();
     }
   }, []);
 
@@ -39,13 +45,21 @@ function StylistAppointmentQueue(props) {
   }
 
   const setNextAppointment = (appointments) => {
-    // Sort elements by the soonest appointment time first.
-    appointments.sort(function (a, b) {
-      let aStart = new Date(a.date + "T" + a.startTime);
-      let bStart = new Date(b.date + "T" + b.startTime);
-      return aStart.valueOf() - bStart.valueOf();
-    });
-    props.changeHeaderCard(appointments[0].customer);
+    if (appointments.length == 0) {
+      props.changeHeaderCard({});
+    } else {
+      // Sort elements by the soonest appointment time first.
+      appointments.sort(function (a, b) {
+        let aStart = new Date(a.date + "T" + a.startTime);
+        let bStart = new Date(b.date + "T" + b.startTime);
+        return aStart.valueOf() - bStart.valueOf();
+      });
+      let customer = appointments[0].customer;
+      customer.appTime = new Date(
+        appointments[0].date + "T" + appointments[0].startTime
+      );
+      props.changeHeaderCard(appointments[0].customer);
+    }
     return appointments;
   };
 
@@ -69,13 +83,10 @@ function StylistAppointmentQueue(props) {
   // const target = event.target;
   //   const stylist = target.value;
 
-  const fetchReservationsForUser = async (userID) => {
-    console.log("Fetching Appointment Queue for: ", userID);
-    console.log(props);
-    // TODO: ACTUALLY FETCH QUEUE FOR STYLIST.
+  const fetchReservationsForUser = async (stylist) => {
     try {
       let response = await axios.get(
-        props.backendDomain + "stylist/" + userID + "/reservation?status=P",
+        props.backendDomain + "stylist/" + stylist.id + "/reservation?status=P",
         {
           headers: {
             Authorization: `basic ${sessionStorage.getItem("authToken")}`,
@@ -83,27 +94,62 @@ function StylistAppointmentQueue(props) {
         }
       );
       console.log(response.data);
-      let appointmentsWithUsersInfo = await getUserInfo(response.data);
-      console.log("Got all user info!");
-      console.log(appointmentsWithUsersInfo);
-      setAppointments(setNextAppointment(appointmentsWithUsersInfo));
+      if (response.data.length > 0) {
+        let appointmentsWithUsersInfo = await getUserInfo(
+          response.data,
+          stylist
+        );
+        let appointmentsWithServiceInfo = await getServiceInfo(
+          appointmentsWithUsersInfo
+        );
+        console.log(appointmentsWithServiceInfo);
+        setAppointments(setNextAppointment(appointmentsWithServiceInfo));
+      } else {
+        setAppointments([]);
+        props.changeHeaderCard(stylist);
+      }
     } catch (error) {
       console.log(error);
       window.alert("Could not fetch appointments.");
     }
-
-    // props.changeHeaderCard({
-    //   profilePic:
-    //     "https://images.pexels.com/photos/1841819/pexels-photo-1841819.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
-    //   username: "Fanola Winona",
-    //   appTime: new Date(2020, 9, 12, 17, 0),
-    // });
   };
 
-  const getUserInfo = async (appointmentArr) => {
+  const getServiceInfo = async (appointmentArr) => {
+    let serviceID = null;
+    let serviceList = [];
+    let response = {};
+    for (const appIndex in appointmentArr) {
+      serviceList = appointmentArr[appIndex].service;
+      for (const servIndex in serviceList) {
+        serviceID = serviceList[servIndex];
+        response = await axios.get(
+          props.backendDomain + "service/" + serviceID,
+          {
+            headers: {
+              Authorization: `basic ${sessionStorage.getItem("authToken")}`,
+            },
+          }
+        );
+        serviceList[servIndex] = response.data;
+      }
+      appointmentArr[appIndex].estWait = calculateEstDur(serviceList);
+    }
+    return appointmentArr;
+  };
+
+  const calculateEstDur = (serviceList) => {
+    let estDur = 0;
+    for (const servIndex in serviceList) {
+      estDur = estDur + serviceList[servIndex].defaultDuration;
+    }
+    return estDur;
+  };
+
+  const getUserInfo = async (appointmentArr, stylist) => {
     let customerID = null;
     console.log("GEtting user info...");
     for (const appIndex in appointmentArr) {
+      appointmentArr[appIndex].stylist = stylist;
       customerID = appointmentArr[appIndex].customer;
       console.log("For user ", customerID);
       try {
@@ -116,6 +162,10 @@ function StylistAppointmentQueue(props) {
           }
         );
         appointmentArr[appIndex].customer = response.data;
+        appointmentArr[appIndex].customer.profilePic = appointmentArr[appIndex]
+          .customer.profilePic
+          ? appointmentArr[appIndex].customer.profilePic
+          : defaultProfileImg;
       } catch (error) {
         console.log(error);
         window.alert(
@@ -126,38 +176,77 @@ function StylistAppointmentQueue(props) {
     return appointmentArr;
   };
 
-  const selectStylistQueueDropdown = () => {
-    // TODO: UPDATE THIS IF
-    if (activeUser.role === 1 || true) {
-      return (
-        <Fragment>
-          <label style={{ color: "white" }}>Select a stylist: </label>
-          <select
-            className="form-control "
-            name="utype"
-            onChange={(value) => console.log(value)}
-          >
-            <option value="" selected disabled hidden>
-              Choose here
-            </option>
-            {stylists.map((stylist) => (
-              <option value={stylist} key={stylist}>
-                {stylist}
-              </option>
-            ))}
-          </select>
-        </Fragment>
-      );
+  const fetchStylists = async () => {
+    try {
+      let response = await axios.get(props.backendDomain + "stylist", {
+        headers: {
+          Authorization: `basic ${sessionStorage.getItem("authToken")}`,
+        },
+      });
+      setStylists(response.data);
+    } catch (error) {
+      console.log(error);
+      window.alert("Could not fetch stylists for manager dropdown.");
     }
   };
 
-  const deleteAppointment = () => {
+  const handleDropdownChange = (event) => {
+    let dropdownStylistID = event.target.value;
+    let desiredStylist = stylists.filter(
+      (stylist) => stylist.id.toString() === dropdownStylistID.toString()
+    );
+    console.log(desiredStylist);
+
+    fetchReservationsForUser(desiredStylist[0]);
+  };
+
+  const selectStylistQueueDropdown = () => {
+    if (stylists.length === 0) {
+      return <span></span>;
+    }
+    return (
+      <Fragment>
+        <label style={{ color: "white" }}>Select a stylist: </label>
+        <select
+          className="form-control "
+          name="utype"
+          onChange={(event) => handleDropdownChange(event)}
+        >
+          <option value="" selected disabled hidden>
+            Choose here
+          </option>
+          {stylists.map((stylist) => (
+            <option value={stylist.id} key={stylist.id}>
+              {stylist.first_name + " " + stylist.last_name}
+            </option>
+          ))}
+        </select>
+      </Fragment>
+    );
+  };
+
+  const deleteAppointment = async () => {
     // TODO: REMOVE FROM BACKEND.
     // Remove appointment in the active modal.
-    var tempApps = appointments.filter(
-      (appointment) => appointment !== modalAppointment
-    );
-    setAppointments(setNextAppointment(tempApps));
+    try {
+      let response = await axios.delete(
+        props.backendDomain + "reservation/" + modalAppointment.id + "/cancel",
+        {
+          headers: {
+            Authorization: `basic ${sessionStorage.getItem("authToken")}`,
+          },
+        }
+      );
+      console.log(response);
+
+      var tempApps = appointments.filter(
+        (appointment) => appointment !== modalAppointment
+      );
+      setAppointments(setNextAppointment(tempApps));
+    } catch (error) {
+      console.log(error);
+      window.alert("Could not delete the desired event. Try again later.");
+    }
     setShowDeleteAppointmentModal(false);
     setShowModal(false);
   };
@@ -200,10 +289,16 @@ function StylistAppointmentQueue(props) {
         setActiveAppointment={props.setActiveAppointment}
         showDelModal={showDelModal}
         displayTime={displayTime}
+        statusOfAppointment={statusOfAppointment}
       />
       {renderDelAppModal(showDeleteAppointmentModal, hideDelModal)}
       {/* Map queue entries for all elements */}
       <div className="appointment-queue-container">
+        {appointments.length === 0 && (
+          <h2 style={{ color: "white", marginTop: "3rem" }}>
+            No Upcoming Reservations
+          </h2>
+        )}
         {appointments.map((appointment) => (
           <div className="appointment-container" key={appointment.username}>
             <div className="appointment-time-container">
@@ -223,13 +318,17 @@ function StylistAppointmentQueue(props) {
                 <picture>
                   {/* Customer's profile Pic */}
                   <img
-                    src={appointment.profilePic}
+                    src={appointment.customer.profilePic}
                     alt="Appointment Profile"
                   ></img>
                 </picture>
                 <div className="username-div">
                   {/* Customer's display name */}
-                  <p>{appointment.username}</p>
+                  <p>
+                    {appointment.customer.first_name +
+                      " " +
+                      appointment.customer.last_name}
+                  </p>
                 </div>
                 <div className="card-div" />
                 <div className="appointment-info-div">

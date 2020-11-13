@@ -10,7 +10,7 @@ import axios from "axios";
 
 function App() {
   // TODO: UPDATE THIS DURING DEPLOYMENT OR GET FROM OTHER FILE.
-   const backendDomain = "http://localhost:8000/";
+  const backendDomain = "http://localhost:8000/";
   //const backendDomain = window._env_.REST_API_URL.toString();
   // TODO: Get auth token (username:password) from login page and save here in session storage.
   sessionStorage.setItem(
@@ -47,29 +47,17 @@ function App() {
   const temp = [
     { title: "home", path: "/stylists/home", icon: faHome, cName: "nav-text" },
     {
-      title: "Appointments",
-      path: "/stylists/appointments",
+      title: "Reservations",
+      path: "/stylists/reservations",
       icon: faConciergeBell,
       cName: "nav-text",
     },
     {
-      title: "Active Appointment",
-      path: "/stylists/activeappointment",
+      title: "Active Reservation",
+      path: "/stylists/activereservation",
       icon: faConciergeBell,
       cName: "nav-text",
     },
-    // {
-    //   title: "New Stylist",
-    //   path: "/stylists/form/newstylist",
-    //   icon: faConciergeBell,
-    //   cName: "nav-text",
-    // },
-    // {
-    //   title: "Edit Stylist",
-    //   path: "/stylists/form/editstylist",
-    //   icon: faConciergeBell,
-    //   cName: "nav-text",
-    // },
     {
       title: "Manage Schedules",
       path: "/stylists/schedule/manage",

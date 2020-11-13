@@ -18,13 +18,7 @@ class StylistViewBody extends Component {
     return (
       <div className="stylist-view-container">
         <Switch>
-          {/* <Route path={`${path}/form`}>
-            <StylistViewForm
-              headerCard={this.props.headerCard}
-              backendDomain={this.props.backendDomain}
-            />
-          </Route> */}
-          <Route path={`${path}/appointments`}>
+          <Route path={`${path}/reservations`}>
             <StylistAppointmentQueue
               changeHeaderCard={this.props.changeHeaderCard}
               setActiveAppointment={this.props.setActiveAppointment}
@@ -32,7 +26,7 @@ class StylistViewBody extends Component {
               backendDomain={this.props.backendDomain}
             />
           </Route>
-          <Route path={`${path}/activeappointment`}>
+          <Route path={`${path}/activereservation`}>
             <ActiveAppointmentView
               changeHeaderCard={this.props.changeHeaderCard}
               activeAppointment={this.props.activeAppointment}

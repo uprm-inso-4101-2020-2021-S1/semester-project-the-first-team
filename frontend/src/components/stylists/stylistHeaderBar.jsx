@@ -40,8 +40,8 @@ function HeaderBarTitle() {
   return (
     <div className="navbar-brand">
       <Switch>
-        <Route path={`${path}/appointments`}>Next Appointment:</Route>
-        <Route path={`${path}/activeappointment`}>Active Appointment:</Route>
+        <Route path={`${path}/reservations`}>Next Reservations:</Route>
+        <Route path={`${path}/activereservation`}>Active Reservation:</Route>
         <Route path={`${path}/schedule/manage`}>
           Manage Stylist Schedules:
         </Route>

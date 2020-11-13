@@ -29,13 +29,10 @@ class StylistView extends Component {
 
   setActiveAppointment = (appointment) => {
     // this.setState({ activeAppointment: appointment });
-    localStorage.setItem(
-      "activeAppointmentID",
-      appointment.username ? appointment.username : ""
-    );
-    window.location.href = appointment.username
-      ? "/stylists/activeappointment"
-      : "/stylists/appointments";
+    localStorage.setItem("activeAppointment", JSON.stringify(appointment));
+    window.location.href = appointment.id
+      ? "/stylists/activereservation"
+      : "/stylists/reservation";
   };
   //   TODO: HANDLE GETTING DATA BASED ON ROUTES FOR THE HEADERBAR.
 
