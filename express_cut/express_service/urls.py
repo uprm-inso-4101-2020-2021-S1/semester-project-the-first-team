@@ -23,6 +23,7 @@ urlpatterns = [
     path('user/<int:pk>', views.users_views),
     path('user/signup', views.user_signup_view),
     path('user/login', obtain_jwt_token),
+    path('user/current', views.current_user),
     
     path('schedule', view_schedule.schedule_views),
     path('schedule/<int:pk>', view_schedule.schedule_views_put),

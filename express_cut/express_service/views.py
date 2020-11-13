@@ -38,6 +38,19 @@ def user_signup_view(request):
     return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
+@swagger_auto_schema(methods=['GET'], responses={**swagResp.commonResponses, **swagResp.getResponse(GeneralUserSerializer)},
+                     tags=['user'], operation_summary="Get Express Cuts User by their token")
+@api_view(['GET'])
+@authentication_classes([JSONWebTokenAuthentication, SessionAuthentication, BasicAuthentication])
+@permission_classes([IsAuthenticated])
+def current_user(request):
+    if request.method == 'GET':
+        serializer = GeneralUserSerializer(request.user)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+
 @swagger_auto_schema(methods=['GET'], responses={**swagResp.commonResponses, **swagResp.getResponse(GeneralUserSerializer)}, 
                     tags=['user'], operation_summary="Get all Users of Express Cuts")
 @api_view(['GET', ])
