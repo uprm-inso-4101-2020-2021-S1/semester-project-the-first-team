@@ -39,11 +39,7 @@ function StylistView(props) {
             },
           }
         );
-        sessionStorage.setItem(
-          "setActiveResp",
-          JSON.stringify(putResponse.data)
-        );
-        console.log("PUT the service as IP");
+
         sessionStorage.setItem(
           "activeAppointment",
           JSON.stringify(response.data)
