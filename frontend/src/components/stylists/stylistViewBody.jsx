@@ -12,50 +12,45 @@ import ManageServicesView from "./manageServicesView";
 import "../../style/stylistViewBody.scss";
 const path = "/stylists";
 
-class StylistViewBody extends Component {
-  state = {};
-  render() {
-    return (
-      <div className="stylist-view-container">
-        <Switch>
-          <Route path={`${path}/reservations`}>
-            <StylistAppointmentQueue
-              changeHeaderCard={this.props.changeHeaderCard}
-              setActiveAppointment={this.props.setActiveAppointment}
-              activeAppointment={this.props.activeAppointment}
-              backendDomain={this.props.backendDomain}
-            />
-          </Route>
-          <Route path={`${path}/activereservation`}>
-            <ActiveAppointmentView
-              changeHeaderCard={this.props.changeHeaderCard}
-              activeAppointment={this.props.activeAppointment}
-              setActiveAppointment={this.props.setActiveAppointment}
-              backendDomain={this.props.backendDomain}
-            />
-          </Route>
-          <Route path={`${path}/schedule/manage`}>
-            <ScheduleManagementView backendDomain={this.props.backendDomain} />
-          </Route>
-          <Route path={`${path}/schedule`}>
-            <ViewScheduleComponent
-              headerCard={this.props.headerCard}
-              backendDomain={this.props.backendDomain}
-            />
-          </Route>
-          <Route path={`${path}/stats`}>
-            <StatsView backendDomain={this.props.backendDomain} />
-          </Route>
-          <Route path={`${path}/userlist`}>
-            <ViewUsersComponent backendDomain={this.props.backendDomain} />
-          </Route>
-          <Route path={`${path}/manageservices`}>
-            <ManageServicesView backendDomain={this.props.backendDomain} />
-          </Route>
-        </Switch>
-      </div>
-    );
-  }
+function StylistViewBody(props) {
+  return (
+    <div className="stylist-view-container">
+      <Switch>
+        <Route path={`${path}/reservations`}>
+          <StylistAppointmentQueue
+            changeHeaderCard={props.changeHeaderCard}
+            setActiveAppointment={props.setActiveAppointment}
+            backendDomain={props.backendDomain}
+          />
+        </Route>
+        <Route path={`${path}/activereservation`}>
+          <ActiveAppointmentView
+            changeHeaderCard={props.changeHeaderCard}
+            setActiveAppointment={props.setActiveAppointment}
+            backendDomain={props.backendDomain}
+          />
+        </Route>
+        <Route path={`${path}/schedule/manage`}>
+          <ScheduleManagementView backendDomain={props.backendDomain} />
+        </Route>
+        <Route path={`${path}/schedule`}>
+          <ViewScheduleComponent
+            headerCard={props.headerCard}
+            backendDomain={props.backendDomain}
+          />
+        </Route>
+        <Route path={`${path}/stats`}>
+          <StatsView backendDomain={props.backendDomain} />
+        </Route>
+        <Route path={`${path}/userlist`}>
+          <ViewUsersComponent backendDomain={props.backendDomain} />
+        </Route>
+        <Route path={`${path}/manageservices`}>
+          <ManageServicesView backendDomain={props.backendDomain} />
+        </Route>
+      </Switch>
+    </div>
+  );
 }
 
 export default StylistViewBody;

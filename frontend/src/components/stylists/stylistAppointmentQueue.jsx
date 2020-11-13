@@ -271,10 +271,20 @@ function StylistAppointmentQueue(props) {
     );
   };
 
+  const setActiveAppointment = async (appointment) => {
+    let success = await props.setActiveAppointment(appointment);
+    if (success) {
+      window.location.href = "/stylists/activereservation";
+    }
+  };
+
   const statusOfAppointment = (appointment) => {
-    // new Date().valueOf() < appointment.appTime.valueOf()
-    //                   ? "On Time"
-    //                   : "Waiting"
+    // TODO: IMPLEMENT LOGIC HERE.
+
+    let stat = "On Time";
+    if (appointment.status === "IP") {
+      stat = "In Progress";
+    }
     return "On Time";
   };
 
@@ -286,7 +296,7 @@ function StylistAppointmentQueue(props) {
         show={showModal}
         hide={hideModal}
         appointment={modalAppointment}
-        setActiveAppointment={props.setActiveAppointment}
+        setActiveAppointment={setActiveAppointment}
         showDelModal={showDelModal}
         displayTime={displayTime}
         statusOfAppointment={statusOfAppointment}

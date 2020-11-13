@@ -1,59 +1,106 @@
-import React, { Component } from "react";
+import React, { useState, useEffect } from "react";
 import StylistHeaderBar from "./stylistHeaderBar";
 import StylistViewBody from "./stylistViewBody";
+import axios from "axios";
 
-class StylistView extends Component {
-  state = {
-    headerCard: {}, // Stuff for the headercard
-    isManager: false,
-    activeAppointment: {}, // TODO: DELETE THIS, SINCE IT'S ID KEPT IN LOCAL STORAGE.
-    currUser: {},
-  };
+function StylistView(props) {
+  const [headerCard, setHeaderCard] = useState({});
 
-  componentDidMount() {
-    this.setState({
-      currUser: JSON.parse(sessionStorage.getItem("user")),
-    });
-  }
-
-  changeHeaderCard(cardInfo) {
-    console.log(cardInfo);
-    this.setState({ headerCard: cardInfo });
-  }
-
-  componentDidUpdate() {
-    if (!this.state.headerCard || !this.state.headerCard.first_name) {
-      this.changeHeaderCard(this.state.currUser);
+  useEffect(() => {
+    if (!headerCard) {
+      setHeaderCard(sessionStorage.getItem("user"));
     }
-  }
+  }, [headerCard]);
 
-  setActiveAppointment = (appointment) => {
-    // this.setState({ activeAppointment: appointment });
-    localStorage.setItem("activeAppointment", JSON.stringify(appointment));
-    window.location.href = appointment.id
-      ? "/stylists/activereservation"
-      : "/stylists/reservation";
+  const setActiveAppointment = async (appointment) => {
+    // TODO: VERIFY THIS IS WORKING AFTER NEW ROUTE.
+    if (!appointment || appointment === "undefined") {
+      sessionStorage.removeItem("activeAppointment");
+    } else {
+      try {
+        let response = await axios.get(
+          props.backendDomain + "reservation/" + appointment.id,
+          {
+            headers: {
+              Authorization: `basic ${sessionStorage.getItem("authToken")}`,
+            },
+          }
+        );
+
+        response.data.status = "IP";
+
+        console.log(response.data);
+        let putResponse = await axios.put(
+          props.backendDomain + "reservation/" + appointment.id,
+          response.data,
+          {
+            headers: {
+              Authorization: `basic ${sessionStorage.getItem("authToken")}`,
+            },
+          }
+        );
+        sessionStorage.setItem(
+          "setActiveResp",
+          JSON.stringify(putResponse.data)
+        );
+        console.log("PUT the service as IP");
+        sessionStorage.setItem(
+          "activeAppointment",
+          JSON.stringify(response.data)
+        );
+        return true;
+      } catch (error) {
+        console.log(error);
+        window.alert("Something went wrong setting Active Appointment.");
+        return false;
+      }
+    }
   };
-  //   TODO: HANDLE GETTING DATA BASED ON ROUTES FOR THE HEADERBAR.
 
-  render() {
-    return (
-      <div className="body-container">
-        <StylistHeaderBar
-          headerCard={this.state.headerCard}
-          changeHeaderCard={this.changeHeaderCard.bind(this)}
-          backendDomain={this.props.backendDomain}
-        />
-        <StylistViewBody
-          changeHeaderCard={this.changeHeaderCard.bind(this)}
-          setActiveAppointment={this.setActiveAppointment.bind(this)}
-          activeAppointment={this.state.activeAppointment}
-          headerCard={this.state.headerCard}
-          backendDomain={this.props.backendDomain}
-        />
-      </div>
-    );
-  }
+  const fetchActiveAppointment = async () => {
+    try {
+      let activeUser = JSON.parse(sessionStorage.getItem("user"));
+      let response = await axios.get(
+        props.backendDomain +
+          "stylist/" +
+          activeUser.id +
+          "/reservation?status=IP",
+        {
+          headers: {
+            Authorization: `basic ${sessionStorage.getItem("authToken")}`,
+          },
+        }
+      );
+      console.log(response);
+      if (response.data.length > 1) {
+        console.log(
+          "The response received contains more than one appointment. Saving only the first one to session storage..."
+        );
+        setActiveAppointment(response.data[0]);
+      } else if (response.data.length === 0) {
+        setActiveAppointment({});
+      }
+    } catch (error) {
+      console.log(error);
+      window.alert("Could not retrieve active appointment from system.");
+    }
+  };
+
+  return (
+    <div className="body-container">
+      <StylistHeaderBar
+        headerCard={headerCard}
+        changeHeaderCard={setHeaderCard}
+        backendDomain={props.backendDomain}
+      />
+      <StylistViewBody
+        changeHeaderCard={setHeaderCard}
+        setActiveAppointment={setActiveAppointment}
+        headerCard={headerCard}
+        backendDomain={props.backendDomain}
+      />
+    </div>
+  );
 }
 
 export default StylistView;
