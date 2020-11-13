@@ -21,8 +21,16 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+debug.log
+
+.vscode/settings.json
+
 .eslintrc.json
 .prettierrc.json
 package-lock.json
 debug.log
 .vscode/settings.json
+
+# Temporary env files
+/public/env-config.js
+env-config.js

@@ -8,7 +8,7 @@ import {
   faHandScissors,
 } from "@fortawesome/free-solid-svg-icons";
 
-import "./../style/card.scss";
+import "../../style/card.scss";
 
 const SERVICEICONS = {
   Shampoo: faSoap,

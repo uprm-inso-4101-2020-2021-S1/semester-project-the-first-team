@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import HeaderBarClock from "./headerBarClock";
 import HeaderBarCard from "./headerBarCard";
 import { Switch, Route, useRouteMatch } from "react-router";
-import "./../style/stylistHeaderBar.scss";
+import "../../style/stylistHeaderBar.scss";
 
 class StylistHeaderBar extends Component {
   constructor(props) {
@@ -19,6 +19,7 @@ class StylistHeaderBar extends Component {
             <HeaderBarCard
               headerCard={this.props.headerCard}
               changeHeaderCard={this.props.changeHeaderCard}
+              backendDomain={this.props.backendDomain}
             />
           </span>
         </div>

@@ -9,7 +9,7 @@ import StatsView from "./statsView";
 import ViewUsersComponent from "./viewUsersComponent";
 import ManageServicesView from "./manageServicesView";
 
-import "./../style/stylistViewBody.scss";
+import "../../style/stylistViewBody.scss";
 const path = "/stylists";
 
 class StylistViewBody extends Component {
@@ -18,14 +18,18 @@ class StylistViewBody extends Component {
     return (
       <div className="stylist-view-container">
         <Switch>
-          <Route path={`${path}/form`}>
-            <StylistViewForm headerCard={this.props.headerCard} />
-          </Route>
+          {/* <Route path={`${path}/form`}>
+            <StylistViewForm
+              headerCard={this.props.headerCard}
+              backendDomain={this.props.backendDomain}
+            />
+          </Route> */}
           <Route path={`${path}/appointments`}>
             <StylistAppointmentQueue
               changeHeaderCard={this.props.changeHeaderCard}
               setActiveAppointment={this.props.setActiveAppointment}
               activeAppointment={this.props.activeAppointment}
+              backendDomain={this.props.backendDomain}
             />
           </Route>
           <Route path={`${path}/activeappointment`}>
@@ -33,22 +37,26 @@ class StylistViewBody extends Component {
               changeHeaderCard={this.props.changeHeaderCard}
               activeAppointment={this.props.activeAppointment}
               setActiveAppointment={this.props.setActiveAppointment}
+              backendDomain={this.props.backendDomain}
             />
           </Route>
           <Route path={`${path}/schedule/manage`}>
-            <ScheduleManagementView />
+            <ScheduleManagementView backendDomain={this.props.backendDomain} />
           </Route>
           <Route path={`${path}/schedule`}>
-            <ViewScheduleComponent headerCard={this.props.headerCard} />
+            <ViewScheduleComponent
+              headerCard={this.props.headerCard}
+              backendDomain={this.props.backendDomain}
+            />
           </Route>
           <Route path={`${path}/stats`}>
-            <StatsView />
+            <StatsView backendDomain={this.props.backendDomain} />
           </Route>
           <Route path={`${path}/userlist`}>
-            <ViewUsersComponent />
+            <ViewUsersComponent backendDomain={this.props.backendDomain} />
           </Route>
           <Route path={`${path}/manageservices`}>
-            <ManageServicesView />
+            <ManageServicesView backendDomain={this.props.backendDomain} />
           </Route>
         </Switch>
       </div>
