@@ -132,3 +132,8 @@ class ReservationPermissions(Permissions):
         return False
 
 
+    def duration_permissions(self, request, reservation):
+        if request.user.is_authenticated and self.has_stylist_permission(request) and request.user.pk == reservation.stylist.pk:
+            return True
+        return False
+
