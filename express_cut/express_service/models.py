@@ -21,7 +21,7 @@ class User(AbstractUser):
 
 class Service(models.Model):
     serviceName = models.CharField(max_length=50)
-    defaultDuration = models.IntegerField()
+    defaultDuration = models.TimeField()
     description = models.CharField(max_length=200)
 
     def __str__(self):
@@ -41,7 +41,7 @@ class TimeSlot(models.Model):
 
 
 class StylistOfferServices(models.Model):
-    EstimatedTime = models.IntegerField()
+    EstimatedTime = models.TimeField()
     stylist = models.ForeignKey(User, on_delete=models.CASCADE, limit_choices_to={'role': User.STYLIST})
     service = models.ForeignKey(Service, on_delete=models.CASCADE)
 

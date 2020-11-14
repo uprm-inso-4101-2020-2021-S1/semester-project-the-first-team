@@ -109,3 +109,8 @@ class ReservationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Reservation
         fields = "__all__"
+
+
+class EstimateSerializer(serializers.Serializer):
+    stylist = serializers.PrimaryKeyRelatedField(queryset=User.objects.filter(role=User.STYLIST), required=True)
+    services = serializers.PrimaryKeyRelatedField(queryset=Service.objects.all(), many=True, required=True)
