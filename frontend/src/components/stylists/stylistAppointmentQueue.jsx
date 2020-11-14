@@ -17,6 +17,9 @@ function StylistAppointmentQueue(props) {
   );
   const [appointments, setAppointments] = useState([]);
   const [stylists, setStylists] = useState([]);
+  const [noReservationsText, setNoReservationsText] = useState(
+    "Fetching reservations..."
+  );
 
   const activeUser = JSON.parse(sessionStorage.getItem("user"));
 
@@ -82,6 +85,9 @@ function StylistAppointmentQueue(props) {
 
   const fetchReservationsForUser = async (stylist) => {
     try {
+      setNoReservationsText("Fetching reservations...");
+      setAppointments([]);
+
       let response = await axios.get(
         props.backendDomain + "stylist/" + stylist.id + "/reservation?status=P",
         {
@@ -102,7 +108,8 @@ function StylistAppointmentQueue(props) {
         console.log(appointmentsWithServiceInfo);
         setAppointments(setNextAppointment(appointmentsWithServiceInfo));
       } else {
-        setAppointments([]);
+        setNoReservationsText("No reservations at the moment.");
+
         props.changeHeaderCard(stylist);
       }
     } catch (error) {
@@ -252,7 +259,7 @@ function StylistAppointmentQueue(props) {
       <Modal show={show} onHide={hide}>
         <Modal.Header closeButton></Modal.Header>
         <Modal.Body>
-          <div>Are you sure you want to delete this appointment?</div>
+          <div>Are you sure you want to delete this reservation?</div>
         </Modal.Body>{" "}
         <Modal.Footer>
           <Button
@@ -302,7 +309,7 @@ function StylistAppointmentQueue(props) {
       <div className="appointment-queue-container">
         {appointments.length === 0 && (
           <h2 style={{ color: "white", marginTop: "3rem" }}>
-            No Upcoming Reservations
+            {noReservationsText}
           </h2>
         )}
         {appointments.map((appointment) => (

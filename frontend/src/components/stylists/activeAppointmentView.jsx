@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import ServiceCard from "./serviceCard";
+import Modal from "react-bootstrap/Modal";
+import Button from "react-bootstrap/Button";
 import "../../style/stylistViewBody.scss";
 import axios from "axios";
 
@@ -10,15 +12,15 @@ function ActiveAppointmentView(props) {
   const [activeAppointment, setAppointment] = useState({});
   const [serviceDurations, setServiceDurations] = useState({});
   const [showFinish, setShowFinish] = useState(false);
+  const [showDelModal, setShowDelModal] = useState(false);
 
   useEffect(() => {
     let actApp = JSON.parse(sessionStorage.getItem("activeAppointment"));
 
-    if (actApp === "undefined" || !actApp || !actApp.id) {
+    if (actApp === null) {
       console.log("No active appointment found locally.");
       // TODO: REQUEST APPOINTMENT FROM BACKEND.
     } else {
-      // TODO: BUILD APPOINTMENT IF IT'S NOT BUILT.
       buildAppointment(actApp);
     }
   }, []);
@@ -80,48 +82,69 @@ function ActiveAppointmentView(props) {
 
   const handleServiceCulmination = (service, duration) => {
     let currServDurs = serviceDurations;
-    currServDurs[service.id] = duration;
+    currServDurs[service.id] = millisToMinutesAndSeconds(duration);
     if (Object.keys(currServDurs).length === activeAppointment.service.length) {
       var showFinish = true;
       for (const servDur in currServDurs) {
         console.log(currServDurs[servDur]);
 
-        // Using negative values for invalid status, and 0ms for deleted.
-        if (currServDurs[servDur] < 0) {
+        if (currServDurs[servDur] === "00:00:00") {
           showFinish = false;
           break;
         }
       }
       setShowFinish(showFinish);
+      console.log(serviceDurations);
     }
     setServiceDurations(currServDurs);
   };
+
+  function millisToMinutesAndSeconds(duration) {
+    var millis = duration <= 0 ? 0 : duration;
+    var hours = Math.floor(millis / 6000000);
+    var minutes = Math.floor(millis / 60000);
+    var seconds = ((millis % 60000) / 1000).toFixed(0);
+    return (
+      (hours < 10 ? "0" : "") +
+      hours +
+      ":" +
+      (minutes < 10 ? "0" : "") +
+      minutes +
+      ":" +
+      (seconds < 10 ? "0" : "") +
+      seconds
+    );
+  }
 
   const finishReservation = async () => {
     console.log("finishing reservation...");
     try {
       // TODO: UPDATE THIS WITH PROPPER ASSIGNMENT AFTER FINAL ROUTE IS IMPLEMENTED.
       let serviceDurationData = [];
+      let tempServDurOb = {};
+      for (const serviceID in serviceDurations) {
+        tempServDurOb = {
+          service: serviceID,
+          duration: serviceDurations[serviceID],
+        };
+        serviceDurationData.push(tempServDurOb);
+      }
 
-      // let response = await axios.put(
-      //   props.backendDomain +
-      //     "reservation/" +
-      //     activeAppointment.id +
-      //     "/complete",
-      //   serviceDurationData,
-      //   {
-      //     headers: {
-      //       Authorization: `basic ${sessionStorage.getItem("authToken")}`,
-      //     },
-      //   }
-      // );
+      let response = await axios.put(
+        props.backendDomain +
+          "reservation/" +
+          activeAppointment.id +
+          "/complete",
+        serviceDurationData,
+        {
+          headers: {
+            Authorization: `basic ${sessionStorage.getItem("authToken")}`,
+          },
+        }
+      );
 
       // Remove locally stored appointment data.
-      await props.setActiveAppointment(false);
-      localStorage.removeItem("serviceTimes");
-
-      // Redirect to reservation queue.
-      window.location.href = "/stylists/reservations";
+      concludeActiveReservation();
     } catch (error) {
       console.log(error);
       window.alert(
@@ -130,8 +153,63 @@ function ActiveAppointmentView(props) {
     }
   };
 
+  const concludeActiveReservation = async () => {
+    await props.setActiveAppointment(false);
+    localStorage.removeItem("serviceTimes");
+
+    // Redirect to reservation queue.
+    window.location.href = "/stylists/reservations";
+  };
+
+  const cancelActiveReservation = async () => {
+    try {
+      let response = await axios.delete(
+        props.backendDomain + "reservation/" + activeAppointment.id + "/cancel",
+        {
+          headers: {
+            Authorization: `basic ${sessionStorage.getItem("authToken")}`,
+          },
+        }
+      );
+
+      concludeActiveReservation();
+    } catch (error) {
+      console.log(error);
+      window.alert("Could not cancel the reservation. Try again later.");
+    }
+  };
+
+  const cancelReservationModal = () => {
+    return (
+      <Modal
+        show={showDelModal}
+        onHide={() => setShowDelModal(false)}
+        size="lg"
+      >
+        <Modal.Header closeButton>
+          <Modal.Title>Cancel Reservation in Progress</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          Are you sure you want to cancel your active reservation with{" "}
+          {props.appointment
+            ? props.appointment.customer.first_name +
+              " " +
+              props.appointment.customer.last_name
+            : "this person"}
+          ?
+        </Modal.Body>{" "}
+        <Modal.Footer>
+          <Button variant="danger" onClick={cancelActiveReservation}>
+            Delete
+          </Button>
+        </Modal.Footer>
+      </Modal>
+    );
+  };
+
   return (
     <div className="active-appointment-container">
+      {cancelReservationModal()}
       <div className="service-container">
         <h3>Services:</h3>
         <div className="service-card-container">
@@ -165,9 +243,8 @@ function ActiveAppointmentView(props) {
             Finish
           </button>
           <button
-            className="cancel"
-            // TODO: REPLACE WITH ARE YOU SURE MODAL.
-            onClick={() => props.setActiveAppointment(false)}
+            className={activeAppointment.id ? "cancel" : "hidden"}
+            onClick={() => setShowDelModal(true)}
           >
             Cancel
           </button>
