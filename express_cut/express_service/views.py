@@ -1,12 +1,13 @@
 from django.shortcuts import render
 from django.http import HttpResponse
-from .models import User, DailySchedule
-from .serializers import GeneralUserSerializer, SingUpUserSerializer, DailyScheduleSerializer
+from .models import User, DailySchedule, Reservation
+from .serializers import GeneralUserSerializer, SingUpUserSerializer, DailyScheduleSerializer, DurationSerializer
 from rest_framework.response import Response
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 from rest_framework_jwt.authentication import JSONWebTokenAuthentication
 from rest_framework.permissions import IsAuthenticated
-from .permissions import Permissions, SignUpPermissions, UserViewPermissions, DailySchedulePermissions
+from .permissions import Permissions, SignUpPermissions, UserViewPermissions, DailySchedulePermissions, \
+    ReservationPermissions
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from drf_yasg.utils import swagger_auto_schema
@@ -21,7 +22,7 @@ def jwt_response_payload_handler(token, user=None, request=None):
 @swagger_auto_schema(methods=['POST'], request_body=SingUpUserSerializer, responses=swagResp.commonPOSTResponses,
                      tags=['user'], operation_summary="Sign up users for Express Cuts")
 @api_view(['POST'])
-@authentication_classes([SessionAuthentication, BasicAuthentication])
+@authentication_classes([JSONWebTokenAuthentication, SessionAuthentication, BasicAuthentication])
 def user_signup_view(request):
     """
     Signup a users in the system.

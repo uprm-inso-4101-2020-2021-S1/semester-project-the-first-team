@@ -35,12 +35,14 @@ urlpatterns = [
     path('reservation', view_reservation.reservation_general),
     path('reservation/<int:pk>', view_reservation.reservation_views),
     path('reservation/<int:pk>/cancel', view_reservation.cancel_reservation),
+    path('reservation/<int:reservation_id>/complete', view_reservation.complete_reservation),
 
     path('stylist', view_role.get_all_stylists),
     path('stylist/<int:stylist_id>/reservation', view_reservation.reservations_by_stylist),
     path('stylist/available', view_role.get_all_available_stylists),
     path('customer', view_role.get_all_customers),
     path('manager', view_role.get_all_managers),
+
 ]
 
 # Stylist_urlpatterns = [
