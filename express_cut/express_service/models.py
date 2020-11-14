@@ -88,6 +88,6 @@ class Notification(models.Model):
 
 
 class ReservationContainsServices(models.Model):
-    duration = models.TimeField()
     reservation = models.ForeignKey(Reservation, on_delete=models.CASCADE)
     service = models.ForeignKey(Service, on_delete=models.CASCADE)
+    duration = models.TimeField(null=True)
