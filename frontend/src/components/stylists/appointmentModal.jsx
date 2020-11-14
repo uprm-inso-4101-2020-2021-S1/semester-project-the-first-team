@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
 import Container from "react-bootstrap/Container";
@@ -19,6 +19,18 @@ const AppointmentModal = ({
   displayTime,
   statusOfAppointment,
 }) => {
+  const [allowStart, setAllowStart] = useState(false);
+
+  useEffect(() => {
+    let activeAppointment = JSON.parse(
+      sessionStorage.getItem("activeAppointment")
+    );
+
+    let showStart = activeAppointment === null ? true : false;
+    console.log(showStart);
+    setAllowStart(showStart);
+  }, [appointment]);
+
   if (!appointment.customer) {
     return <span></span>;
   }
@@ -104,7 +116,7 @@ const AppointmentModal = ({
         <Button variant="danger" onClick={showDelModal}>
           Delete
         </Button>
-        {!localStorage.getItem("activeAppointment") && (
+        {allowStart && (
           <Button
             variant="primary"
             onClick={() => setActiveAppointment(appointment)}

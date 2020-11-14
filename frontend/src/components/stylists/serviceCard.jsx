@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faSoap,
@@ -25,34 +25,73 @@ const BUTTONSTATES = {
   deleted: ["Restore", ""],
 };
 
-class ServiceCard extends Component {
-  state = {
-    serviceState: "pending",
-    startTime: 0,
-    endTime: 0,
+function ServiceCard(props) {
+  const [serviceState, setServiceState] = useState("pending");
+  const [startTime, setStartTime] = useState(0);
+  const [endTime, setEndTime] = useState(0);
+
+  useEffect(() => {
+    getLocalTimes();
+  }, []);
+
+  useEffect(() => {
+    persistTimes();
+  }, [startTime, endTime]);
+
+  const persistTimes = () => {
+    // Check if there is one in local storage.
+
+    let localTimes = JSON.parse(localStorage.getItem("serviceTimes"));
+    if (!localTimes) {
+      localTimes = {};
+    }
+    localTimes[props.service.id.toString()] = {
+      startTime: startTime,
+      endTime: endTime,
+    };
+    localStorage.setItem("serviceTimes", JSON.stringify(localTimes));
   };
 
-  componentDidMount() {
-    console.log(this.props);
-  }
-  handlePositiveAction = () => {
-    switch (this.state.serviceState) {
+  const getLocalTimes = () => {
+    // Check if there is one in local storage.
+    let localTimes = JSON.parse(localStorage.getItem("serviceTimes"));
+
+    if (localTimes) {
+      console.log(localTimes);
+      let serviceTimes = localTimes[props.service.id.toString()];
+      if (serviceTimes.startTime > 0) {
+        setStartTime(serviceTimes.startTime);
+        setServiceState("active");
+      }
+      if (serviceTimes.endTime > 0) {
+        setEndTime(serviceTimes.endTime);
+        setServiceState("finished");
+        props.handleCulmination(
+          props.service,
+          serviceTimes.endTime - serviceTimes.startTime
+        );
+      }
+    }
+  };
+
+  const handlePositiveAction = () => {
+    switch (serviceState) {
       case "pending":
         var d = new Date();
-        this.setState({ serviceState: "active", startTime: d.getTime() });
+        setServiceState("active");
+        setStartTime(d.getTime());
         break;
       case "active":
         var de = new Date();
-        var end = de.getTime();
-        this.setState({ serviceState: "finished", endTime: end });
-        this.props.handleCulmination(
-          this.props.service,
-          end - this.state.startTime
-        );
+        let end = de.getTime();
+        setServiceState("finished");
+        setEndTime(end);
+
+        props.handleCulmination(props.service, end - startTime);
         break;
       case "deleted":
-        this.setState({ serviceState: "pending" });
-        this.props.handleCulmination(this.props.service, -1);
+        setServiceState("pending");
+        props.handleCulmination(props.service, -1);
         break;
       default:
         console.log("Something went wrong handling positive action.");
@@ -60,18 +99,19 @@ class ServiceCard extends Component {
     }
   };
 
-  handleNegativeAction = () => {
-    switch (this.state.serviceState) {
+  const handleNegativeAction = () => {
+    switch (serviceState) {
       case "pending":
-        // this.setState({ serviceState: "deleted" });
-        // this.props.handleCulmination(this.props.service, 0);
+        // commented out logic since stylist can't remove individual services during appointment.
         break;
       case "active":
-        this.setState({ serviceState: "pending", startTime: 0 });
+        setServiceState("pending");
+        setStartTime(0);
         break;
       case "finished":
-        this.setState({ serviceState: "active", endTime: 0 });
-        this.props.handleCulmination(this.props.service, -1);
+        setServiceState("active");
+        setEndTime(0);
+        props.handleCulmination(props.service, -1);
         break;
       default:
         console.log("Something went wrong handling negative action.");
@@ -79,8 +119,8 @@ class ServiceCard extends Component {
     }
   };
 
-  printDuration() {
-    var duration = this.state.endTime - this.state.startTime;
+  const printDuration = () => {
+    var duration = endTime - startTime;
     var minutes = Math.floor(duration / 60000);
     var seconds = ((duration % 60000) / 1000).toFixed(0);
     console.log(
@@ -92,36 +132,34 @@ class ServiceCard extends Component {
       seconds,
       " seconds."
     );
-  }
+  };
 
-  render() {
-    return (
-      <card className={"service-card " + this.state.serviceState}>
-        <FontAwesomeIcon
-          icon={
-            SERVICEICONS[this.props.service.serviceName]
-              ? SERVICEICONS[this.props.service.serviceName]
-              : faHandScissors
-          }
-        />
-        <text>{this.props.service.serviceName}</text>
-        <div className="btn-div">
-          <button
-            className={"pos-btn " + this.state.serviceState}
-            onClick={this.handlePositiveAction}
-          >
-            {BUTTONSTATES[this.state.serviceState][0]}
-          </button>
-          <button
-            className={"neg-btn " + this.state.serviceState}
-            onClick={this.handleNegativeAction}
-          >
-            {BUTTONSTATES[this.state.serviceState][1]}
-          </button>
-        </div>
-      </card>
-    );
-  }
+  return (
+    <card className={"service-card " + serviceState}>
+      <FontAwesomeIcon
+        icon={
+          SERVICEICONS[props.service.serviceName]
+            ? SERVICEICONS[props.service.serviceName]
+            : faHandScissors
+        }
+      />
+      <text>{props.service.serviceName}</text>
+      <div className="btn-div">
+        <button
+          className={"pos-btn " + serviceState}
+          onClick={handlePositiveAction}
+        >
+          {BUTTONSTATES[serviceState][0]}
+        </button>
+        <button
+          className={"neg-btn " + serviceState}
+          onClick={handleNegativeAction}
+        >
+          {BUTTONSTATES[serviceState][1]}
+        </button>
+      </div>
+    </card>
+  );
 }
 
 export default ServiceCard;

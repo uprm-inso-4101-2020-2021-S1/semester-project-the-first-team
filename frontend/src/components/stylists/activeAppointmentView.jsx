@@ -79,7 +79,6 @@ function ActiveAppointmentView(props) {
   };
 
   const handleServiceCulmination = (service, duration) => {
-    // TODO: SAVE THESE VALUES IN LOCAL STORAGE (AND REMOVE WHEN DONE) TO PERSIST THROUGH REFRESHES.
     let currServDurs = serviceDurations;
     currServDurs[service.id] = duration;
     if (Object.keys(currServDurs).length === activeAppointment.service.length) {
@@ -99,10 +98,36 @@ function ActiveAppointmentView(props) {
   };
 
   const finishReservation = async () => {
-    // TODO: ADD ROUTES AFTER THEY'RE MADE.
     console.log("finishing reservation...");
-    await props.setActiveAppointment(false);
-    window.location.href = "/stylists/reservations";
+    try {
+      // TODO: UPDATE THIS WITH PROPPER ASSIGNMENT AFTER FINAL ROUTE IS IMPLEMENTED.
+      let serviceDurationData = [];
+
+      // let response = await axios.put(
+      //   props.backendDomain +
+      //     "reservation/" +
+      //     activeAppointment.id +
+      //     "/complete",
+      //   serviceDurationData,
+      //   {
+      //     headers: {
+      //       Authorization: `basic ${sessionStorage.getItem("authToken")}`,
+      //     },
+      //   }
+      // );
+
+      // Remove locally stored appointment data.
+      await props.setActiveAppointment(false);
+      localStorage.removeItem("serviceTimes");
+
+      // Redirect to reservation queue.
+      window.location.href = "/stylists/reservations";
+    } catch (error) {
+      console.log(error);
+      window.alert(
+        "Could not submit finished reservation. Please try again later."
+      );
+    }
   };
 
   return (
