@@ -109,3 +109,10 @@ class ReservationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Reservation
         fields = "__all__"
+
+
+class AnotherReservationSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Reservation
+        fields = ['id', 'startTime', 'endTime']
