@@ -79,6 +79,7 @@ function ActiveAppointmentView(props) {
   };
 
   const handleServiceCulmination = (service, duration) => {
+    // TODO: SAVE THESE VALUES IN LOCAL STORAGE (AND REMOVE WHEN DONE) TO PERSIST THROUGH REFRESHES.
     let currServDurs = serviceDurations;
     currServDurs[service.id] = duration;
     if (Object.keys(currServDurs).length === activeAppointment.service.length) {
