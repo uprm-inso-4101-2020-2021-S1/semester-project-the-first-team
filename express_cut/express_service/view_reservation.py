@@ -1,3 +1,5 @@
+import datetime
+
 from .models import User, Reservation, Service
 from .serializers import  ReservationSerializer, DurationSerializer, EstimateSerializer
 from rest_framework.response import Response
@@ -34,7 +36,12 @@ def reservation_views(request, pk):
             return Response(status=status.HTTP_403_FORBIDDEN)
         serializer = ReservationSerializer(obj, data=request.data)
         if serializer.is_valid():
-            serializer.save() #TODO: Handle if this fails
+            endTime = (datetime.datetime.combine(datetime.date.today(),
+                                                 serializer.validated_data['startTime']) +
+                       calculate_estimated_wait_time(serializer.initial_data['service'],
+                                                     serializer.validated_data['stylist'])).time()
+            serializer.validated_data['endTime'] = endTime
+            serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -64,8 +71,13 @@ def reservation_general(request):
             return Response(status=status.HTTP_403_FORBIDDEN)
         serializer = ReservationSerializer(data=request.data)
         if serializer.is_valid():
+            endTime = (datetime.datetime.combine(datetime.date.today(),
+                                                 serializer.validated_data['startTime']) +
+                       calculate_estimated_wait_time(serializer.initial_data['service'],
+                                                     serializer.validated_data['stylist'])).time()
+            serializer.validated_data['endTime'] = endTime
             reservation = serializer.save()
-            return Response(data = {'id': reservation.pk}, status = status.HTTP_201_CREATED)
+            return Response(data={'id': reservation.pk}, status = status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     elif request.method == 'GET':
