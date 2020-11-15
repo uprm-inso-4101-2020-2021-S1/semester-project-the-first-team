@@ -119,6 +119,11 @@ class ReservationSerializer(serializers.ModelSerializer):
         fields = ['id', 'status', 'timestamp', 'date', 'startTime', 'endTime', 'note', 'customer', 'stylist', 'service']
 
 
+class EstimateSerializer(serializers.Serializer):
+    stylist = serializers.PrimaryKeyRelatedField(queryset=User.objects.filter(role=User.STYLIST), required=True)
+    services = serializers.PrimaryKeyRelatedField(queryset=Service.objects.all(), many=True, required=True)
+
+
 class ListDurationSerializer(serializers.ListSerializer):
 
     def update(self, instance, validated_data):

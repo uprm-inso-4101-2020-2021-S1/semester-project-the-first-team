@@ -1,5 +1,5 @@
-from .models import User, Reservation
-from .serializers import ReservationSerializer, DurationSerializer
+from .models import User, Reservation, Service
+from .serializers import  ReservationSerializer, DurationSerializer, EstimateSerializer
 from rest_framework.response import Response
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 from rest_framework_jwt.authentication import JSONWebTokenAuthentication
@@ -10,6 +10,8 @@ from rest_framework.decorators import api_view, permission_classes, authenticati
 from drf_yasg.utils import swagger_auto_schema
 from .swagger_models import SwagResponses as swagResp
 from .swagger_models import SwagParmDef
+from .utils import calculate_estimated_wait_time
+
 
 
 @swagger_auto_schema(methods=['PUT'], request_body=ReservationSerializer,
@@ -120,6 +122,22 @@ def cancel_reservation(request, pk):
     return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
+@swagger_auto_schema(methods=['PUT'], request_body=EstimateSerializer,
+                     responses={**swagResp.commonResponses, **swagResp.getResponse(EstimateSerializer)},
+                     tags=['reservation'], operation_summary="Calculate Estimated Service Duration")
+@api_view(['PUT'])
+@authentication_classes([JSONWebTokenAuthentication, SessionAuthentication, BasicAuthentication])
+@permission_classes([IsAuthenticated])
+def estimate_reservation_time(request):
+    if request.method == 'PUT':
+        serializer = EstimateSerializer(data=request.data)
+        if serializer.is_valid():
+            estimate = calculate_estimated_wait_time(serializer.initial_data['services'],
+                                                     serializer.validated_data['stylist'])
+            return Response({"time_estimate": str(estimate)}, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+      
+      
 @swagger_auto_schema(methods=['PUT'], request_body=DurationSerializer, responses=swagResp.commonPOSTResponses,
                      tags=['reservation'], operation_summary="Completes reservation and updates service(s) duration.")
 @api_view(['PUT'])
