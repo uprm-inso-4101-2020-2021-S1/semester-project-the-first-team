@@ -24,8 +24,7 @@ def calculate_estimated_wait_time(services_id: List[int], stylist: User) -> date
     if stylist_estimate['estimate']:
         estimate_time = stylist_estimate['estimate']
     if default_estimate['estimate']:
-        estimate_time = estimate_time + default_estimate['estimate']
-
+        estimate_time = estimate_time + datetime.timedelta(minutes=default_estimate['estimate'])
     total_minutes = int(estimate_time.seconds / 60)
     if total_minutes % 5:
         estimate_time = estimate_time + datetime.timedelta(minutes=(5 - (total_minutes % 5)))

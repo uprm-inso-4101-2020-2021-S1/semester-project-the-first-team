@@ -21,7 +21,7 @@ class User(AbstractUser):
 
 class Service(models.Model):
     serviceName = models.CharField(max_length=50)
-    defaultDuration = models.TimeField()
+    defaultDuration = models.IntegerField()
     description = models.CharField(max_length=200)
 
     def __str__(self):
