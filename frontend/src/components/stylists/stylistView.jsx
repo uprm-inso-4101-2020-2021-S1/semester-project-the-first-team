@@ -2,15 +2,17 @@ import React, { useState, useEffect } from "react";
 import StylistHeaderBar from "./stylistHeaderBar";
 import StylistViewBody from "./stylistViewBody";
 import axios from "axios";
+let user = JSON.parse(sessionStorage.getItem("user"));
 
 function StylistView(props) {
-  const [headerCard, setHeaderCard] = useState({});
+  const [headerCard, setHeaderCard] = useState(user);
 
   useEffect(() => {
-    if (!headerCard) {
-      setHeaderCard(sessionStorage.getItem("user"));
+    if (!user) {
+      user = JSON.parse(sessionStorage.getItem("user"));
+      setHeaderCard(user);
     }
-  }, [headerCard]);
+  }, []);
 
   const setActiveAppointment = async (appointment) => {
     // TODO: VERIFY THIS IS WORKING AFTER NEW ROUTE.
