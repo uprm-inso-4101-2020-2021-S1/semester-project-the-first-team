@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import User, Service, DailySchedule, Reservation, TimeSlot, ReservationContainsServices
+from .models import User, Service, DailySchedule, Reservation, TimeSlot, ReservationContainsServices, Feedback
 from django.contrib.auth.hashers import make_password
 
 
@@ -150,4 +150,8 @@ class DurationSerializer(serializers.ModelSerializer):
         list_serializer_class = ListDurationSerializer
 
 
+class FeedbackSerializer(serializers.ModelSerializer):
 
+    class Meta:
+        model = Feedback
+        fields = "__all__"

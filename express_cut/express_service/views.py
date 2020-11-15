@@ -1,13 +1,14 @@
 from django.shortcuts import render
 from django.http import HttpResponse
-from .models import User, DailySchedule, Reservation
-from .serializers import GeneralUserSerializer, SingUpUserSerializer, DailyScheduleSerializer, DurationSerializer
+from .models import User, DailySchedule, Reservation, Feedback
+from .serializers import GeneralUserSerializer, SingUpUserSerializer, DailyScheduleSerializer, DurationSerializer, \
+    FeedbackSerializer
 from rest_framework.response import Response
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 from rest_framework_jwt.authentication import JSONWebTokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from .permissions import Permissions, SignUpPermissions, UserViewPermissions, DailySchedulePermissions, \
-    ReservationPermissions
+    ReservationPermissions, FeedbackPermissions
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from drf_yasg.utils import swagger_auto_schema
@@ -111,6 +112,43 @@ def users_views(request, pk):
             return Response(status=status.HTTP_403_FORBIDDEN)
         usr_obj.delete()
         return Response(status=status.HTTP_200_OK)
+    return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+@swagger_auto_schema(methods=['POST'], request_body=FeedbackSerializer, responses=swagResp.commonPOSTResponses,
+                     tags=['feedback'], operation_summary="Creates feedback.")
+@swagger_auto_schema(methods=['GET'], responses={**swagResp.commonResponses, **swagResp.getResponse(FeedbackSerializer)},
+                     tags=['feedback'], operation_summary="Get Feedback of given reservation.")
+@api_view(['POST', 'GET'])
+@authentication_classes([JSONWebTokenAuthentication, SessionAuthentication, BasicAuthentication])
+def feedback_views(request, reservation_id):
+    try:
+        obj = Reservation.objects.get(pk=reservation_id)
+        request.data['reservation'] = reservation_id
+    except Reservation.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    if request.method == 'POST':
+        if not FeedbackPermissions().POST_permissions(request, obj):
+            return Response(status=status.HTTP_403_FORBIDDEN)
+        data = request.data
+        serializer = FeedbackSerializer(data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    elif request.method == 'GET':
+        try:
+            feedback = Feedback.objects.get(reservation=reservation_id)
+            request.data['reservation'] = reservation_id
+        except Reservation.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        if not FeedbackPermissions().GET_permissions(request, obj):
+            return Response(status=status.HTTP_403_FORBIDDEN)
+        serializer = FeedbackSerializer(feedback)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
     return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 

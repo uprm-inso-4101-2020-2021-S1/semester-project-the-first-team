@@ -43,6 +43,8 @@ urlpatterns = [
     path('customer', view_role.get_all_customers),
     path('manager', view_role.get_all_managers),
 
+    path('feedback/<int:reservation_id>', views.feedback_views),
+
 ]
 
 # Stylist_urlpatterns = [
