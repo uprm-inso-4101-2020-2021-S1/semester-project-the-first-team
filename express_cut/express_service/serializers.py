@@ -4,6 +4,8 @@ from rest_framework.exceptions import ValidationError
 from .models import User, Service, DailySchedule, Reservation, TimeSlot, ReservationContainsServices
 from django.contrib.auth.hashers import make_password
 import datetime
+from .utils import calculate_estimated_wait_time
+
 
 class GeneralUserSerializer(serializers.ModelSerializer):
     id = serializers.PrimaryKeyRelatedField(read_only=True)
@@ -127,7 +129,7 @@ class ReservationSerializer(serializers.ModelSerializer):
         try:
             schedule = stylist.dailyschedule_set.get(date=date)
         except DailySchedule.DoesNotExist:
-            raise ValidationError("Unable to find a slot for the given date.")
+            raise ValidationError("Stylist doesn't have a work schedule for the day.")
         time_slot = schedule.timeslots.filter(start_time__lte=startTime, end_time__gte=endTime)
         # TODO: what if there is more than one schedule for a stylist in one day (this shouldn't happen)
         if not time_slot:
@@ -135,20 +137,27 @@ class ReservationSerializer(serializers.ModelSerializer):
         reservations = Reservation.objects.filter(stylist=stylist.pk, date=date)
         if not reservations:
             return None
-        conflict_reserv = reservations.filter(startTime__gt=endTime, startTime__lt=startTime)
+        conflict_reserv = reservations.filter(startTime__gte=startTime, startTime__lt=endTime)
         if conflict_reserv:
             raise ValidationError("Unable to find a slot for the given timeframe.")
-        conflict_reserv = reservations.filter(endTime__gt=endTime, endTime__lt=startTime)
+        conflict_reserv = reservations.filter(endTime__gte=startTime, endTime__lt=endTime)
         if conflict_reserv:
             raise ValidationError("Unable to find a slot for the given timeframe.")
 
-    def create(self, validated_data):
+    def update(self, instance, validated_data):
         startTime = validated_data['startTime']
-        endTime = (datetime.datetime.combine(datetime.date.today(), startTime) + datetime.timedelta(minutes=30)).time()
-        #TODO: Call estimated_reservation_time
+        endTime = validated_data['endTime']
         self.validate_reservation(startTime, endTime, validated_data['date'],
                                   validated_data['stylist'])
-        return Reservation(**validated_data)
+        return super(ReservationSerializer, self).update(instance, validated_data)
+
+    def create(self, validated_data):
+        startTime = validated_data['startTime']
+        endTime = validated_data['endTime']
+        self.validate_reservation(startTime, endTime, validated_data['date'],
+                                  validated_data['stylist'])
+        return super(ReservationSerializer, self).create(validated_data)
+
 
 class EstimateSerializer(serializers.Serializer):
     stylist = serializers.PrimaryKeyRelatedField(queryset=User.objects.filter(role=User.STYLIST), required=True)
