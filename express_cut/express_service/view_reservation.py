@@ -171,4 +171,28 @@ def complete_reservation(request, reservation_id):
             obj.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    else: return Response({'Fail': 'This is bad'}, status.HTTP_400_BAD_REQUEST)
+    return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+@swagger_auto_schema(methods=['PUT'], responses=swagResp.commonPOSTResponses,
+                     tags=['reservation'], operation_summary="Start the process of a reservation.")
+@api_view(['PUT'])
+@authentication_classes([JSONWebTokenAuthentication, SessionAuthentication, BasicAuthentication])
+@permission_classes([IsAuthenticated])
+def start_reservation(request, reservation_id):
+    if request.method == 'PUT':
+        try:
+            reservation = Reservation.objects.get(pk=reservation_id)
+        except Reservation.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        if not ReservationPermissions().duration_permissions(request, reservation):
+            return Response(status=status.HTTP_403_FORBIDDEN)
+        if reservation.status == Reservation.PENDING:
+            reservation.status = Reservation.IN_PROCESS
+            reservation.save()
+            return Response(status=status.HTTP_200_OK)
+        return Response({"error": "Unable to start processing a reservation with status %s"
+                                  % dict(Reservation.STATUS)[reservation.status]}, status=status.HTTP_400_BAD_REQUEST)
+    return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
