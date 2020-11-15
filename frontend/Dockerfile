@@ -5,8 +5,8 @@ COPY . /app/
 
 ENV REST_API_URL=http://localhost:8000/
 # Add bash
-RUN apk add --no-cache bash
-RUN chmod +x env.sh && bash env.sh  && cp env-config.js ./public/
+# RUN apk add --no-cache bash
+# RUN chmod +x env.sh && bash env.sh  && cp env-config.js ./public/
 # COPY  ./env-config.js ./public/ 
 # Prepare the container for building react.
 RUN npm install --silent
@@ -23,5 +23,16 @@ COPY nginx/nginx.conf /etc/nginx/conf.d
 #Expose the container's http port
 EXPOSE 80
 
+# Copy .env file and shell script to container
+WORKDIR /usr/share/nginx/html
+COPY ./env.sh .
+COPY .env .
+
+# Add bash
+RUN apk add --no-cache bash
+
+# Make our shell script executable
+RUN chmod +x env.sh
+
 # Start Nginx server
-CMD ["nginx", "-g", "daemon off;"] 
+CMD ["/bin/bash", "-c", "/usr/share/nginx/html/env.sh && nginx -g \"daemon off;\""]

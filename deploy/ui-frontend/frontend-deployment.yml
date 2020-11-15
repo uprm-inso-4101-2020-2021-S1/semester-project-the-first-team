@@ -24,7 +24,7 @@ spec:
       restartPolicy: Always
       containers:
       - name: express-ui
-        image: isaacrivriv/express-cuts-ui:phase2
+        image: isaacrivriv/express-cuts-ui:phase3
         imagePullPolicy: Always
         resources:
           requests:
@@ -36,8 +36,19 @@ spec:
         ports:
         - containerPort: 80
         env:
-        - name: REST_API_URI
+        - name: REST_API_URL
           valueFrom:
             secretKeyRef:
-              name:  express-secret-ui
-              key: REST_API_URI
+              name:  express-secret
+              key: REST_API_URL
+        volumeMounts:
+        - mountPath: /etc/nginx/conf.d # mount nginx-conf volume to /etc/nginx
+          readOnly: true
+          name: nginx-conf
+      volumes:
+      - name: nginx-conf
+        configMap:
+          name: nginx-conf # place ConfigMap `nginx-conf` on /etc/nginx
+          items:
+            - key: nginx.conf
+              path: nginx.conf

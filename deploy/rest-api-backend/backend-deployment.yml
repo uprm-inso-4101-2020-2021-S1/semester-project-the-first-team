@@ -24,7 +24,7 @@ spec:
       restartPolicy: Always
       containers:
       - name: express-api
-        image: isaacrivriv/express-cuts-rest-api:phase2
+        image: isaacrivriv/express-cuts-rest-api:phase3
         imagePullPolicy: Always
         resources:
           requests:
@@ -77,9 +77,9 @@ spec:
               name: express-secret
               key: DJANGO_CORS_ORIGIN_WHITELIST
         - name: GENERATE_TEST_DATA
-          value: "true"
+          value: "false"
         - name: CORS_ALLOW_ALL
           value: "true"
         - name: DEBUG
-          value: "true"
+          value: "false"
         

@@ -46,9 +46,20 @@ services:
       # For initial populating DB
       - GENERATE_TEST_DATA=true
 
-  # ui:
-  #   image: node
-  #   container_name: User-Interface
+  ui:
+    image: express-cuts-ui:latest
+    build:
+      context: ../frontend
+    container_name: express-UI
+    ports:
+      - 8080:80
+    depends_on:
+      rest:
+        condition: service_healthy
+    environment:
+      - REST_API_URL=http://localhost:8080/api/
+    volumes:
+      - "./frontend/:/etc/nginx/conf.d/"
 
   tester:
     # Create image from Dockerfile if image not created.
