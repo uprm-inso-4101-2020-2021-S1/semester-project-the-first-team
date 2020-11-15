@@ -13,18 +13,54 @@ function ActiveAppointmentView(props) {
   const [serviceDurations, setServiceDurations] = useState({});
   const [showFinish, setShowFinish] = useState(false);
   const [showDelModal, setShowDelModal] = useState(false);
+  const activeUser = JSON.parse(sessionStorage.getItem("user"));
 
   useEffect(() => {
+    setupActiveReservationView();
+  }, []);
+
+  const setupActiveReservationView = async () => {
     let actApp = JSON.parse(sessionStorage.getItem("activeAppointment"));
 
     if (actApp === null) {
-      console.log("No active appointment found locally.");
-      // TODO: REQUEST APPOINTMENT FROM BACKEND.
+      // TODO: TEST THIS IS FUNCTIONING AFTER ROUTE TO SET AS IN PROGRESS IS IMPLEMENED IN QUEUE VIEW.
+      actApp = await fetchActiveReservationsForUser(activeUser);
+    }
+    if (actApp === null) {
+      window.alert(
+        "No active reservations at the moment. You will now be redirected to the Reservation Queue."
+      );
+      window.location.href = "/stylists/reservations";
     } else {
       buildAppointment(actApp);
     }
-  }, []);
+  };
 
+  const fetchActiveReservationsForUser = async (stylist) => {
+    try {
+      let response = await axios.get(
+        props.backendDomain +
+          "stylist/" +
+          stylist.id +
+          "/reservation?status=IP",
+        {
+          headers: {
+            Authorization: `basic ${sessionStorage.getItem("authToken")}`,
+          },
+        }
+      );
+      console.log(response.data);
+      if (response.data.length > 0) {
+        return response.data[0];
+      } else {
+        props.changeHeaderCard(stylist);
+        return null;
+      }
+    } catch (error) {
+      console.log(error);
+      window.alert("Could not fetch appointments.");
+    }
+  };
   const buildAppointment = async (appointment) => {
     let appWCustomer = await getCustomerInfo(appointment);
     await props.changeHeaderCard(appWCustomer.customer);
@@ -119,7 +155,6 @@ function ActiveAppointmentView(props) {
   const finishReservation = async () => {
     console.log("finishing reservation...");
     try {
-      // TODO: UPDATE THIS WITH PROPPER ASSIGNMENT AFTER FINAL ROUTE IS IMPLEMENTED.
       let serviceDurationData = [];
       let tempServDurOb = {};
       for (const serviceID in serviceDurations) {
@@ -146,6 +181,7 @@ function ActiveAppointmentView(props) {
       // Remove locally stored appointment data.
       concludeActiveReservation();
     } catch (error) {
+      // TODO: HANDLE SPECIFIC ERROR CODES FOR NOT ENOUGH PERMISSIONS
       console.log(error);
       window.alert(
         "Could not submit finished reservation. Please try again later."

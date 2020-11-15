@@ -84,10 +84,13 @@ function ServiceCard(props) {
       case "active":
         var de = new Date();
         let end = de.getTime();
-        setServiceState("finished");
-        setEndTime(end);
+        // DON'T ALLOW THE USER TO CLICK THROUGH TO FINSIH BEFORE AT LEAST 1 SECOND PASSES.
+        if (end - startTime >= 1000) {
+          setServiceState("finished");
+          setEndTime(end);
 
-        props.handleCulmination(props.service, end - startTime);
+          props.handleCulmination(props.service, end - startTime);
+        }
         break;
       case "deleted":
         setServiceState("pending");
