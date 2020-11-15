@@ -71,6 +71,17 @@ class DailySchedulePermissions(Permissions):
         if request.user.is_authenticated and self.has_manager_permission(request):
             return True
         return False
+    # TODO: Check permissions for GET single obj
+
+    def GET_all_by_stylist_permissions(self, request, stylist):
+        if request.user.is_authenticated and self.has_manager_permission(request):
+            return True
+        elif request.user.is_authenticated and self.has_stylist_permission(request) and stylist.pk == request.user.pk:
+            return True
+        return False
+
+    def GET_all_permissions(self, request):
+        return request.user.is_authenticated and self.has_manager_permission(request)
 
 
 class ReservationPermissions(Permissions):
@@ -114,4 +125,11 @@ class ReservationPermissions(Permissions):
                 request.user.pk == obj.customer.pk:
             return True
         return self.has_manager_permission(request)
+
+    def duration_permissions(self, request, reservation):
+        if request.user.is_authenticated and self.has_manager_permission(request): #TODO: Remove permissions for manager.
+            return True
+        if request.user.is_authenticated and self.has_stylist_permission(request) and request.user.pk == reservation.stylist.pk:
+            return True
+        return False
 

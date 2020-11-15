@@ -1,7 +1,6 @@
 version: "3.1"
 
 services:
-
   db:
     image: postgres:12.4
     container_name: database
@@ -33,7 +32,7 @@ services:
     environment:
       - DJANGO_ALLOWED_HOSTS=*
       # - DJANGO_SECRET_KEY="mim-1fbk4#ih!%awlxv17s_a835bpc&djw0y#4@c%&h-*eovba"
-      - DJANGO_CORS_ORIGIN_WHITELIST=http://localhost http://*
+      - DJANGO_CORS_ORIGIN_WHITELIST=http://*
       - DEBUG=true
       - CORS_ALLOW_ALL=true
 
@@ -41,24 +40,15 @@ services:
       - DATABASE_NAME=test-db
       - DATABASE_USER=admin
       - DATABASE_PASSWORD=password
-      - DATABASE_HOST=db
+      - DATABASE_HOST=database
       - DATABASE_PORT=5432
 
       # For initial populating DB
       - GENERATE_TEST_DATA=true
 
-  ui:
-    image: express-cuts-ui:latest
-    build:
-      context: ../frontend
-    container_name: express-UI
-    ports:
-      - 8080:80
-    # depends_on:
-    #   rest:
-    #     condition: service_healthy
-    environment:
-      - REST_API_URL=http://rest:8000
+  # ui:
+  #   image: node
+  #   container_name: User-Interface
 
   tester:
     # Create image from Dockerfile if image not created.
@@ -72,9 +62,9 @@ services:
     environment:
       - REST_API_URL=http://rest:8000
     volumes:
-        - "./docker-test-out:/output/reports/"
+      - "./docker-test-out:/output/reports/"
 
-#### SELENIUM Containers
+  #### SELENIUM Containers
 
   chrome:
     image: selenium/node-chrome:4.0.0
@@ -94,3 +84,22 @@ services:
     #   - "4442:4442"
     #   - "4443:4443"
     #   - "4444:4444"
+
+  frontend:
+    image: express-cuts-frontend:latest
+    # Currently having issues with this; hardcoding in dockerfile
+    # environment:
+    #   - REST_API_URL=http://insert domain name and port in dockerfile.
+    build:
+      context: ../frontend
+    container_name: express-frontend
+    healthcheck:
+      test: curl http://localhost
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    ports:
+      - 80:80
+    depends_on:
+      rest:
+        condition: service_healthy

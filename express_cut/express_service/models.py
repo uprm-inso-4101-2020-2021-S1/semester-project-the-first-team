@@ -67,7 +67,7 @@ class Reservation(models.Model):
                                  related_name='customer_reservations')
     stylist = models.ForeignKey(User, on_delete=models.CASCADE,  limit_choices_to={'role': User.STYLIST},
                                 related_name='stylist_reservations')
-    service = models.ManyToManyField(Service)
+    service = models.ManyToManyField(Service, through='ReservationContainsServices')
     status = models.CharField(max_length=2, choices=STATUS, default=PENDING)
 
 
@@ -86,3 +86,8 @@ class Notification(models.Model):
     timestamp = models.DateTimeField()
     status = models.CharField(max_length=1, choices=STATUS)
 
+
+class ReservationContainsServices(models.Model):
+    reservation = models.ForeignKey(Reservation, on_delete=models.CASCADE)
+    service = models.ForeignKey(Service, on_delete=models.CASCADE)
+    duration = models.TimeField(null=True)

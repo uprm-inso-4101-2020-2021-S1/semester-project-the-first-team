@@ -1,5 +1,5 @@
 from .models import User, Reservation, Service
-from .serializers import  ReservationSerializer, EstimateSerializer
+from .serializers import  ReservationSerializer, DurationSerializer, EstimateSerializer
 from rest_framework.response import Response
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 from rest_framework_jwt.authentication import JSONWebTokenAuthentication
@@ -136,3 +136,27 @@ def estimate_reservation_time(request):
                                                      serializer.validated_data['stylist'])
             return Response({"time_estimate": str(estimate)}, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+      
+      
+@swagger_auto_schema(methods=['PUT'], request_body=DurationSerializer, responses=swagResp.commonPOSTResponses,
+                     tags=['reservation'], operation_summary="Completes reservation and updates service(s) duration.")
+@api_view(['PUT'])
+@authentication_classes([JSONWebTokenAuthentication, SessionAuthentication, BasicAuthentication])
+@permission_classes([IsAuthenticated])
+def complete_reservation(request, reservation_id):
+    if request.method == 'PUT':
+        try:
+            obj = Reservation.objects.get(pk=reservation_id)
+        except Reservation.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        if not ReservationPermissions().duration_permissions(request, obj):
+            return Response(status=status.HTTP_403_FORBIDDEN)
+        data = request.data
+        serializer = DurationSerializer(obj, data=data, many=True)
+        if serializer.is_valid():
+            serializer.save()
+            obj.status = Reservation.DONE
+            obj.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    else: return Response({'Fail': 'This is bad'}, status.HTTP_400_BAD_REQUEST)

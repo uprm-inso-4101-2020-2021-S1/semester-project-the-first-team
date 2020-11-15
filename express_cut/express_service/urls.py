@@ -1,5 +1,5 @@
 from django.urls import path
-from . import views, view_service, view_role, view_reservation
+from . import views, view_service, view_role, view_reservation, view_schedule
 from django.conf.urls import url
 from rest_framework.urlpatterns import format_suffix_patterns
 from rest_framework import permissions
@@ -23,9 +23,11 @@ urlpatterns = [
     path('user/<int:pk>', views.users_views),
     path('user/signup', views.user_signup_view),
     path('user/login', obtain_jwt_token),
+    path('user/current', views.current_user),
     
-    path('schedule', views.schedule_views),
-    path('schedule/<int:pk>', views.schedule_views_put),
+    path('schedule', view_schedule.schedule_views),
+    path('schedule/<int:pk>', view_schedule.schedule_views_put),
+    path('stylist/<int:stylist_id>/schedule', view_schedule.get_all_schedule_by_stylist),
 
     path('service', view_service.get_all_services),
     path('service/<int:pk>', view_service.get_service_views),
@@ -34,12 +36,14 @@ urlpatterns = [
     path('reservation/<int:pk>', view_reservation.reservation_views),
     path('reservation/<int:pk>/cancel', view_reservation.cancel_reservation),
     path('reservation/estimate', view_reservation.estimate_reservation_time),
+    path('reservation/<int:reservation_id>/complete', view_reservation.complete_reservation),
 
     path('stylist', view_role.get_all_stylists),
     path('stylist/<int:stylist_id>/reservation', view_reservation.reservations_by_stylist),
     path('stylist/available', view_role.get_all_available_stylists),
     path('customer', view_role.get_all_customers),
     path('manager', view_role.get_all_managers),
+
 ]
 
 # Stylist_urlpatterns = [

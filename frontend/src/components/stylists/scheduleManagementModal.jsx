@@ -38,9 +38,11 @@ function ScheduleManagementModal(props) {
         {!props.showEditModal && (
           <Form onSubmit={props.createEvent}>
             <Form.Label>Select Stylist:</Form.Label>
-            <Form.Control as="select" name="stylistName" type="select">
-              {props.stylistNames.map((stylistName) => (
-                <option key={stylistName}>{stylistName}</option>
+            <Form.Control as="select" name="stylist" type="select">
+              {props.stylists.map((stylist) => (
+                <option key={stylist.id} value={stylist.id}>
+                  {stylist.first_name + " " + stylist.last_name}
+                </option>
               ))}
             </Form.Control>
             <Button variant="primary" type="submit">
@@ -51,7 +53,11 @@ function ScheduleManagementModal(props) {
       </Modal.Body>
       {props.showEditModal && (
         <Modal.Footer>
-          <Button type="delete" name="delete" onClick={props.deleteEvent}>
+          <Button
+            type="delete"
+            name="delete"
+            onClick={() => props.deleteEvent()}
+          >
             Delete
           </Button>
         </Modal.Footer>

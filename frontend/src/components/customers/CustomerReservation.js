@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { Alert, Container, Row, Col } from "react-bootstrap";
-import PropTypes from "prop-types";
 import ReservationForm from "./ReservationForm";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowRight, faArrowLeft } from "@fortawesome/free-solid-svg-icons";
@@ -221,8 +220,11 @@ function CustomerReservation(props) {
           <SlideDown className="alert-slide">
             {selectWarning ? (
               <Row>
+                {" "}
                 <Col className="justify-content-center text-center mt-3 mb-1">
+                  {" "}
                   <Alert className="select-alert" variant="warning">
+                    {" "}
                     Please select an item before continuing.
                   </Alert>
                 </Col>
