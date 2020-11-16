@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
-from .models import User, Service, DailySchedule, Reservation, TimeSlot, ReservationContainsServices
+from .models import User, Service, DailySchedule, Reservation, TimeSlot, ReservationContainsServices, Feedback
 from django.contrib.auth.hashers import make_password
 import datetime
 from .utils import calculate_estimated_wait_time
@@ -195,4 +195,8 @@ class DurationSerializer(serializers.ModelSerializer):
         list_serializer_class = ListDurationSerializer
 
 
+class FeedbackSerializer(serializers.ModelSerializer):
 
+    class Meta:
+        model = Feedback
+        fields = "__all__"
