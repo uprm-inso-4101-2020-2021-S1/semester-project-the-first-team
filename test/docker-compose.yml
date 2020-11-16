@@ -20,7 +20,7 @@ services:
       context: ../express_cut
     container_name: express-API
     healthcheck:
-      test: curl http://127.0.0.1:8000
+      test: curl http://127.0.0.1:8000/api
       interval: 5s
       timeout: 5s
       retries: 20
@@ -95,22 +95,3 @@ services:
     #   - "4442:4442"
     #   - "4443:4443"
     #   - "4444:4444"
-
-  frontend:
-    image: express-cuts-frontend:latest
-    # Currently having issues with this; hardcoding in dockerfile
-    # environment:
-    #   - REST_API_URL=http://insert domain name and port in dockerfile.
-    build:
-      context: ../frontend
-    container_name: express-frontend
-    healthcheck:
-      test: curl http://localhost
-      interval: 5s
-      timeout: 5s
-      retries: 20
-    ports:
-      - 80:80
-    depends_on:
-      rest:
-        condition: service_healthy

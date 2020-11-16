@@ -81,5 +81,7 @@ spec:
         - name: CORS_ALLOW_ALL
           value: "true"
         - name: DEBUG
-          value: "false"
+          value: "true"
+        - name: JWT_EXPIRATION_TIME
+          value: "600"
         
