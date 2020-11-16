@@ -3,7 +3,7 @@ from .serializers import ReservationSerializer, DurationSerializer, FeedbackSeri
 import datetime
 
 from .models import User, Reservation, Service
-from .serializers import  ReservationSerializer, DurationSerializer, EstimateSerializer
+from .serializers import ReservationSerializer, DurationSerializer, EstimateSerializer, ReservationTimeSlotsSerializer
 from rest_framework.response import Response
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 from rest_framework_jwt.authentication import JSONWebTokenAuthentication
@@ -15,7 +15,6 @@ from drf_yasg.utils import swagger_auto_schema
 from .swagger_models import SwagResponses as swagResp
 from .swagger_models import SwagParmDef
 from .utils import calculate_estimated_wait_time
-
 
 
 @swagger_auto_schema(methods=['PUT'], request_body=ReservationSerializer,
@@ -176,6 +175,31 @@ def complete_reservation(request, reservation_id):
     return Response(status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
+@swagger_auto_schema(methods=['GET'], responses={**swagResp.commonResponses,
+                                                           **swagResp.getResponse(ReservationTimeSlotsSerializer)},
+                     tags=['stylist'], operation_summary="Get pending and in process reserved slots for a Stylist on current day.")
+@api_view(['GET'])
+@authentication_classes([JSONWebTokenAuthentication, SessionAuthentication, BasicAuthentication])
+@permission_classes([IsAuthenticated])
+def get_daily_reservations(request, stylist_id):
+    if request.method == 'GET':
+        try:
+            stylist = User.objects.get(pk=stylist_id, role=User.STYLIST)
+        except User.DoesNotExist:
+            return Response({"mesage":"Stylist with ID=%d not found." %stylist_id}, status=status.HTTP_404_NOT_FOUND)
+        if not ReservationPermissions().GET_stylist_reservation_today_permissions(request):
+            return Response(status=status.HTTP_403_FORBIDDEN)
+        reservations = Reservation.objects.filter(stylist=stylist_id, date=datetime.date.today(),
+                                                  status__in=[Reservation.PENDING, Reservation.IN_PROCESS])
+        if reservations:
+            serializer = ReservationTimeSlotsSerializer(reservations, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        else:
+            return Response({"message": "Stylist with ID=%d does not have reservations for today." %stylist_id},
+                            status=status.HTTP_404_NOT_FOUND)
+    return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
 @swagger_auto_schema(methods=['PUT'], responses=swagResp.commonPOSTResponses,
                      tags=['reservation'], operation_summary="Start the process of a reservation.")
 @api_view(['PUT'])
@@ -196,8 +220,6 @@ def start_reservation(request, reservation_id):
         return Response({"error": "Unable to start processing a reservation with status %s"
                                   % dict(Reservation.STATUS)[reservation.status]}, status=status.HTTP_400_BAD_REQUEST)
     return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-
 
 
 @swagger_auto_schema(methods=['POST'], request_body=FeedbackSerializer, responses=swagResp.commonPOSTResponses,
@@ -233,5 +255,4 @@ def feedback_views(request, reservation_id):
             return Response(status=status.HTTP_403_FORBIDDEN)
         serializer = FeedbackSerializer(feedback)
         return Response(serializer.data, status=status.HTTP_200_OK)
-
     return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)

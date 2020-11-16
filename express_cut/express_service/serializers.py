@@ -195,6 +195,13 @@ class DurationSerializer(serializers.ModelSerializer):
         list_serializer_class = ListDurationSerializer
 
 
+class ReservationTimeSlotsSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Reservation
+        fields = ['id', 'startTime', 'endTime']
+
+
 class FeedbackSerializer(serializers.ModelSerializer):
 
     class Meta:

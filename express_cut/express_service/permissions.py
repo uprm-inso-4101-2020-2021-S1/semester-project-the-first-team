@@ -126,6 +126,12 @@ class ReservationPermissions(Permissions):
             return True
         return False
 
+    def GET_stylist_reservation_today_permissions(self, request):
+        if request.user.is_authenticated:
+            return True
+        return False
+
+
     def duration_permissions(self, request, reservation):
         if request.user.is_authenticated and self.has_manager_permission(request): #TODO: Remove permissions for manager.
             return True
