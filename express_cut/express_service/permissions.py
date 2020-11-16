@@ -144,7 +144,7 @@ class FeedbackPermissions(Permissions):
             return True
         elif request.user.is_authenticated and self.has_manager_permission(request):
             return True
-        elif request.user.is_authenticated and self.has_stylist_permission(request):
+        elif request.user.is_authenticated and self.has_stylist_permission(request) and request.user.pk == obj.stylist.pk:
             return True
         return False
 
