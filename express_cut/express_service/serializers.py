@@ -195,10 +195,7 @@ class DurationSerializer(serializers.ModelSerializer):
         list_serializer_class = ListDurationSerializer
 
 
-
-
-
-class AnotherReservationSerializer(serializers.ModelSerializer):
+class ReservationTimeSlotsSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Reservation
