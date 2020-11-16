@@ -124,13 +124,22 @@ class ReservationPermissions(Permissions):
         elif request.user.is_authenticated and self.has_client_permission(request) and \
                 request.user.pk == obj.customer.pk:
             return True
-        return self.has_manager_permission(request)
+        return False
 
     def duration_permissions(self, request, reservation):
+        if request.user.is_authenticated and self.has_manager_permission(request): #TODO: Remove permissions for manager.
+            return True
         if request.user.is_authenticated and self.has_stylist_permission(request) and request.user.pk == reservation.stylist.pk:
             return True
         return False
 
+    def START_permissions(self, request, obj):
+        if request.user.is_authenticated and self.has_manager_permission(request): # TODO: Remove permissions for manager.
+            return True
+        elif request.user.is_authenticated and self.has_stylist_permission(request) and \
+                request.user.pk == obj.stylist.pk:
+            return True
+        return False
 
 class FeedbackPermissions(Permissions):
 
