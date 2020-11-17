@@ -14,7 +14,8 @@ function App() {
   //const backendDomain = window._env_.REST_API_URL.toString();
   // TODO: Get auth token (username:password) from login page and save here in session storage.
 
-  sessionStorage.setItem("authType", "basic");
+  // Options: JWT or basic
+  sessionStorage.setItem("authType", "JWT");
 
   useEffect(() => {
     logInUser();
