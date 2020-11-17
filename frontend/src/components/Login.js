@@ -3,18 +3,15 @@ import { Button, Col, Container, Row, Form } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCut, faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import { Link } from "react-router-dom";
+import PropTypes from "prop-types";
+import { Redirect } from "react-router-dom";
 import "../style/login.scss";
 
 function Login(props) {
-  const [validated, setValidated] = useState(false);
-  const [username, setUsername] = useState(null);
-  const [password, setPassword] = useState(null);
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-  };
-
-  return (
+  return !props.loggedIn ? (
     <Container fluid>
       <Row>
         <Col className="">
@@ -35,17 +32,29 @@ function Login(props) {
             </Row>
             <Row>
               <Col className="login-form">
-                <Form validate={validated} onSubmit={handleSubmit}>
+                <Form
+                  onSubmit={(e) =>
+                    props.handleLogin(e, {
+                      username: username,
+                      password: password,
+                    })
+                  }
+                >
                   <Form.Group
                     as={Row}
                     className="justify-content-center"
-                    controlId="formEmail"
-                    style={{ "margin-bottom": "4rem" }}
+                    controlId="formUsername"
+                    style={{ marginBottom: "4rem" }}
                   >
                     <Form.Control
-                      className="text-box email"
-                      type="email"
-                      placeholder="Email"
+                      className="text-box username"
+                      type="username"
+                      placeholder="Username"
+                      name="username"
+                      value={username}
+                      onChange={(e) => {
+                        setUsername(e.target.value);
+                      }}
                     />
                   </Form.Group>
                   <Form.Group
@@ -57,6 +66,11 @@ function Login(props) {
                       className="text-box password"
                       type="password"
                       placeholder="Password"
+                      name="password"
+                      value={password}
+                      onChange={(e) => {
+                        setPassword(e.target.value);
+                      }}
                     />
                   </Form.Group>
                   <Button size="lg" type="submit" className="login-button">
@@ -75,7 +89,17 @@ function Login(props) {
         </Col>
       </Row>
     </Container>
+  ) : props.userRole === 2 ? (
+    <Redirect to="/customers" />
+  ) : (
+    <Redirect to="/stylists" />
   );
 }
+
+Login.propTypes = {
+  handleLogin: PropTypes.func.isRequired,
+  userRole: PropTypes.number.isRequired,
+  loggedIn: PropTypes.bool.isRequired,
+};
 
 export default Login;
