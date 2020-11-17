@@ -163,3 +163,12 @@ class FeedbackPermissions(Permissions):
             return True
         return False
 
+
+class CustomerViewPermissions(Permissions):
+
+    def GET_permissions(self, request, obj):
+        if request.user.is_authenticated and self.has_manager_permission(request):
+            return True
+        if request.user.is_authenticated and self.has_stylist_permission(request):
+            return True
+        return False
