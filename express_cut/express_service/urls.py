@@ -45,6 +45,7 @@ urlpatterns = [
     path('stylist/<int:stylist_id>/reservedTimeSlots', view_reservation.get_daily_reservations),
     path('stylist/available', view_role.get_all_available_stylists),
     path('customer', view_role.get_all_customers),
+    path('customer/<int:pk>', view_role.get_customer_by_id),
     path('manager', view_role.get_all_managers),
 
 ]
