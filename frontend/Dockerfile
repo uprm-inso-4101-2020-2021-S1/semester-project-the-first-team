@@ -3,7 +3,7 @@ WORKDIR /app
 #Copy the react app to the container.
 COPY . /app/
 
-ENV REST_API_URL=http://localhost:8000/
+ENV REST_API_URL=http://localhost:8000/api/
 # Add bash
 # RUN apk add --no-cache bash
 # RUN chmod +x env.sh && bash env.sh  && cp env-config.js ./public/
