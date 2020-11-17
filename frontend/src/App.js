@@ -11,7 +11,7 @@ import axios from "axios";
 function App() {
   // TODO: UPDATE THIS DURING DEPLOYMENT OR GET FROM OTHER FILE.
   //  const backendDomain = "http://localhost:8000/";
-  const backendDomain = window._env_.REST_API_URL.toString();
+  const backendDomain = window._env_.REST_API_URI.toString();
   // TODO: Get auth token (username:password) from login page and save here in session storage.
   sessionStorage.setItem(
     "authToken",

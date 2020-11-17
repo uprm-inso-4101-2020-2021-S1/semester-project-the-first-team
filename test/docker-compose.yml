@@ -57,7 +57,7 @@ services:
       rest:
         condition: service_healthy
     environment:
-      - REST_API_URL=http://localhost:8080/api/
+      - REST_API_URI=http://localhost:8080/api/
     volumes:
       - "./frontend/:/etc/nginx/conf.d/"
 
@@ -71,7 +71,7 @@ services:
       rest:
         condition: service_healthy
     environment:
-      - REST_API_URL=http://rest:8000
+      - REST_API_URI=http://rest:8000
     volumes:
       - "./docker-test-out:/output/reports/"
 

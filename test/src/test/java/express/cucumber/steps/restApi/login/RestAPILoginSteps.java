@@ -36,7 +36,7 @@ import express.cucumber.steps.restApi.RestAPICommonSteps;
 public class RestAPILoginSteps {
 
 	// URI for backend
-	private String url = System.getenv("REST_API_URL");
+	private String url = System.getenv("REST_API_URI");
 
 	// Used for testing
 	public static Client client;
@@ -44,9 +44,9 @@ public class RestAPILoginSteps {
 	public static WebTarget target;
 
 	// Routes for user rest api
-	private final String userLoginPath="/user/login";
+	private final String userLoginPath="/api/user/login";
 	// Routes for service rest api
-	private final String servicePath="/service";
+	private final String servicePath="/api/service";
 
 	// Initial number of objects in db
 	private int testStartUserNumber = 4;
@@ -54,7 +54,7 @@ public class RestAPILoginSteps {
 	@Given("^The user logs in with JWT (.*) and (.*)$")
 	public void the_user_logs_in_with_JWT(String user, String pass) throws Throwable {
 		if(url==null)
-			url=System.getenv("REST_API_URL");
+			url=System.getenv("REST_API_URI");
 		// Disable SSL cert check
 		SSLContext sslcontext = SSLContext.getInstance("TLS");
 		sslcontext.init(null, new TrustManager[]{new X509TrustManager() {

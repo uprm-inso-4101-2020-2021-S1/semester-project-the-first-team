@@ -13,7 +13,7 @@ These are the environment variables used by the User Interface for running. Read
 
 | Environment Variable | Required | Description |
 | ------------- | ------------- | ------------- |
-| REST_API_URL | true | The URI on which the Rest API is deployed to connect and run routes. |
+| REST_API_URI | true | The URI on which the Rest API is deployed to connect and run routes. |
 
 ## Usage
 
@@ -28,7 +28,7 @@ Its best to use the Dockerfile to build the User Interface as a Docker image to 
 * To start the server first create an *env-config.js* file in the public folder. Fill in the folder with the required environment variables as listed above as a json object named window._env_ like below
   ```json
   window._env_ = {
-      "REST_API_URL":"http://localhost:8000/api/"
+      "REST_API_URI":"http://localhost:8000/api/"
   }
   ```
 

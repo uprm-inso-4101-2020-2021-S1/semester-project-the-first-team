@@ -36,8 +36,8 @@ import express.cucumber.steps.restApi.RestAPICommonSteps;
 public class RestAPIUserSteps {
 
 	// Routes for user rest api
-	private final String userSignupPath="/user/signup";
-	private final String userPath="/user";
+	private final String userSignupPath="/api/user/signup";
+	private final String userPath="/api/user";
 
 	// Initial number of objects in db
 	private int testStartUserNumber = 4;
