@@ -13,10 +13,8 @@ function App() {
   const backendDomain = "http://localhost:8000/";
   //const backendDomain = window._env_.REST_API_URL.toString();
   // TODO: Get auth token (username:password) from login page and save here in session storage.
-  sessionStorage.setItem(
-    "authToken",
-    new Buffer("Manager:Manager").toString("base64")
-  );
+
+  sessionStorage.setItem("authType", "basic");
 
   useEffect(() => {
     logInUser();
@@ -26,17 +24,29 @@ function App() {
     //  todo: implement actual log in to get requests.
     // todo: update this to not run every refresh.
     // Getting hardcoded user from backend.
+    let authType = sessionStorage.getItem("authType");
+
     try {
-      console.log("Logging in");
       const userPk = 3;
-      console.log("current domain: " + backendDomain);
-      console.log("Sending REquest: " + backendDomain + "user/" + userPk);
-      let userInfoResponse = await axios.get(backendDomain + "user/" + userPk, {
-        headers: {
-          Authorization: `basic ${sessionStorage.getItem("authToken")}`,
-        },
-      });
-      sessionStorage.setItem("user", JSON.stringify(userInfoResponse.data));
+
+      let loginJSON = { username: "Stylist", password: "Stylist" };
+      let userInfoResponse = await axios.post(
+        backendDomain + "user/login",
+        loginJSON
+      );
+      console.log(userInfoResponse);
+      if (authType === "basic") {
+        sessionStorage.setItem(
+          "authToken",
+          new Buffer("Stylist:Stylist").toString("base64")
+        );
+      } else {
+        sessionStorage.setItem("authToken", userInfoResponse.data.token);
+      }
+      sessionStorage.setItem(
+        "user",
+        JSON.stringify(userInfoResponse.data.user)
+      );
     } catch (error) {
       console.log(error);
       window.alert("Could not sign in.");

@@ -96,7 +96,10 @@ function ViewScheduleComponent(props) {
           saturdayDateString,
         {
           headers: {
-            Authorization: `basic ${sessionStorage.getItem("authToken")}`,
+            Authorization:
+              sessionStorage.getItem("authType") +
+              " " +
+              sessionStorage.getItem("authToken"),
           },
         }
       );

@@ -21,8 +21,8 @@ function ActiveAppointmentView(props) {
 
   const setupActiveReservationView = async () => {
     let actApp = JSON.parse(sessionStorage.getItem("activeAppointment"));
-
-    if (actApp === null) {
+    console.log(actApp);
+    if (actApp === null || actApp === "" || !actApp) {
       // TODO: TEST THIS IS FUNCTIONING AFTER ROUTE TO SET AS IN PROGRESS IS IMPLEMENED IN QUEUE VIEW.
       actApp = await fetchActiveReservationsForUser(activeUser);
     }
@@ -45,10 +45,14 @@ function ActiveAppointmentView(props) {
           "/reservation?status=IP",
         {
           headers: {
-            Authorization: `basic ${sessionStorage.getItem("authToken")}`,
+            Authorization:
+              sessionStorage.getItem("authType") +
+              " " +
+              sessionStorage.getItem("authToken"),
           },
         }
       );
+      console.log("fetch active user...");
       console.log(response.data);
       if (response.data.length > 0) {
         return response.data[0];
@@ -62,6 +66,7 @@ function ActiveAppointmentView(props) {
     }
   };
   const buildAppointment = async (appointment) => {
+    console.log(appointment);
     let appWCustomer = await getCustomerInfo(appointment);
     await props.changeHeaderCard(appWCustomer.customer);
     let fullApp = await getServiceInfo(appWCustomer);
@@ -80,11 +85,16 @@ function ActiveAppointmentView(props) {
           props.backendDomain + "service/" + serviceID,
           {
             headers: {
-              Authorization: `basic ${sessionStorage.getItem("authToken")}`,
+              Authorization:
+                sessionStorage.getItem("authType") +
+                " " +
+                sessionStorage.getItem("authToken"),
             },
           }
         );
         serviceList[servIndex] = response.data;
+        console.log(response);
+        console.log(serviceList);
       } else {
         console.log("following service not integer: ", serviceID);
       }
@@ -100,7 +110,10 @@ function ActiveAppointmentView(props) {
           props.backendDomain + "user/" + appointment.customer,
           {
             headers: {
-              Authorization: `basic ${sessionStorage.getItem("authToken")}`,
+              Authorization:
+                sessionStorage.getItem("authType") +
+                " " +
+                sessionStorage.getItem("authToken"),
             },
           }
         );
@@ -173,7 +186,10 @@ function ActiveAppointmentView(props) {
         serviceDurationData,
         {
           headers: {
-            Authorization: `basic ${sessionStorage.getItem("authToken")}`,
+            Authorization:
+              sessionStorage.getItem("authType") +
+              " " +
+              sessionStorage.getItem("authToken"),
           },
         }
       );
@@ -203,7 +219,10 @@ function ActiveAppointmentView(props) {
         props.backendDomain + "reservation/" + activeAppointment.id + "/cancel",
         {
           headers: {
-            Authorization: `basic ${sessionStorage.getItem("authToken")}`,
+            Authorization:
+              sessionStorage.getItem("authType") +
+              " " +
+              sessionStorage.getItem("authToken"),
           },
         }
       );

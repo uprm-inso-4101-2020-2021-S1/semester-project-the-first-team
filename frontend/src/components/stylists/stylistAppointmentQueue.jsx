@@ -28,7 +28,7 @@ function StylistAppointmentQueue(props) {
       fetchReservationsForUser(activeUser);
     }
     // TODO, CHANGE THIS FOR THE PROPER ROLES FOR STYLIST DROPDOWN.
-    if (activeUser.role === 1) {
+    if (activeUser) {
       fetchStylists();
     }
   }, []);
@@ -92,7 +92,10 @@ function StylistAppointmentQueue(props) {
         props.backendDomain + "stylist/" + stylist.id + "/reservation?status=P",
         {
           headers: {
-            Authorization: `basic ${sessionStorage.getItem("authToken")}`,
+            Authorization:
+              sessionStorage.getItem("authType") +
+              " " +
+              sessionStorage.getItem("authToken"),
           },
         }
       );
@@ -130,7 +133,10 @@ function StylistAppointmentQueue(props) {
           props.backendDomain + "service/" + serviceID,
           {
             headers: {
-              Authorization: `basic ${sessionStorage.getItem("authToken")}`,
+              Authorization:
+                sessionStorage.getItem("authType") +
+                " " +
+                sessionStorage.getItem("authToken"),
             },
           }
         );
@@ -161,7 +167,10 @@ function StylistAppointmentQueue(props) {
           props.backendDomain + "user/" + customerID,
           {
             headers: {
-              Authorization: `basic ${sessionStorage.getItem("authToken")}`,
+              Authorization:
+                sessionStorage.getItem("authType") +
+                " " +
+                sessionStorage.getItem("authToken"),
             },
           }
         );
@@ -184,7 +193,10 @@ function StylistAppointmentQueue(props) {
     try {
       let response = await axios.get(props.backendDomain + "stylist", {
         headers: {
-          Authorization: `basic ${sessionStorage.getItem("authToken")}`,
+          Authorization:
+            sessionStorage.getItem("authType") +
+            " " +
+            sessionStorage.getItem("authToken"),
         },
       });
       setStylists(response.data);
@@ -236,7 +248,10 @@ function StylistAppointmentQueue(props) {
         props.backendDomain + "reservation/" + modalAppointment.id + "/cancel",
         {
           headers: {
-            Authorization: `basic ${sessionStorage.getItem("authToken")}`,
+            Authorization:
+              sessionStorage.getItem("authType") +
+              " " +
+              sessionStorage.getItem("authToken"),
           },
         }
       );

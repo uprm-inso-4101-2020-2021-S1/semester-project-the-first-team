@@ -93,7 +93,10 @@ function HeaderCardDropRight(props) {
       console.log(props);
       let response = await axios.get(props.backendDomain + "stylist", {
         headers: {
-          Authorization: `basic ${sessionStorage.getItem("authToken")}`,
+          Authorization:
+            sessionStorage.getItem("authType") +
+            " " +
+            sessionStorage.getItem("authToken"),
         },
       });
 

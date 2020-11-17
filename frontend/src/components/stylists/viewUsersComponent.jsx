@@ -44,10 +44,12 @@ function ViewUsersComponent(backendDomain) {
 
   const updateUserList = async (filter) => {
     let templist = await getUsers(filter);
-    templist = filterLocally(filter)
-      ? localSort(filter, templist.data)
-      : templist.data;
-    setUserList(templist);
+    if (templist) {
+      templist = filterLocally(filter)
+        ? localSort(filter, templist.data)
+        : templist.data;
+      setUserList(templist);
+    }
   };
 
   const filterLocally = (filter) => {
@@ -129,7 +131,10 @@ function ViewUsersComponent(backendDomain) {
         backendDomain.backendDomain + uType.toLowerCase(),
         {
           headers: {
-            Authorization: `basic ${sessionStorage.getItem("authToken")}`,
+            Authorization:
+              sessionStorage.getItem("authType") +
+              " " +
+              sessionStorage.getItem("authToken"),
           },
         }
       );
@@ -143,7 +148,10 @@ function ViewUsersComponent(backendDomain) {
     try {
       const user = await axios.get(backendDomain.backendDomain + "user/" + id, {
         headers: {
-          Authorization: `basic ${sessionStorage.getItem("authToken")}`,
+          Authorization:
+            sessionStorage.getItem("authType") +
+            " " +
+            sessionStorage.getItem("authToken"),
         },
       });
       return user.data;
@@ -166,7 +174,10 @@ function ViewUsersComponent(backendDomain) {
           backendDomain.backendDomain + "user/" + modalUser.id,
           {
             headers: {
-              Authorization: `basic ${sessionStorage.getItem("authToken")}`,
+              Authorization:
+                sessionStorage.getItem("authType") +
+                " " +
+                sessionStorage.getItem("authToken"),
             },
           }
         );
@@ -189,7 +200,10 @@ function ViewUsersComponent(backendDomain) {
           modalUser,
           {
             headers: {
-              Authorization: `basic ${sessionStorage.getItem("authToken")}`,
+              Authorization:
+                sessionStorage.getItem("authType") +
+                " " +
+                sessionStorage.getItem("authToken"),
             },
           }
         );
@@ -200,7 +214,10 @@ function ViewUsersComponent(backendDomain) {
           modalUser,
           {
             headers: {
-              Authorization: `basic ${sessionStorage.getItem("authToken")}`,
+              Authorization:
+                sessionStorage.getItem("authType") +
+                " " +
+                sessionStorage.getItem("authToken"),
             },
           }
         );

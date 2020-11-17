@@ -25,7 +25,10 @@ class ManageServicesView extends Component {
     axios
       .get(this.props.backendDomain + "service", {
         headers: {
-          Authorization: `basic ${sessionStorage.getItem("authToken")}`,
+          Authorization:
+            sessionStorage.getItem("authType") +
+            " " +
+            sessionStorage.getItem("authToken"),
         },
       })
       .then((response) => {
@@ -100,7 +103,10 @@ class ManageServicesView extends Component {
     axios
       .post(this.props.backendDomain + "service", this.state.activeService, {
         headers: {
-          Authorization: `basic ${sessionStorage.getItem("authToken")}`,
+          Authorization:
+            sessionStorage.getItem("authType") +
+            " " +
+            sessionStorage.getItem("authToken"),
         },
       })
       .then((response) => {
@@ -121,7 +127,10 @@ class ManageServicesView extends Component {
         this.state.activeService,
         {
           headers: {
-            Authorization: `basic ${sessionStorage.getItem("authToken")}`,
+            Authorization:
+              sessionStorage.getItem("authType") +
+              " " +
+              sessionStorage.getItem("authToken"),
           },
         }
       )
@@ -150,7 +159,10 @@ class ManageServicesView extends Component {
 
           {
             headers: {
-              Authorization: `basic ${sessionStorage.getItem("authToken")}`,
+              Authorization:
+                sessionStorage.getItem("authType") +
+                " " +
+                sessionStorage.getItem("authToken"),
             },
           }
         )

@@ -131,7 +131,10 @@ function ScheduleManagementView(props) {
           saturdayDateString,
         {
           headers: {
-            Authorization: `basic ${sessionStorage.getItem("authToken")}`,
+            Authorization:
+              sessionStorage.getItem("authType") +
+              " " +
+              sessionStorage.getItem("authToken"),
           },
         }
       );
@@ -270,7 +273,10 @@ function ScheduleManagementView(props) {
     try {
       let response = await axios.get(props.backendDomain + "stylist", {
         headers: {
-          Authorization: `basic ${sessionStorage.getItem("authToken")}`,
+          Authorization:
+            sessionStorage.getItem("authType") +
+            " " +
+            sessionStorage.getItem("authToken"),
         },
       });
 
@@ -297,7 +303,10 @@ function ScheduleManagementView(props) {
         props.backendDomain + "schedule/" + parentID,
         {
           headers: {
-            Authorization: `basic ${sessionStorage.getItem("authToken")}`,
+            Authorization:
+              sessionStorage.getItem("authType") +
+              " " +
+              sessionStorage.getItem("authToken"),
           },
         }
       );
@@ -324,7 +333,10 @@ function ScheduleManagementView(props) {
         scheduleObj,
         {
           headers: {
-            Authorization: `basic ${sessionStorage.getItem("authToken")}`,
+            Authorization:
+              sessionStorage.getItem("authType") +
+              " " +
+              sessionStorage.getItem("authToken"),
           },
         }
       );
@@ -356,7 +368,10 @@ function ScheduleManagementView(props) {
         tempSchedule,
         {
           headers: {
-            Authorization: `basic ${sessionStorage.getItem("authToken")}`,
+            Authorization:
+              sessionStorage.getItem("authType") +
+              " " +
+              sessionStorage.getItem("authToken"),
           },
         }
       );
@@ -376,7 +391,10 @@ function ScheduleManagementView(props) {
         props.backendDomain + "schedule/" + activeEvent.parentID,
         {
           headers: {
-            Authorization: `basic ${sessionStorage.getItem("authToken")}`,
+            Authorization:
+              sessionStorage.getItem("authType") +
+              " " +
+              sessionStorage.getItem("authToken"),
           },
         }
       );
@@ -394,7 +412,10 @@ function ScheduleManagementView(props) {
           response.data,
           {
             headers: {
-              Authorization: `basic ${sessionStorage.getItem("authToken")}`,
+              Authorization:
+                sessionStorage.getItem("authType") +
+                " " +
+                sessionStorage.getItem("authToken"),
             },
           }
         );
@@ -405,7 +426,10 @@ function ScheduleManagementView(props) {
           props.backendDomain + "schedule/" + activeEvent.parentID,
           {
             headers: {
-              Authorization: `basic ${sessionStorage.getItem("authToken")}`,
+              Authorization:
+                sessionStorage.getItem("authType") +
+                " " +
+                sessionStorage.getItem("authToken"),
             },
           }
         );

@@ -107,7 +107,10 @@ class StylistViewForm extends Component {
           body,
           {
             headers: {
-              Authorization: `basic ${sessionStorage.getItem("authToken")}`,
+              Authorization:
+                sessionStorage.getItem("authType") +
+                " " +
+                sessionStorage.getItem("authToken"),
             },
           }
         )
@@ -133,7 +136,10 @@ class StylistViewForm extends Component {
       axios
         .post(this.props.backendDomain + "user/signup", body, {
           headers: {
-            Authorization: `basic ${sessionStorage.getItem("authToken")}`,
+            Authorization:
+              sessionStorage.getItem("authType") +
+              " " +
+              sessionStorage.getItem("authToken"),
           },
         })
         .then((response) => {
@@ -179,7 +185,10 @@ class StylistViewForm extends Component {
     axios
       .delete(this.props.backendDomain + "user/" + this.props.headerCard.pk, {
         headers: {
-          Authorization: `basic ${sessionStorage.getItem("authToken")}`,
+          Authorization:
+            sessionStorage.getItem("authType") +
+            " " +
+            sessionStorage.getItem("authToken"),
         },
       })
       .then((response) => {

@@ -16,41 +16,37 @@ function StylistView(props) {
 
   const setActiveAppointment = async (appointment) => {
     // TODO: VERIFY THIS IS WORKING AFTER NEW ROUTE.
-    console.log(appointment);
+    // console.log(appointment);
     if (!appointment) {
       sessionStorage.removeItem("activeAppointment");
-      sessionStorage.setItem("t", true);
+      // sessionStorage.setItem("t", true);
     } else {
       try {
-        let response = await axios.get(
-          props.backendDomain + "reservation/" + appointment.id,
+        console.log();
+        let response = await axios.put(
+          props.backendDomain + "reservation/" + appointment.id + "/start",
+          {},
           {
             headers: {
-              Authorization: `basic ${sessionStorage.getItem("authToken")}`,
+              Authorization:
+                sessionStorage.getItem("authType") +
+                " " +
+                sessionStorage.getItem("authToken"),
             },
           }
         );
-
-        response.data.status = "IP";
 
         console.log(response.data);
-        let putResponse = await axios.put(
-          props.backendDomain + "reservation/" + appointment.id,
-          response.data,
-          {
-            headers: {
-              Authorization: `basic ${sessionStorage.getItem("authToken")}`,
-            },
-          }
-        );
 
         sessionStorage.setItem(
           "activeAppointment",
           JSON.stringify(response.data)
         );
+        window.alert(JSON.stringify(response.data));
         return true;
       } catch (error) {
         console.log(error);
+        console.log(error.data);
         window.alert("Something went wrong setting Active Appointment.");
         return false;
       }
@@ -67,7 +63,10 @@ function StylistView(props) {
           "/reservation?status=IP",
         {
           headers: {
-            Authorization: `basic ${sessionStorage.getItem("authToken")}`,
+            Authorization:
+              sessionStorage.getItem("authType") +
+              " " +
+              sessionStorage.getItem("authToken"),
           },
         }
       );
