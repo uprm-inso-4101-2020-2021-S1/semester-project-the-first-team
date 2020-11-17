@@ -37,6 +37,7 @@ function ActiveAppointmentView(props) {
   };
 
   const fetchActiveReservationsForUser = async (stylist) => {
+    console.log("fetch active user...");
     try {
       let response = await axios.get(
         props.backendDomain +
@@ -52,7 +53,7 @@ function ActiveAppointmentView(props) {
           },
         }
       );
-      console.log("fetch active user...");
+
       console.log(response.data);
       if (response.data.length > 0) {
         return response.data[0];
@@ -67,10 +68,12 @@ function ActiveAppointmentView(props) {
   };
   const buildAppointment = async (appointment) => {
     console.log(appointment);
-    let appWCustomer = await getCustomerInfo(appointment);
-    await props.changeHeaderCard(appWCustomer.customer);
-    let fullApp = await getServiceInfo(appWCustomer);
-    setAppointment(fullApp);
+    if (appointment) {
+      let appWCustomer = await getCustomerInfo(appointment);
+      await props.changeHeaderCard(appWCustomer.customer);
+      let fullApp = await getServiceInfo(appWCustomer);
+      setAppointment(fullApp);
+    }
   };
 
   const getServiceInfo = async (appointment) => {
@@ -104,7 +107,7 @@ function ActiveAppointmentView(props) {
   };
 
   const getCustomerInfo = async (appointment) => {
-    if (Number.isInteger(appointment.customer)) {
+    if (appointment && Number.isInteger(appointment.customer)) {
       try {
         let response = await axios.get(
           props.backendDomain + "user/" + appointment.customer,

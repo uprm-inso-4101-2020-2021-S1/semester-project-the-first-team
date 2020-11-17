@@ -28,7 +28,8 @@ function StylistAppointmentQueue(props) {
       fetchReservationsForUser(activeUser);
     }
     // TODO, CHANGE THIS FOR THE PROPER ROLES FOR STYLIST DROPDOWN.
-    if (activeUser) {
+    let actUs = JSON.parse(sessionStorage.getItem("user"));
+    if (actUs.role === 0 || actUs.role === 3) {
       fetchStylists();
     }
   }, []);
@@ -88,6 +89,7 @@ function StylistAppointmentQueue(props) {
       setNoReservationsText("Fetching reservations...");
       setAppointments([]);
 
+      // Get Pending reservations.
       let response = await axios.get(
         props.backendDomain + "stylist/" + stylist.id + "/reservation?status=P",
         {
@@ -110,14 +112,48 @@ function StylistAppointmentQueue(props) {
         );
         console.log(appointmentsWithServiceInfo);
         setAppointments(setNextAppointment(appointmentsWithServiceInfo));
+
+        // Get In Progess Appointments.
+        // TODO: TEST THIS AFTER GETTING USER INFO IS FIXED FOR STYLIST
+        let actApp = JSON.parse(sessionStorage.getItem("activeAppointment"));
+        if (!actApp || actApp === "" || actApp === null) {
+          let responseIP = await axios.get(
+            props.backendDomain +
+              "stylist/" +
+              stylist.id +
+              "/reservation?status=IP",
+            {
+              headers: {
+                Authorization:
+                  sessionStorage.getItem("authType") +
+                  " " +
+                  sessionStorage.getItem("authToken"),
+              },
+            }
+          );
+
+          if (responseIP.length > 0) {
+            sessionStorage.setItem(
+              "activeAppointment",
+              JSON.stringify(responseIP.data[0])
+            );
+          }
+        }
       } else {
         setNoReservationsText("No reservations at the moment.");
 
         props.changeHeaderCard(stylist);
       }
     } catch (error) {
-      console.log(error);
-      window.alert("Could not fetch appointments.");
+      setNoReservationsText("No reservations at the moment.");
+      console.log(error.message);
+      if (
+        error.message &&
+        error.message !== "Request failed with status code 404"
+      ) {
+        console.log(error);
+        window.alert("Could not fetch appointments.");
+      }
     }
   };
 
@@ -217,28 +253,30 @@ function StylistAppointmentQueue(props) {
   };
 
   const selectStylistQueueDropdown = () => {
-    if (stylists.length === 0) {
+    let activeUser = JSON.parse(sessionStorage.getItem("user"));
+    if (activeUser.role === 0 || activeUser.role === 3) {
+      return (
+        <Fragment>
+          <label style={{ color: "white" }}>Select a stylist: </label>
+          <select
+            className="form-control "
+            name="utype"
+            onChange={(event) => handleDropdownChange(event)}
+          >
+            <option value="" selected disabled hidden>
+              Choose here
+            </option>
+            {stylists.map((stylist) => (
+              <option value={stylist.id} key={stylist.id}>
+                {stylist.first_name + " " + stylist.last_name}
+              </option>
+            ))}
+          </select>
+        </Fragment>
+      );
+    } else {
       return <span></span>;
     }
-    return (
-      <Fragment>
-        <label style={{ color: "white" }}>Select a stylist: </label>
-        <select
-          className="form-control "
-          name="utype"
-          onChange={(event) => handleDropdownChange(event)}
-        >
-          <option value="" selected disabled hidden>
-            Choose here
-          </option>
-          {stylists.map((stylist) => (
-            <option value={stylist.id} key={stylist.id}>
-              {stylist.first_name + " " + stylist.last_name}
-            </option>
-          ))}
-        </select>
-      </Fragment>
-    );
   };
 
   const deleteAppointment = async () => {
