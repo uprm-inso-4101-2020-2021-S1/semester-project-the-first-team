@@ -74,7 +74,7 @@ class Reservation(models.Model):
 class Feedback(models.Model):
     rating = models.SmallIntegerField(validators=[MinValueValidator(0), MaxValueValidator(5)])
     comments = models.CharField(max_length=200)
-    reservation = models.ForeignKey(Reservation, on_delete=models.CASCADE)
+    reservation = models.OneToOneField(Reservation, on_delete=models.CASCADE)
 
 
 class Notification(models.Model):

@@ -13,6 +13,7 @@ from rest_framework.decorators import api_view, permission_classes, authenticati
 from drf_yasg.utils import swagger_auto_schema
 from .swagger_models import SwagResponses as swagResp
 
+
 def jwt_response_payload_handler(token, user=None, request=None):
     return {
         'token': token,
