@@ -30,7 +30,7 @@ const emptyUser = {
   password: "",
 };
 
-function ViewUsersComponent(backendDomain) {
+function ViewUsersComponent(props) {
   const [userList, setUserList] = useState([]);
   const [filter, setFilter] = useState(defaultFilterString);
   const [modalUser, setModalUser] = useState(emptyUser);
@@ -39,6 +39,7 @@ function ViewUsersComponent(backendDomain) {
   const [createUser, setCreateUser] = useState(false);
 
   useEffect(() => {
+    props.redirectIfNotManager();
     updateUserList(filter);
   }, [filter]);
 
@@ -128,7 +129,7 @@ function ViewUsersComponent(backendDomain) {
     try {
       const uType = !filterLocally(userType) ? userType : "user";
       const result = await axios.get(
-        backendDomain.backendDomain + uType.toLowerCase(),
+        props.backendDomain + uType.toLowerCase(),
         {
           headers: {
             Authorization:
@@ -146,7 +147,7 @@ function ViewUsersComponent(backendDomain) {
 
   const getUser = async (id) => {
     try {
-      const user = await axios.get(backendDomain.backendDomain + "user/" + id, {
+      const user = await axios.get(props.backendDomain + "user/" + id, {
         headers: {
           Authorization:
             sessionStorage.getItem("authType") +
@@ -171,7 +172,7 @@ function ViewUsersComponent(backendDomain) {
     try {
       if (modalUser.id) {
         let result = await axios.delete(
-          backendDomain.backendDomain + "user/" + modalUser.id,
+          props.backendDomain + "user/" + modalUser.id,
           {
             headers: {
               Authorization:
@@ -196,7 +197,7 @@ function ViewUsersComponent(backendDomain) {
       if (modalUser.id) {
         // PUTTING
         let response = await axios.put(
-          backendDomain.backendDomain + "user/" + modalUser.id,
+          props.backendDomain + "user/" + modalUser.id,
           modalUser,
           {
             headers: {
@@ -210,7 +211,7 @@ function ViewUsersComponent(backendDomain) {
       } else {
         // POSTING
         let response = await axios.post(
-          backendDomain.backendDomain + "user/signup",
+          props.backendDomain + "user/signup",
           modalUser,
           {
             headers: {

@@ -24,9 +24,7 @@ function ViewScheduleComponent(props) {
       lastSun.getMonth(),
       lastSun.getDate() + 6
     );
-    console.log("today: ", date.toString());
-    console.log("Last Sunday: ", lastSun.toString());
-    console.log("Next Saturday: ", nextSat.toString());
+
     return [lastSun, nextSat];
   };
 
@@ -107,7 +105,11 @@ function ViewScheduleComponent(props) {
       addScheduleToEvents(response.data);
     } catch (error) {
       console.log(error);
-      window.alert("There was an issue getting the schedules from the system.");
+      if (error.message !== "Request failed with status code 404") {
+        window.alert(
+          "There was an issue getting the schedules from the system."
+        );
+      }
     }
   };
 

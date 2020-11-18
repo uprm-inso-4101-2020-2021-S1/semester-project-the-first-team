@@ -31,7 +31,10 @@ function StylistViewBody(props) {
           />
         </Route>
         <Route path={`${path}/schedule/manage`}>
-          <ScheduleManagementView backendDomain={props.backendDomain} />
+          <ScheduleManagementView
+            backendDomain={props.backendDomain}
+            redirectIfNotManager={props.redirectIfNotManager}
+          />
         </Route>
         <Route path={`${path}/schedule`}>
           <ViewScheduleComponent
@@ -40,13 +43,22 @@ function StylistViewBody(props) {
           />
         </Route>
         <Route path={`${path}/stats`}>
-          <StatsView backendDomain={props.backendDomain} />
+          <StatsView
+            backendDomain={props.backendDomain}
+            redirectIfNotManager={props.redirectIfNotManager}
+          />
         </Route>
         <Route path={`${path}/userlist`}>
-          <ViewUsersComponent backendDomain={props.backendDomain} />
+          <ViewUsersComponent
+            backendDomain={props.backendDomain}
+            redirectIfNotManager={props.redirectIfNotManager}
+          />
         </Route>
         <Route path={`${path}/manageservices`}>
-          <ManageServicesView backendDomain={props.backendDomain} />
+          <ManageServicesView
+            backendDomain={props.backendDomain}
+            redirectIfNotManager={props.redirectIfNotManager}
+          />
         </Route>
       </Switch>
     </div>

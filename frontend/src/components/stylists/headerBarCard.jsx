@@ -13,8 +13,6 @@ const defaultProfileImg =
 class HeaderBarCard extends Component {
   state = {};
 
-  // TODO: Rework route-dependent components into functions.
-  // Create dropdown for various stylist views.
   render() {
     return (
       <div className=" header-card">
@@ -52,6 +50,7 @@ class HeaderBarCard extends Component {
             <HeaderCardDropRight
               changeHeaderCard={this.props.changeHeaderCard}
               backendDomain={this.props.backendDomain}
+              headerCard={this.props.headerCard}
             />
           </Route>
         </div>
@@ -63,6 +62,11 @@ class HeaderBarCard extends Component {
 export default HeaderBarCard;
 
 function HeaderCardAppointmentTime(appTime) {
+  console.log(appTime);
+  let time = appTime.appTime;
+  if (typeof time === "string") {
+    time = new Date(time);
+  }
   return (
     <Fragment>
       <div>
@@ -71,7 +75,7 @@ function HeaderCardAppointmentTime(appTime) {
       <div>
         <div className="header-card-rightmost-section">
           <FontAwesomeIcon icon={faClock} />
-          <p className="app-time">{displayTime(appTime.appTime)}</p>
+          <p className="app-time">{displayTime(time)}</p>
         </div>
       </div>
     </Fragment>
@@ -79,15 +83,18 @@ function HeaderCardAppointmentTime(appTime) {
 }
 
 function HeaderCardDropRight(props) {
-  // state = { dropdownOptions: [] };
   const [dropdownOptions, setDropdownOptions] = useState([]);
+  const [showDropdown, setShowDropdown] = useState(false);
 
   useEffect(() => {
-    getStylistsForDropdown();
+    let activeUser = JSON.parse(sessionStorage.getItem("user"));
+    if (activeUser.role === 0 || activeUser.role === 3) {
+      setShowDropdown(true);
+      getStylistsForDropdown();
+    }
   }, []);
 
   const getStylistsForDropdown = async () => {
-    // TODO: ADD ROUTE TO GET USERS THAT ARE STYLISTS ONLY.
     console.log("getting stylists from backend...");
     try {
       console.log(props);
@@ -100,7 +107,6 @@ function HeaderCardDropRight(props) {
         },
       });
 
-      console.log(response);
       setDropdownOptions(response.data);
       props.changeHeaderCard(response.data[0]);
     } catch (error) {
@@ -110,7 +116,7 @@ function HeaderCardDropRight(props) {
     }
   };
 
-  return (
+  return showDropdown ? (
     <div className="btn-group dropdown">
       <DropdownButton className="btn dropdown-toggle" drop="down" title="">
         {dropdownOptions.length > 0 &&
@@ -124,6 +130,8 @@ function HeaderCardDropRight(props) {
           ))}
       </DropdownButton>
     </div>
+  ) : (
+    <span></span>
   );
 }
 

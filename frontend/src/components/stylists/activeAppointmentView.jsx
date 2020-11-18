@@ -67,12 +67,12 @@ function ActiveAppointmentView(props) {
     }
   };
   const buildAppointment = async (appointment) => {
-    console.log(appointment);
     if (appointment) {
       let appWCustomer = await getCustomerInfo(appointment);
       await props.changeHeaderCard(appWCustomer.customer);
       let fullApp = await getServiceInfo(appWCustomer);
       setAppointment(fullApp);
+      sessionStorage.setItem("activeAppointment", JSON.stringify(fullApp));
     }
   };
 
@@ -110,7 +110,7 @@ function ActiveAppointmentView(props) {
     if (appointment && Number.isInteger(appointment.customer)) {
       try {
         let response = await axios.get(
-          props.backendDomain + "user/" + appointment.customer,
+          props.backendDomain + "customer/" + appointment.customer,
           {
             headers: {
               Authorization:

@@ -30,7 +30,7 @@ function App() {
     try {
       const userPk = 3;
 
-      let loginJSON = { username: "Stylist", password: "Stylist" };
+      let loginJSON = { username: "Manager", password: "Manager" };
       let userInfoResponse = await axios.post(
         backendDomain + "user/login",
         loginJSON
@@ -39,7 +39,9 @@ function App() {
       if (authType === "basic") {
         sessionStorage.setItem(
           "authToken",
-          new Buffer("Stylist:Stylist").toString("base64")
+          new Buffer(loginJSON.username + ":" + loginJSON.password).toString(
+            "base64"
+          )
         );
       } else {
         sessionStorage.setItem("authToken", userInfoResponse.data.token);

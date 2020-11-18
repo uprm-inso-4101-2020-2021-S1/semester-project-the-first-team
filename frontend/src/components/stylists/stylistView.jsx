@@ -14,12 +14,20 @@ function StylistView(props) {
     }
   }, []);
 
+  const redirectIfNotManager = () => {
+    let browserUser = JSON.parse(sessionStorage.getItem("user"));
+
+    if (
+      browserUser.role &&
+      (browserUser.role !== 0 || browserUser.role !== 3)
+    ) {
+      window.location.href = "/stylists/reservations";
+    }
+  };
+
   const setActiveAppointment = async (appointment) => {
-    // TODO: VERIFY THIS IS WORKING AFTER NEW ROUTE.
-    // console.log(appointment);
     if (!appointment) {
       sessionStorage.removeItem("activeAppointment");
-      // sessionStorage.setItem("t", true);
     } else {
       try {
         console.log();
@@ -36,52 +44,16 @@ function StylistView(props) {
           }
         );
 
-        console.log(response.data);
-
         sessionStorage.setItem(
           "activeAppointment",
-          JSON.stringify(response.data)
+          JSON.stringify(appointment)
         );
-        window.alert(JSON.stringify(response.data));
         return true;
       } catch (error) {
         console.log(error);
-        console.log(error.data);
         window.alert("Something went wrong setting Active Appointment.");
         return false;
       }
-    }
-  };
-
-  const fetchActiveAppointment = async () => {
-    try {
-      let activeUser = JSON.parse(sessionStorage.getItem("user"));
-      let response = await axios.get(
-        props.backendDomain +
-          "stylist/" +
-          activeUser.id +
-          "/reservation?status=IP",
-        {
-          headers: {
-            Authorization:
-              sessionStorage.getItem("authType") +
-              " " +
-              sessionStorage.getItem("authToken"),
-          },
-        }
-      );
-      console.log(response);
-      if (response.data.length > 1) {
-        console.log(
-          "The response received contains more than one appointment. Saving only the first one to session storage..."
-        );
-        setActiveAppointment(response.data[0]);
-      } else if (response.data.length === 0) {
-        setActiveAppointment({});
-      }
-    } catch (error) {
-      console.log(error);
-      window.alert("Could not retrieve active appointment from system.");
     }
   };
 
@@ -97,6 +69,7 @@ function StylistView(props) {
         setActiveAppointment={setActiveAppointment}
         headerCard={headerCard}
         backendDomain={props.backendDomain}
+        redirectIfNotManager={redirectIfNotManager}
       />
     </div>
   );

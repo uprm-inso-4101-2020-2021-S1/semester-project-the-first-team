@@ -98,6 +98,9 @@ class StatsView extends Component {
     keys: ["iron", "manicure", "shampoo", "conditioner", "trim"],
     indexBy: "stylist",
   };
+  componentDidMount() {
+    this.props.redirectIfNotManager();
+  }
   render() {
     return (
       <div

@@ -18,6 +18,7 @@ function ScheduleManagementView(props) {
 
   // EFFECTS ==================================================
   useEffect(() => {
+    props.redirectIfNotManager();
     getStylistsFromBackend();
   }, []);
 

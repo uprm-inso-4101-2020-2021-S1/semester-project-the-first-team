@@ -101,7 +101,6 @@ function StylistAppointmentQueue(props) {
           },
         }
       );
-      console.log(response.data);
       if (response.data.length > 0) {
         let appointmentsWithUsersInfo = await getUserInfo(
           response.data,
@@ -110,35 +109,7 @@ function StylistAppointmentQueue(props) {
         let appointmentsWithServiceInfo = await getServiceInfo(
           appointmentsWithUsersInfo
         );
-        console.log(appointmentsWithServiceInfo);
         setAppointments(setNextAppointment(appointmentsWithServiceInfo));
-
-        // Get In Progess Appointments.
-        // TODO: TEST THIS AFTER GETTING USER INFO IS FIXED FOR STYLIST
-        let actApp = JSON.parse(sessionStorage.getItem("activeAppointment"));
-        if (!actApp || actApp === "" || actApp === null) {
-          let responseIP = await axios.get(
-            props.backendDomain +
-              "stylist/" +
-              stylist.id +
-              "/reservation?status=IP",
-            {
-              headers: {
-                Authorization:
-                  sessionStorage.getItem("authType") +
-                  " " +
-                  sessionStorage.getItem("authToken"),
-              },
-            }
-          );
-
-          if (responseIP.length > 0) {
-            sessionStorage.setItem(
-              "activeAppointment",
-              JSON.stringify(responseIP.data[0])
-            );
-          }
-        }
       } else {
         setNoReservationsText("No reservations at the moment.");
 
@@ -154,6 +125,40 @@ function StylistAppointmentQueue(props) {
         console.log(error);
         window.alert("Could not fetch appointments.");
       }
+    }
+
+    try {
+      // Get In Progess Appointments.
+      let actApp = JSON.parse(sessionStorage.getItem("activeAppointment"));
+      if (!actApp || actApp === "" || actApp === null) {
+        let responseIP = await axios.get(
+          props.backendDomain +
+            "stylist/" +
+            stylist.id +
+            "/reservation?status=IP",
+          {
+            headers: {
+              Authorization:
+                sessionStorage.getItem("authType") +
+                " " +
+                sessionStorage.getItem("authToken"),
+            },
+          }
+        );
+        console.log(responseIP.data);
+
+        if (responseIP.data.length > 0) {
+          sessionStorage.setItem(
+            "activeAppointment",
+            JSON.stringify(responseIP.data[0])
+          );
+        }
+      }
+    } catch (error) {
+      console.log(error);
+      window.alert(
+        "Could not verify if there are any active reservations; please go to the active reservations view or reload the page."
+      );
     }
   };
 
@@ -200,7 +205,7 @@ function StylistAppointmentQueue(props) {
       console.log("For user ", customerID);
       try {
         let response = await axios.get(
-          props.backendDomain + "user/" + customerID,
+          props.backendDomain + "customer/" + customerID,
           {
             headers: {
               Authorization:

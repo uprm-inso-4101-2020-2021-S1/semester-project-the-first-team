@@ -18,6 +18,7 @@ class ManageServicesView extends Component {
   state = { serviceList: [], activeService: emptyService };
 
   componentDidMount() {
+    this.props.redirectIfNotManager();
     this.getServices();
   }
 
