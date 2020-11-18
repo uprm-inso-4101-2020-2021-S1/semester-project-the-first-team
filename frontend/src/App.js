@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import Sidebar from "./components/Sidebar";
 import StylistView from "./components/stylists/stylistView";
 import Customer from "./components/customers/Customer";
-
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import { faHome, faConciergeBell } from "@fortawesome/free-solid-svg-icons";
 import Login from "./components/Login";
@@ -28,8 +27,6 @@ function App() {
     let authType = sessionStorage.getItem("authType");
 
     try {
-      const userPk = 3;
-
       let loginJSON = { username: "Manager", password: "Manager" };
       let userInfoResponse = await axios.post(
         backendDomain + "user/login",

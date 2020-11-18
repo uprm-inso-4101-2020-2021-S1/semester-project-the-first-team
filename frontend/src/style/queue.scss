@@ -97,6 +97,15 @@
           }
         }
 
+        .appointment-info-div p span {
+          &.P {
+            color: lightgreen;
+          }
+          &.IP {
+            color: orange;
+          }
+        }
+
         .card-div {
           height: 100%;
           border-left: 3px solid white;

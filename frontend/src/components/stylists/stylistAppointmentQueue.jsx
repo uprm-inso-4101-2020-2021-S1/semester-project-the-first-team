@@ -1,11 +1,11 @@
 import React, { Fragment, useState, useEffect } from "react";
 import AppointmentModal from "./appointmentModal";
 import "../../style/queue.scss";
-
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faClock } from "@fortawesome/free-solid-svg-icons";
 import { Modal, Button } from "react-bootstrap";
 import axios from "axios";
+
 const defaultProfileImg =
   "https://images.pexels.com/photos/194446/pexels-photo-194446.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940";
 
@@ -24,12 +24,12 @@ function StylistAppointmentQueue(props) {
   const activeUser = JSON.parse(sessionStorage.getItem("user"));
 
   useEffect(() => {
+    // On load page, fetch the reservations for the logged in user.
     if (activeUser.id) {
       fetchReservationsForUser(activeUser);
     }
-    // TODO, CHANGE THIS FOR THE PROPER ROLES FOR STYLIST DROPDOWN.
-    let actUs = JSON.parse(sessionStorage.getItem("user"));
-    if (actUs.role === 0 || actUs.role === 3) {
+
+    if (activeUser.role === 0 || activeUser.role === 3) {
       fetchStylists();
     }
   }, []);
@@ -85,7 +85,9 @@ function StylistAppointmentQueue(props) {
   };
 
   const fetchReservationsForUser = async (stylist) => {
+    let reservationsToSave = [];
     try {
+      // Reset display and empty any cached values.
       setNoReservationsText("Fetching reservations...");
       setAppointments([]);
 
@@ -101,65 +103,89 @@ function StylistAppointmentQueue(props) {
           },
         }
       );
+
+      // If there are any reservations pending, process them.
       if (response.data.length > 0) {
-        let appointmentsWithUsersInfo = await getUserInfo(
+        let reservationsWithUserInfo = await getUserInfo(
           response.data,
           stylist
         );
-        let appointmentsWithServiceInfo = await getServiceInfo(
-          appointmentsWithUsersInfo
+        let reservationsWithServiceInfo = await getServiceInfo(
+          reservationsWithUserInfo
         );
-        setAppointments(setNextAppointment(appointmentsWithServiceInfo));
+
+        // Set the appointments to save.
+        reservationsToSave = reservationsWithServiceInfo;
+
+        // if no reservations
       } else {
         setNoReservationsText("No reservations at the moment.");
-
         props.changeHeaderCard(stylist);
       }
+
+      // Handle Error responses.
     } catch (error) {
       setNoReservationsText("No reservations at the moment.");
-      console.log(error.message);
-      if (
-        error.message &&
-        error.message !== "Request failed with status code 404"
-      ) {
-        console.log(error);
-        window.alert("Could not fetch appointments.");
+      console.log(error);
+
+      // Error 404 has been reserved for meaning the stylist does not have any reservations at this moment.
+      // If error is 404, show nothing. Else, show alert.
+      if (error.message !== "Request failed with status code 404") {
+        window.alert("Could not fetch reservations.");
       }
     }
 
+    // Get In Progess Appointments.
     try {
-      // Get In Progess Appointments.
-      let actApp = JSON.parse(sessionStorage.getItem("activeAppointment"));
-      if (!actApp || actApp === "" || actApp === null) {
-        let responseIP = await axios.get(
-          props.backendDomain +
-            "stylist/" +
-            stylist.id +
-            "/reservation?status=IP",
-          {
-            headers: {
-              Authorization:
-                sessionStorage.getItem("authType") +
-                " " +
-                sessionStorage.getItem("authToken"),
-            },
-          }
-        );
-        console.log(responseIP.data);
-
-        if (responseIP.data.length > 0) {
-          sessionStorage.setItem(
-            "activeAppointment",
-            JSON.stringify(responseIP.data[0])
-          );
+      let responseIP = await axios.get(
+        props.backendDomain +
+          "stylist/" +
+          stylist.id +
+          "/reservation?status=IP",
+        {
+          headers: {
+            Authorization:
+              sessionStorage.getItem("authType") +
+              " " +
+              sessionStorage.getItem("authToken"),
+          },
         }
+      );
+
+      if (responseIP.data.length > 0) {
+        // Set the active reservation in the session storage.
+        sessionStorage.setItem(
+          "activeAppointment",
+          JSON.stringify(responseIP.data[0])
+        );
+
+        // Build the reservation data.
+        let reservationsWithUserInfo = await getUserInfo(
+          responseIP.data,
+          stylist
+        );
+        let reservationsWithServiceInfo = await getServiceInfo(
+          reservationsWithUserInfo
+        );
+
+        // Add the In Progress reservation data to the list of reservations to show.
+        reservationsToSave = reservationsToSave.concat(
+          reservationsWithServiceInfo
+        );
       }
+
+      // Handle errors with In Progress fetching.
     } catch (error) {
       console.log(error);
-      window.alert(
-        "Could not verify if there are any active reservations; please go to the active reservations view or reload the page."
-      );
+      if (error.message !== "Request failed with status code 404") {
+        window.alert(
+          "Could not verify if there are any active reservations; please go to the active reservations view or reload the page."
+        );
+      }
     }
+
+    // Set appointments to show.
+    setAppointments(setNextAppointment(reservationsToSave));
   };
 
   const getServiceInfo = async (appointmentArr) => {
@@ -340,13 +366,11 @@ function StylistAppointmentQueue(props) {
   };
 
   const statusOfAppointment = (appointment) => {
-    // TODO: IMPLEMENT LOGIC HERE.
-
-    let stat = "On Time";
+    let stat = "Pending";
     if (appointment.status === "IP") {
       stat = "In Progress";
     }
-    return "On Time";
+    return stat;
   };
 
   return (
@@ -370,44 +394,49 @@ function StylistAppointmentQueue(props) {
             {noReservationsText}
           </h2>
         )}
-        {appointments.map((appointment) => (
-          <div className="appointment-container" key={appointment.username}>
+        {appointments.map((reservation) => (
+          <div className="appointment-container" key={reservation.username}>
             <div className="appointment-time-container">
               <div className="card">
-                {/* Time of appointment */}
+                {/* Time of reservation */}
                 <div>
                   <FontAwesomeIcon icon={faClock} />
-                  <p>{displayTime(appointment)}</p>
+                  <p>{displayTime(reservation)}</p>
                 </div>
               </div>
             </div>
             <div
               className=" appointment-card"
-              onClick={() => enableModal(appointment)}
+              onClick={() => enableModal(reservation)}
             >
               <div className="card-body">
                 <picture>
                   {/* Customer's profile Pic */}
                   <img
-                    src={appointment.customer.profilePic}
+                    src={reservation.customer.profilePic}
                     alt="Appointment Profile"
                   ></img>
                 </picture>
                 <div className="username-div">
                   {/* Customer's display name */}
                   <p>
-                    {appointment.customer.first_name +
+                    {reservation.customer.first_name +
                       " " +
-                      appointment.customer.last_name}
+                      reservation.customer.last_name}
                   </p>
                 </div>
                 <div className="card-div" />
                 <div className="appointment-info-div">
-                  {/* Appointment Information: num services, duration, status. */}
-                  <p>Num. of Services: {appointment.service.length}</p>
-                  <p>Est. Duration: {appointment.estWait} min.</p>
-                  {/*DYNAMICALLY DETERMINE IF APPOINTMENT IS ON TIME OR WAITING. */}
-                  <p>Status: {statusOfAppointment(appointment)}</p>
+                  {/* reservation Information: num services, duration, status. */}
+                  <p>Num. of Services: {reservation.service.length}</p>
+                  <p>Est. Duration: {reservation.estWait} min.</p>
+                  {/*DYNAMICALLY DETERMINE IF reservation IS ON TIME OR WAITING. */}
+                  <p>
+                    Status:{" "}
+                    <span className={reservation.status}>
+                      {statusOfAppointment(reservation)}
+                    </span>
+                  </p>
                 </div>
               </div>
             </div>
