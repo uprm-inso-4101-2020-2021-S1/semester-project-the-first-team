@@ -225,7 +225,7 @@ function ReservationForm(props) {
             <Spinner
               animation="border"
               variant="secondary"
-              style={{ width: "60px", height: "60px" }}
+              className="loading-spinner"
             />
           </Col>
         </Row>
