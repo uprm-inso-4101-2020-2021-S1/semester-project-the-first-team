@@ -13,7 +13,7 @@ function Customer(props) {
   console.log();
   return props.userRole === 2 ? (
     <>
-      <Sidebar items={sidebarItems} />
+      <Sidebar items={sidebarItems} logout={props.logout} />
       <Route path={`${match.url}/reservations`}>
         <CustomerReservation />
       </Route>
@@ -24,6 +24,7 @@ function Customer(props) {
 }
 Customer.propTypes = {
   loggedIn: PropTypes.bool,
+  logout: PropTypes.func.isRequired,
   userRole: PropTypes.number.isRequired,
   userName: PropTypes.string,
   userId: PropTypes.number,

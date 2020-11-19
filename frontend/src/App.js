@@ -47,25 +47,27 @@ function App() {
     }
   }, [loggedIn]);
 
-  console.log(loggedIn, username, userRole, userId);
   const handleLogin = (e, data) => {
     e.preventDefault();
     axios
       .post(`${backendDomain}user/login`, data)
       .then((res) => {
-        // TODO: Remove console logs
-        console.log(res.data.user);
         localStorage.setItem("token", res.data.token);
         setUserRole(res.data.user.role);
         setUserId(res.data.user.id);
         setUsername(res.data.user.username);
         setLoggedIn(true);
       })
-      .catch((error) => {
-        // TODO: Proper error handling
-        console.log(error);
+      .catch(() => {
         window.alert("Invalid login credentials.");
       });
+  };
+
+  const handleLogout = (e) => {
+    e.preventDefault();
+    setLoggedIn(false);
+    localStorage.clear();
+    // TODO: Add proper logout
   };
 
   sessionStorage.setItem(
@@ -165,7 +167,7 @@ function App() {
             <Redirect to="/login" />
           </Route>
           <Route path="/stylists">
-            <Sidebar items={temp} />
+            <Sidebar items={temp} logout={handleLogout} />
             {loggedIn ? (
               !isLoading ? (
                 <>
@@ -199,6 +201,7 @@ function App() {
                   userRole={userRole}
                   userName={username}
                   backendDomain={backendDomain}
+                  logout={handleLogout}
                 />
               ) : (
                 <Container>
