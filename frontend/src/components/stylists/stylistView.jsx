@@ -9,6 +9,7 @@ function StylistView(props) {
 
   useEffect(() => {
     if (!user) {
+      fetchActiveUser();
       user = JSON.parse(sessionStorage.getItem("user"));
       setHeaderCard(user);
     }
@@ -25,6 +26,24 @@ function StylistView(props) {
     }
   };
 
+  const fetchActiveUser = async () => {
+    try {
+      let response = await axios.get(props.backendDomain + "user/current", {
+        headers: {
+          Authorization: "JWT " + localStorage.getItem("token"),
+        },
+      });
+
+      response.data.password = "";
+      sessionStorage.setItem("user", JSON.stringify(response.data));
+    } catch (error) {
+      console.log(error);
+      window.alert(
+        "Something went wrong fetching your information for the stylist views."
+      );
+    }
+  };
+
   const setActiveAppointment = async (appointment) => {
     if (!appointment) {
       sessionStorage.removeItem("activeAppointment");
@@ -36,10 +55,7 @@ function StylistView(props) {
           {},
           {
             headers: {
-              Authorization:
-                sessionStorage.getItem("authType") +
-                " " +
-                sessionStorage.getItem("authToken"),
+              Authorization: "JWT " + localStorage.getItem("token"),
             },
           }
         );

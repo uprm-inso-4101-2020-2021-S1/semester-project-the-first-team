@@ -96,10 +96,7 @@ function StylistAppointmentQueue(props) {
         props.backendDomain + "stylist/" + stylist.id + "/reservation?status=P",
         {
           headers: {
-            Authorization:
-              sessionStorage.getItem("authType") +
-              " " +
-              sessionStorage.getItem("authToken"),
+            Authorization: "JWT " + localStorage.getItem("token"),
           },
         }
       );
@@ -144,10 +141,7 @@ function StylistAppointmentQueue(props) {
           "/reservation?status=IP",
         {
           headers: {
-            Authorization:
-              sessionStorage.getItem("authType") +
-              " " +
-              sessionStorage.getItem("authToken"),
+            Authorization: "JWT " + localStorage.getItem("token"),
           },
         }
       );
@@ -200,10 +194,7 @@ function StylistAppointmentQueue(props) {
           props.backendDomain + "service/" + serviceID,
           {
             headers: {
-              Authorization:
-                sessionStorage.getItem("authType") +
-                " " +
-                sessionStorage.getItem("authToken"),
+              Authorization: "JWT " + localStorage.getItem("token"),
             },
           }
         );
@@ -234,10 +225,7 @@ function StylistAppointmentQueue(props) {
           props.backendDomain + "customer/" + customerID,
           {
             headers: {
-              Authorization:
-                sessionStorage.getItem("authType") +
-                " " +
-                sessionStorage.getItem("authToken"),
+              Authorization: "JWT " + localStorage.getItem("token"),
             },
           }
         );
@@ -260,10 +248,7 @@ function StylistAppointmentQueue(props) {
     try {
       let response = await axios.get(props.backendDomain + "stylist", {
         headers: {
-          Authorization:
-            sessionStorage.getItem("authType") +
-            " " +
-            sessionStorage.getItem("authToken"),
+          Authorization: "JWT " + localStorage.getItem("token"),
         },
       });
       setStylists(response.data);
@@ -317,10 +302,7 @@ function StylistAppointmentQueue(props) {
         props.backendDomain + "reservation/" + modalAppointment.id + "/cancel",
         {
           headers: {
-            Authorization:
-              sessionStorage.getItem("authType") +
-              " " +
-              sessionStorage.getItem("authToken"),
+            Authorization: "JWT " + localStorage.getItem("token"),
           },
         }
       );

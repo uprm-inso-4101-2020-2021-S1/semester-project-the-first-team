@@ -23,7 +23,6 @@ function ActiveAppointmentView(props) {
     let actApp = JSON.parse(sessionStorage.getItem("activeAppointment"));
     console.log(actApp);
     if (actApp === null || actApp === "" || !actApp) {
-      // TODO: TEST THIS IS FUNCTIONING AFTER ROUTE TO SET AS IN PROGRESS IS IMPLEMENED IN QUEUE VIEW.
       actApp = await fetchActiveReservationsForUser(activeUser);
     }
     if (actApp === null) {
@@ -46,10 +45,7 @@ function ActiveAppointmentView(props) {
           "/reservation?status=IP",
         {
           headers: {
-            Authorization:
-              sessionStorage.getItem("authType") +
-              " " +
-              sessionStorage.getItem("authToken"),
+            Authorization: "JWT " + localStorage.getItem("token"),
           },
         }
       );
@@ -88,10 +84,7 @@ function ActiveAppointmentView(props) {
           props.backendDomain + "service/" + serviceID,
           {
             headers: {
-              Authorization:
-                sessionStorage.getItem("authType") +
-                " " +
-                sessionStorage.getItem("authToken"),
+              Authorization: "JWT " + localStorage.getItem("token"),
             },
           }
         );
@@ -113,10 +106,7 @@ function ActiveAppointmentView(props) {
           props.backendDomain + "customer/" + appointment.customer,
           {
             headers: {
-              Authorization:
-                sessionStorage.getItem("authType") +
-                " " +
-                sessionStorage.getItem("authToken"),
+              Authorization: "JWT " + localStorage.getItem("token"),
             },
           }
         );
@@ -189,10 +179,7 @@ function ActiveAppointmentView(props) {
         serviceDurationData,
         {
           headers: {
-            Authorization:
-              sessionStorage.getItem("authType") +
-              " " +
-              sessionStorage.getItem("authToken"),
+            Authorization: "JWT " + localStorage.getItem("token"),
           },
         }
       );
@@ -222,10 +209,7 @@ function ActiveAppointmentView(props) {
         props.backendDomain + "reservation/" + activeAppointment.id + "/cancel",
         {
           headers: {
-            Authorization:
-              sessionStorage.getItem("authType") +
-              " " +
-              sessionStorage.getItem("authToken"),
+            Authorization: "JWT " + localStorage.getItem("token"),
           },
         }
       );

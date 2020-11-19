@@ -26,7 +26,6 @@ function App() {
   // TODO: UPDATE THIS DURING DEPLOYMENT OR GET FROM OTHER FILE.
   const backendDomain = "http://localhost:8000/";
   //const backendDomain = window._env_.REST_API_URL.toString();
-  // TODO: Get auth token (username:password) from login page and save here in session storage.
 
   useEffect(() => {
     if (loggedIn) {
@@ -39,6 +38,7 @@ function App() {
           setUserRole(res.data.role);
           setUserId(res.data.id);
           setUsername(res.data.username);
+          setStylistsInfo(res.data);
           setIsLoading(false);
         })
         .catch(() => {
@@ -67,48 +67,14 @@ function App() {
     e.preventDefault();
     setLoggedIn(false);
     localStorage.clear();
+    sessionStorage.clear();
     // TODO: Add proper logout
   };
 
-  sessionStorage.setItem(
-    "authToken",
-    new Buffer("Manager:Manager").toString("base64")
-  );
-
-  useEffect(() => {
-    logInUser();
-  }, [backendDomain]);
-
-  const logInUser = async () => {
-    //  todo: implement actual log in to get requests.
-    // todo: update this to not run every refresh.
-    // Getting hardcoded user from backend.
-    let authType = sessionStorage.getItem("authType");
-
-    try {
-      let loginJSON = { username: "Manager", password: "Manager" };
-      let userInfoResponse = await axios.post(
-        backendDomain + "user/login",
-        loginJSON
-      );
-      console.log(userInfoResponse);
-      if (authType === "basic") {
-        sessionStorage.setItem(
-          "authToken",
-          new Buffer(loginJSON.username + ":" + loginJSON.password).toString(
-            "base64"
-          )
-        );
-      } else {
-        sessionStorage.setItem("authToken", userInfoResponse.data.token);
-      }
-      sessionStorage.setItem(
-        "user",
-        JSON.stringify(userInfoResponse.data.user)
-      );
-    } catch (error) {
-      console.log(error);
-      window.alert("Could not sign in.");
+  const setStylistsInfo = (stylistData) => {
+    if (stylistData.role !== 2) {
+      stylistData.password = "";
+      sessionStorage.setItem("user", JSON.stringify(stylistData));
     }
   };
 
@@ -139,12 +105,12 @@ function App() {
       icon: faConciergeBell,
       cName: "nav-text",
     },
-    {
-      title: "Statistics",
-      path: "/stylists/stats",
-      icon: faConciergeBell,
-      cName: "nav-text",
-    },
+    // {
+    //   title: "Statistics",
+    //   path: "/stylists/stats",
+    //   icon: faConciergeBell,
+    //   cName: "nav-text",
+    // },
     {
       title: "View Users",
       path: "/stylists/userlist",
@@ -167,7 +133,7 @@ function App() {
             <Redirect to="/login" />
           </Route>
           <Route path="/stylists">
-            <Sidebar items={temp} logout={handleLogout} />
+            <Sidebar items={temp} logout={handleLogout} userRole={userRole} />
             {loggedIn ? (
               !isLoading ? (
                 <>

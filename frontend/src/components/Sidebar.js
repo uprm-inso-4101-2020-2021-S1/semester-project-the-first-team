@@ -17,21 +17,22 @@ const managerTitleLinks = [
   "View Users",
   "Manage Services",
 ];
-function canUserViewLink(title) {
-  if (managerTitleLinks.includes(title)) {
-    let activeUser = JSON.parse(sessionStorage.getItem("user"));
-    if (activeUser.role === 0 || activeUser.role === 3) {
-      return true;
-    }
-    return false;
-  }
-  return true;
-}
+
 function Sidebar(props) {
   const [sidebar, setSidebar] = useState(false);
 
   const showSidebar = () => setSidebar(!sidebar);
   const location = useLocation();
+
+  function canUserViewLink(title) {
+    if (managerTitleLinks.includes(title)) {
+      if (props.userRole === 0 || props.userRole === 3) {
+        return true;
+      }
+      return false;
+    }
+    return true;
+  }
 
   return (
     <>

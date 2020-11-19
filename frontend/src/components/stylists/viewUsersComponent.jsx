@@ -4,6 +4,7 @@ import DropdownItem from "react-bootstrap/DropdownItem";
 import axios from "axios";
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
+import { Row, Col } from "react-bootstrap";
 
 const dropdownFilters = [
   "First Name",
@@ -83,7 +84,12 @@ function ViewUsersComponent(props) {
     );
   };
   const areFieldsFilled = () => {
+    if (!modalUser.username) {
+      return false;
+    }
+
     if (createUser) {
+      console.log(modalUser);
       return (
         modalUser.username.length > 0 &&
         modalUser.first_name.length > 0 &&
@@ -108,13 +114,13 @@ function ViewUsersComponent(props) {
     if (user.id) {
       tempUser = await getUser(user.id);
       setCreateUser(false);
+      setModalUser(tempUser);
     } else {
+      setModalUser(tempUser);
       setCreateUser(true);
     }
-    if (tempUser) {
-      setModalUser(tempUser);
-      setShowModal(!showModal);
-    }
+
+    setShowModal(!showModal);
   };
 
   const updateModalUser = (event) => {
@@ -132,10 +138,7 @@ function ViewUsersComponent(props) {
         props.backendDomain + uType.toLowerCase(),
         {
           headers: {
-            Authorization:
-              sessionStorage.getItem("authType") +
-              " " +
-              sessionStorage.getItem("authToken"),
+            Authorization: "JWT " + localStorage.getItem("token"),
           },
         }
       );
@@ -149,10 +152,7 @@ function ViewUsersComponent(props) {
     try {
       const user = await axios.get(props.backendDomain + "user/" + id, {
         headers: {
-          Authorization:
-            sessionStorage.getItem("authType") +
-            " " +
-            sessionStorage.getItem("authToken"),
+          Authorization: "JWT " + localStorage.getItem("token"),
         },
       });
       return user.data;
@@ -175,10 +175,7 @@ function ViewUsersComponent(props) {
           props.backendDomain + "user/" + modalUser.id,
           {
             headers: {
-              Authorization:
-                sessionStorage.getItem("authType") +
-                " " +
-                sessionStorage.getItem("authToken"),
+              Authorization: "JWT " + localStorage.getItem("token"),
             },
           }
         );
@@ -201,10 +198,7 @@ function ViewUsersComponent(props) {
           modalUser,
           {
             headers: {
-              Authorization:
-                sessionStorage.getItem("authType") +
-                " " +
-                sessionStorage.getItem("authToken"),
+              Authorization: "JWT " + localStorage.getItem("token"),
             },
           }
         );
@@ -215,10 +209,7 @@ function ViewUsersComponent(props) {
           modalUser,
           {
             headers: {
-              Authorization:
-                sessionStorage.getItem("authType") +
-                " " +
-                sessionStorage.getItem("authToken"),
+              Authorization: "JWT " + localStorage.getItem("token"),
             },
           }
         );
@@ -339,7 +330,6 @@ function ViewUsersComponent(props) {
                 />
               </Fragment>
             )}
-            {/* SHOULD ROLE BE CHANGEABLE FOR EXISTING USERS? */}
             {createUser && (
               <Fragment>
                 <label>Role:</label>
@@ -352,7 +342,20 @@ function ViewUsersComponent(props) {
                   value={modalUser.role}
                   onChange={(e) => updateModalUser(e)}
                 />
-                <i>0: "Manager", 1: "Stylist", 2: "Customer", 3: "Admin"</i>
+                <Row>
+                  <Col>
+                    <i>0 -{">"} Manager</i>
+                  </Col>
+                  <Col>
+                    <i> 1 -{">"} Stylist</i>
+                  </Col>
+                  <Col>
+                    <i> 2 -{">"} Customer</i>
+                  </Col>
+                  <Col>
+                    <i>3 -{">"} Admin</i>
+                  </Col>
+                </Row>
               </Fragment>
             )}
           </form>
@@ -365,7 +368,7 @@ function ViewUsersComponent(props) {
           <Button
             variant="primary"
             onClick={submitUser}
-            disabled={!validateEmail() || !areFieldsFilled()}
+            disabled={!showModal || !validateEmail() || !areFieldsFilled()}
           >
             Submit
           </Button>

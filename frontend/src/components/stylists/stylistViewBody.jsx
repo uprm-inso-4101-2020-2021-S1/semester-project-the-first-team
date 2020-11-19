@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import { Switch, Route } from "react-router";
-import StylistViewForm from "./stylistViewForm";
 import StylistAppointmentQueue from "./stylistAppointmentQueue";
 import ActiveAppointmentView from "./activeAppointmentView";
 import ScheduleManagementView from "./scheduleManagementView";
@@ -42,12 +41,12 @@ function StylistViewBody(props) {
             backendDomain={props.backendDomain}
           />
         </Route>
-        <Route path={`${path}/stats`}>
+        {/* <Route path={`${path}/stats`}>
           <StatsView
             backendDomain={props.backendDomain}
             redirectIfNotManager={props.redirectIfNotManager}
           />
-        </Route>
+        </Route> */}
         <Route path={`${path}/userlist`}>
           <ViewUsersComponent
             backendDomain={props.backendDomain}
