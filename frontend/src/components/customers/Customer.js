@@ -10,8 +10,8 @@ import "../../style/customer.scss";
 function Customer(props) {
   const [sidebarItems] = useState(CustomerSidebarItems);
   let match = useRouteMatch();
-
-  return props.userRole == 2 ? (
+  console.log();
+  return props.userRole === 2 ? (
     <>
       <Sidebar items={sidebarItems} />
       <Route path={`${match.url}/reservations`}>
@@ -23,10 +23,10 @@ function Customer(props) {
   );
 }
 Customer.propTypes = {
-  loggedIn: PropTypes.bool.isRequired,
+  loggedIn: PropTypes.bool,
   userRole: PropTypes.number.isRequired,
-  userName: PropTypes.string.isRequired,
-  userId: PropTypes.number.isRequired,
+  userName: PropTypes.string,
+  userId: PropTypes.number,
 };
 
 export default Customer;

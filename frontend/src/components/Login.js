@@ -33,12 +33,12 @@ function Login(props) {
             <Row>
               <Col className="login-form">
                 <Form
-                  onSubmit={(e) =>
+                  onSubmit={(e) => {
                     props.handleLogin(e, {
                       username: username,
                       password: password,
-                    })
-                  }
+                    });
+                  }}
                 >
                   <Form.Group
                     as={Row}
@@ -78,7 +78,7 @@ function Login(props) {
                   </Button>
                   <Form.Text className="sign-up">
                     <span>{"Don't have an account?"}</span>
-                    <Link to="/#" className="sign-up link">
+                    <Link to="/sign-up" className="sign-up link">
                       Sign Up
                     </Link>
                   </Form.Text>
@@ -97,9 +97,9 @@ function Login(props) {
 }
 
 Login.propTypes = {
-  handleLogin: PropTypes.func.isRequired,
-  userRole: PropTypes.number.isRequired,
-  loggedIn: PropTypes.bool.isRequired,
+  handleLogin: PropTypes.func,
+  userRole: PropTypes.number,
+  loggedIn: PropTypes.bool,
 };
 
 export default Login;

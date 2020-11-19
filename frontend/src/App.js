@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import Sidebar from "./components/Sidebar";
 import StylistView from "./components/stylists/stylistView";
 import Customer from "./components/customers/Customer";
+import { Container, Row, Col, Spinner } from "react-bootstrap";
 
 import {
   BrowserRouter as Router,
@@ -17,6 +18,7 @@ function App() {
   const [loggedIn, setLoggedIn] = useState(
     localStorage.getItem("token") ? true : false
   );
+  const [isLoading, setIsLoading] = useState(true);
   const [username, setUsername] = useState("");
   const [userId, setUserId] = useState(null);
   const [userRole, setUserRole] = useState(null);
@@ -28,34 +30,36 @@ function App() {
 
   useEffect(() => {
     if (loggedIn) {
+      setIsLoading(true);
       axios
         .get(`${backendDomain}user/current`, {
           headers: { Authorization: `JWT ${localStorage.getItem("token")}` },
         })
         .then((res) => {
+          setUserRole(res.data.role);
           setUserId(res.data.id);
           setUsername(res.data.username);
-          setUserRole(res.data.role);
+          setIsLoading(false);
         })
-        .catch((error) => {
+        .catch(() => {
           setLoggedIn(false);
-          console.log(error);
         });
     }
-  });
+  }, [loggedIn]);
 
+  console.log(loggedIn, username, userRole, userId);
   const handleLogin = (e, data) => {
     e.preventDefault();
     axios
       .post(`${backendDomain}user/login`, data)
       .then((res) => {
         // TODO: Remove console logs
-        //console.log(res.data.user);
+        console.log(res.data.user);
         localStorage.setItem("token", res.data.token);
-        setLoggedIn(true);
+        setUserRole(res.data.user.role);
         setUserId(res.data.user.id);
         setUsername(res.data.user.username);
-        setUserRole(res.data.user.role);
+        setLoggedIn(true);
       })
       .catch((error) => {
         // TODO: Proper error handling
@@ -64,35 +68,35 @@ function App() {
       });
   };
 
-  //sessionStorage.setItem(
-  //"authToken",
-  //new Buffer("Manager:Manager").toString("base64")
-  //);
+  sessionStorage.setItem(
+    "authToken",
+    new Buffer("Manager:Manager").toString("base64")
+  );
 
-  //useEffect(() => {
-  //logInUser();
-  //}, [backendDomain]);
+  useEffect(() => {
+    logInUser();
+  }, [backendDomain]);
 
-  //const logInUser = async () => {
-  ////  todo: implement actual log in to get requests.
-  //// todo: update this to not run every refresh.
-  //// Getting hardcoded user from backend.
-  //try {
-  //console.log("Logging in");
-  //const userPk = 3;
-  //console.log("current domain: " + backendDomain);
-  //console.log("Sending REquest: " + backendDomain + "user/" + userPk);
-  //let userInfoResponse = await axios.get(backendDomain + "user/" + userPk, {
-  //headers: {
-  //Authorization: `basic ${sessionStorage.getItem("authToken")}`,
-  //},
-  //});
-  //sessionStorage.setItem("user", JSON.stringify(userInfoResponse.data));
-  //} catch (error) {
-  //console.log(error);
-  //window.alert("Could not sign in.");
-  //}
-  //};
+  const logInUser = async () => {
+    //  todo: implement actual log in to get requests.
+    // todo: update this to not run every refresh.
+    // Getting hardcoded user from backend.
+    try {
+      console.log("Logging in");
+      const userPk = 3;
+      console.log("current domain: " + backendDomain);
+      console.log("Sending REquest: " + backendDomain + "user/" + userPk);
+      let userInfoResponse = await axios.get(backendDomain + "user/" + userPk, {
+        headers: {
+          Authorization: `basic ${sessionStorage.getItem("authToken")}`,
+        },
+      });
+      sessionStorage.setItem("user", JSON.stringify(userInfoResponse.data));
+    } catch (error) {
+      console.log(error);
+      window.alert("Could not sign in.");
+    }
+  };
 
   // TODO: Move this to a separate file
   const temp = [
@@ -161,23 +165,57 @@ function App() {
             <Redirect to="/login" />
           </Route>
           <Route path="/stylists">
+            <Sidebar items={temp} />
             {loggedIn ? (
-              <>
-                <Sidebar items={temp} />
-                <StylistView backendDomain={backendDomain} />
-              </>
+              !isLoading ? (
+                <>
+                  <StylistView backendDomain={backendDomain} />
+                </>
+              ) : (
+                <Container>
+                  <Row>
+                    <Col
+                      className="justify-content-center align-items-center text-center loading"
+                      style={{ paddingTop: "400px" }}
+                    >
+                      <Spinner
+                        animation="border"
+                        variant="secondary"
+                        className="loading-spinner"
+                      />
+                    </Col>
+                  </Row>
+                </Container>
+              )
             ) : (
               <Redirect to="/login" />
             )}
           </Route>
           <Route path="/customers">
             {loggedIn ? (
-              <Customer
-                userId={userId}
-                userRole={userRole}
-                userName={username}
-                backendDomain={backendDomain}
-              />
+              !isLoading ? (
+                <Customer
+                  userId={userId}
+                  userRole={userRole}
+                  userName={username}
+                  backendDomain={backendDomain}
+                />
+              ) : (
+                <Container>
+                  <Row>
+                    <Col
+                      className="justify-content-center align-items-center text-center loading"
+                      style={{ paddingTop: "400px" }}
+                    >
+                      <Spinner
+                        animation="border"
+                        variant="secondary"
+                        className="loading-spinner"
+                      />
+                    </Col>
+                  </Row>
+                </Container>
+              )
             ) : (
               <Redirect to="/login" />
             )}
