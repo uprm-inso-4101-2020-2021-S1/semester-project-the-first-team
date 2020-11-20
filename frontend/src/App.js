@@ -82,7 +82,7 @@ function App() {
   };
 
   const setStylistsInfo = async (stylistData) => {
-    sessionStorage.clear();
+    sessionStorage.removeItem("user");
     if (stylistData.role !== 2) {
       stylistData.password = "";
       await sessionStorage.setItem("user", JSON.stringify(stylistData));

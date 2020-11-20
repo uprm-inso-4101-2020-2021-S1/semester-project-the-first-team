@@ -22,6 +22,7 @@ function ActiveAppointmentView(props) {
 
   const setupActiveReservationView = async () => {
     let actApp = JSON.parse(sessionStorage.getItem("activeAppointment"));
+    console.log(actApp);
     if (actApp === null || actApp === "" || !actApp) {
       actApp = await fetchActiveReservationsForUser(activeUser);
     }

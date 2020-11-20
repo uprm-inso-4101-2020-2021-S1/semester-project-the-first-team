@@ -116,12 +116,12 @@ const AppointmentModal = ({
         <Button variant="danger" onClick={showDelModal}>
           Delete
         </Button>
-        {allowStart && (
+        {(allowStart || appointment.status === "IP") && (
           <Button
             variant="primary"
             onClick={() => setActiveAppointment(appointment)}
           >
-            Start
+            {appointment.status === "IP" ? "Continue" : "Start"}
           </Button>
         )}
       </Modal.Footer>

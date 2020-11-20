@@ -13,12 +13,14 @@ function StylistView(props) {
 
   useEffect(() => {
     user = JSON.parse(sessionStorage.getItem("user"));
-    if (!user) {
+    if (!user.first_name) {
       fetchActiveUser();
       user = JSON.parse(sessionStorage.getItem("user"));
-      setHeaderCard(user);
     }
-  }, [props.isLoading]);
+    console.log(headerCard);
+    console.log(user);
+    setHeaderCard(user);
+  }, []);
 
   const redirectIfNotManager = () => {
     let browserUser = JSON.parse(sessionStorage.getItem("user"));
@@ -83,15 +85,26 @@ function StylistView(props) {
     }
   };
 
+  const changeHeaderCard = (newUser) => {
+    console.log(newUser);
+    if (!newUser || !newUser.first_name) {
+      if (headerCard.appTime) {
+        setHeaderCard(user);
+      }
+    } else {
+      setHeaderCard(newUser);
+    }
+  };
+
   return (
     <div className="body-container">
       <StylistHeaderBar
         headerCard={headerCard}
-        changeHeaderCard={setHeaderCard}
+        changeHeaderCard={changeHeaderCard}
         backendDomain={props.backendDomain}
       />
       <StylistViewBody
-        changeHeaderCard={setHeaderCard}
+        changeHeaderCard={changeHeaderCard}
         setActiveAppointment={setActiveAppointment}
         headerCard={headerCard}
         backendDomain={props.backendDomain}

@@ -345,7 +345,12 @@ function StylistAppointmentQueue(props) {
   };
 
   const setActiveAppointment = async (appointment) => {
-    let success = await props.setActiveAppointment(appointment);
+    let success = false;
+    if (appointment.status === "IP") {
+      success = true;
+    } else {
+      success = await props.setActiveAppointment(appointment);
+    }
     if (success) {
       window.location.href = "/stylists/activereservation";
     }
