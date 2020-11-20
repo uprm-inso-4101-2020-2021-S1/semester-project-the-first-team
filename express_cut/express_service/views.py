@@ -1,16 +1,18 @@
 from django.shortcuts import render
 from django.http import HttpResponse
-from .models import User, DailySchedule
-from .serializers import GeneralUserSerializer, SingUpUserSerializer, DailyScheduleSerializer
+from .models import User, DailySchedule, Reservation
+from .serializers import GeneralUserSerializer, SingUpUserSerializer, DailyScheduleSerializer, DurationSerializer
 from rest_framework.response import Response
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 from rest_framework_jwt.authentication import JSONWebTokenAuthentication
 from rest_framework.permissions import IsAuthenticated
-from .permissions import Permissions, SignUpPermissions, UserViewPermissions, DailySchedulePermissions
+from .permissions import Permissions, SignUpPermissions, UserViewPermissions, DailySchedulePermissions, \
+    ReservationPermissions
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from drf_yasg.utils import swagger_auto_schema
 from .swagger_models import SwagResponses as swagResp
+
 
 def jwt_response_payload_handler(token, user=None, request=None):
     return {
@@ -21,7 +23,7 @@ def jwt_response_payload_handler(token, user=None, request=None):
 @swagger_auto_schema(methods=['POST'], request_body=SingUpUserSerializer, responses=swagResp.commonPOSTResponses,
                      tags=['user'], operation_summary="Sign up users for Express Cuts")
 @api_view(['POST'])
-@authentication_classes([SessionAuthentication, BasicAuthentication])
+@authentication_classes([JSONWebTokenAuthentication, SessionAuthentication, BasicAuthentication])
 def user_signup_view(request):
     """
     Signup a users in the system.
@@ -36,6 +38,19 @@ def user_signup_view(request):
         user = serializer.save()
         return Response(data = {'id': user.pk}, status=status.HTTP_201_CREATED)
     return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+@swagger_auto_schema(methods=['GET'], responses={**swagResp.commonResponses, **swagResp.getResponse(GeneralUserSerializer)},
+                     tags=['user'], operation_summary="Get Express Cuts User by their token")
+@api_view(['GET'])
+@authentication_classes([JSONWebTokenAuthentication, SessionAuthentication, BasicAuthentication])
+@permission_classes([IsAuthenticated])
+def current_user(request):
+    if request.method == 'GET':
+        serializer = GeneralUserSerializer(request.user)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 
 
 @swagger_auto_schema(methods=['GET'], responses={**swagResp.commonResponses, **swagResp.getResponse(GeneralUserSerializer)}, 

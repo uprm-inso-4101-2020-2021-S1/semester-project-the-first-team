@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500&display=swap");
 @import "./style/styleVariables";
 
 * {
@@ -135,7 +135,14 @@ h3 {
   .header-container {
     display: flex;
     flex-wrap: nowrap;
+    flex-direction: column;
     justify-content: center;
+
+    .logo-container {
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+    }
   }
 }
 
@@ -455,5 +462,39 @@ h3 {
 
   .time-slot-icon {
     color: #9b62ea;
+  }
+}
+
+.loading-spinner {
+  height: 90px;
+  width: 90px;
+}
+
+.logout {
+  display: flex;
+  color: #8e8e8e;
+  transition: 0.25s ease-in-out;
+  padding-bottom: 15px;
+  padding-left: 20px;
+  align-self: center;
+  align-items: center;
+  font-size: 1.3rem;
+  font-weight: 500;
+
+  .logout-icon {
+    font-size: 1.8rem;
+    color: #8e8e8e;
+    transition: 0.25s ease-in-out;
+    padding-left: 10px;
+  }
+}
+
+.logout:hover {
+  text-decoration: none;
+  color: white;
+  transition: 0.25s ease-in-out;
+  .logout-icon {
+    color: #6d45a4;
+    transition: 0.25s ease-in-out;
   }
 }

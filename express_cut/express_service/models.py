@@ -41,7 +41,7 @@ class TimeSlot(models.Model):
 
 
 class StylistOfferServices(models.Model):
-    EstimatedTime = models.IntegerField()
+    EstimatedTime = models.TimeField()
     stylist = models.ForeignKey(User, on_delete=models.CASCADE, limit_choices_to={'role': User.STYLIST})
     service = models.ForeignKey(Service, on_delete=models.CASCADE)
 
@@ -67,14 +67,14 @@ class Reservation(models.Model):
                                  related_name='customer_reservations')
     stylist = models.ForeignKey(User, on_delete=models.CASCADE,  limit_choices_to={'role': User.STYLIST},
                                 related_name='stylist_reservations')
-    service = models.ManyToManyField(Service)
+    service = models.ManyToManyField(Service, through='ReservationContainsServices')
     status = models.CharField(max_length=2, choices=STATUS, default=PENDING)
 
 
 class Feedback(models.Model):
     rating = models.SmallIntegerField(validators=[MinValueValidator(0), MaxValueValidator(5)])
     comments = models.CharField(max_length=200)
-    reservation = models.ForeignKey(Reservation, on_delete=models.CASCADE)
+    reservation = models.OneToOneField(Reservation, on_delete=models.CASCADE)
 
 
 class Notification(models.Model):
@@ -86,3 +86,8 @@ class Notification(models.Model):
     timestamp = models.DateTimeField()
     status = models.CharField(max_length=1, choices=STATUS)
 
+
+class ReservationContainsServices(models.Model):
+    reservation = models.ForeignKey(Reservation, on_delete=models.CASCADE)
+    service = models.ForeignKey(Service, on_delete=models.CASCADE)
+    duration = models.TimeField(null=True)
