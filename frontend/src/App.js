@@ -13,6 +13,7 @@ import {
 import { faHome, faConciergeBell } from "@fortawesome/free-solid-svg-icons";
 import Login from "./components/Login";
 import axios from "axios";
+import Signup from "./components/Signup";
 
 function App() {
   const [loggedIn, setLoggedIn] = useState(
@@ -23,9 +24,7 @@ function App() {
   const [userId, setUserId] = useState(null);
   const [userRole, setUserRole] = useState(null);
 
-  //  const backendDomain = "http://localhost:8000/";
   const backendDomain = window._env_.REST_API_URI.toString();
-  // TODO: Get auth token (username:password) from login page and save here in session storage.
 
   useEffect(() => {
     if (loggedIn) {
@@ -44,7 +43,7 @@ function App() {
           setLoggedIn(false);
         });
     }
-  }, [loggedIn]);
+  }, [backendDomain, loggedIn]);
 
   const handleLogin = (e, data) => {
     e.preventDefault();
@@ -67,6 +66,21 @@ function App() {
     setLoggedIn(false);
     localStorage.clear();
     // TODO: Add proper logout
+  };
+
+  const handleCustomerSignup = (e, data) => {
+    e.preventDefault();
+    data.role = 2;
+    axios
+      .post(`${backendDomain}user/signup`, data)
+      .then(() => {
+        return true;
+      })
+      .catch((err) => {
+        console.log(err);
+        window.alert("Please try again.");
+        return false;
+      });
   };
 
   sessionStorage.setItem(
@@ -228,6 +242,9 @@ function App() {
               loggedIn={loggedIn}
               userRole={userRole}
             />
+          </Route>
+          <Route path="/sign-up">
+            <Signup signup={handleCustomerSignup} />
           </Route>
         </Switch>
       </div>
