@@ -17,8 +17,7 @@ function StylistView(props) {
       fetchActiveUser();
       user = JSON.parse(sessionStorage.getItem("user"));
     }
-    console.log(headerCard);
-    console.log(user);
+
     setHeaderCard(user);
   }, []);
 
@@ -60,7 +59,6 @@ function StylistView(props) {
       props.setIsActiveAppointment(false);
     } else {
       try {
-        console.log();
         let response = await axios.put(
           props.backendDomain + "reservation/" + appointment.id + "/start",
           {},
@@ -86,7 +84,6 @@ function StylistView(props) {
   };
 
   const changeHeaderCard = (newUser) => {
-    console.log(newUser);
     if (!newUser || !newUser.first_name) {
       if (headerCard.appTime) {
         setHeaderCard(user);

@@ -27,7 +27,6 @@ const AppointmentModal = ({
     );
 
     let showStart = activeAppointment === null ? true : false;
-    console.log(showStart);
     setAllowStart(showStart);
   }, [appointment]);
 

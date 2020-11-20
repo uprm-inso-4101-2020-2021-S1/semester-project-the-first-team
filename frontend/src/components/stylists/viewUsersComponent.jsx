@@ -90,7 +90,6 @@ function ViewUsersComponent(props) {
     }
 
     if (createUser) {
-      console.log(modalUser);
       return (
         modalUser.username.length > 0 &&
         modalUser.first_name.length > 0 &&
@@ -180,13 +179,12 @@ function ViewUsersComponent(props) {
             },
           }
         );
-        console.log(result);
       }
       setShowDeleteModal(false);
       toggleModal(emptyUser);
     } catch (error) {
-      window.alert("Something went wrong. Could not delete user.");
       console.warn(error);
+      window.alert("Something went wrong. Could not delete user.");
     }
   };
 

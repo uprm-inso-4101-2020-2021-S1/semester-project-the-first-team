@@ -22,7 +22,6 @@ function ActiveAppointmentView(props) {
 
   const setupActiveReservationView = async () => {
     let actApp = JSON.parse(sessionStorage.getItem("activeAppointment"));
-    console.log(actApp);
     if (actApp === null || actApp === "" || !actApp) {
       actApp = await fetchActiveReservationsForUser(activeUser);
     }
@@ -39,7 +38,6 @@ function ActiveAppointmentView(props) {
   };
 
   const fetchActiveReservationsForUser = async (stylist) => {
-    console.log("fetch active user...");
     try {
       let response = await axios.get(
         props.backendDomain +
@@ -53,7 +51,6 @@ function ActiveAppointmentView(props) {
         }
       );
 
-      console.log(response.data);
       if (response.data.length > 0) {
         return response.data[0];
       } else {
@@ -92,8 +89,6 @@ function ActiveAppointmentView(props) {
           }
         );
         serviceList[servIndex] = response.data;
-        console.log(response);
-        console.log(serviceList);
       } else {
         console.log("following service not integer: ", serviceID);
       }
@@ -131,8 +126,6 @@ function ActiveAppointmentView(props) {
     if (Object.keys(currServDurs).length === activeAppointment.service.length) {
       var showFinish = true;
       for (const servDur in currServDurs) {
-        console.log(currServDurs[servDur]);
-
         if (currServDurs[servDur] === "00:00:00") {
           showFinish = false;
           break;
@@ -162,7 +155,6 @@ function ActiveAppointmentView(props) {
   }
 
   const finishReservation = async () => {
-    console.log("finishing reservation...");
     try {
       let serviceDurationData = [];
       let tempServDurOb = {};

@@ -75,16 +75,6 @@ function ViewScheduleComponent(props) {
       (saturday.getDate() > 9 ? saturday.getDate() : "0" + saturday.getDate());
 
     try {
-      console.log(
-        "Route to call: ",
-        props.backendDomain +
-          "stylist/" +
-          props.headerCard.id +
-          "/schedule?start_date=" +
-          sundayDateString +
-          "&end_date=" +
-          saturdayDateString
-      );
       let response = await axios.get(
         props.backendDomain +
           "stylist/" +

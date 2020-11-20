@@ -219,11 +219,9 @@ function StylistAppointmentQueue(props) {
 
   const getUserInfo = async (appointmentArr, stylist) => {
     let customerID = null;
-    console.log("GEtting user info...");
     for (const appIndex in appointmentArr) {
       appointmentArr[appIndex].stylist = stylist;
       customerID = appointmentArr[appIndex].customer;
-      console.log("For user ", customerID);
       try {
         let response = await axios.get(
           props.backendDomain + "customer/" + customerID,
@@ -267,7 +265,6 @@ function StylistAppointmentQueue(props) {
     let desiredStylist = stylists.filter(
       (stylist) => stylist.id.toString() === dropdownStylistID.toString()
     );
-    console.log(desiredStylist);
 
     fetchReservationsForUser(desiredStylist[0]);
   };
@@ -310,7 +307,6 @@ function StylistAppointmentQueue(props) {
           },
         }
       );
-      console.log(response);
 
       var tempApps = appointments.filter(
         (appointment) => appointment !== modalAppointment

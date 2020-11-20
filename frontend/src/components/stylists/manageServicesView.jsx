@@ -58,7 +58,6 @@ class ManageServicesView extends Component {
       name === "defaultDuration"
         ? parseInt(event.target.value)
         : event.target.value;
-    console.log(tempActServ);
     this.setState({
       activeService: tempActServ,
     });
@@ -98,7 +97,6 @@ class ManageServicesView extends Component {
   };
 
   postActiveService() {
-    console.log("POST-ing active service...");
     axios
       .post(this.props.backendDomain + "service", this.state.activeService, {
         headers: {
@@ -107,7 +105,6 @@ class ManageServicesView extends Component {
       })
       .then((response) => {
         this.getServices();
-        console.log("Service Successfully POST-ed.");
         alert("Service created successfully!");
       })
       .catch((error) => {
@@ -116,7 +113,6 @@ class ManageServicesView extends Component {
   }
 
   putActiveService() {
-    console.log("PUT-ing active Service...");
     axios
       .put(
         this.props.backendDomain + "service/" + this.state.activeService.id,
@@ -129,7 +125,6 @@ class ManageServicesView extends Component {
       )
       .then((response) => {
         this.getServices();
-        console.log("Service Successfully PUT.");
         alert("Service updated successfully!");
       })
       .catch((error) => {
@@ -138,10 +133,9 @@ class ManageServicesView extends Component {
   }
 
   deleteActiveService = () => {
-    console.log("DELETE-ing active Service...");
     if (!this.state.activeService.id) {
       console.log(
-        "Cannot delete service that is not created; resetting form..."
+        "Cannot delete service that is not created; reseting form..."
       );
       this.setActiveService(emptyService);
       this.toggleModal();
@@ -159,7 +153,6 @@ class ManageServicesView extends Component {
         .then((response) => {
           this.getServices();
           this.toggleModal();
-          console.log("Service Successfully DELETE-d.");
           alert("Service deleted successfully.");
         })
         .catch((error) => {

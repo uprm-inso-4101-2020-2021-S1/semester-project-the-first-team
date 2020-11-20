@@ -57,7 +57,6 @@ function ServiceCard(props) {
     let localTimes = JSON.parse(localStorage.getItem("serviceTimes"));
 
     if (localTimes) {
-      console.log(localTimes);
       let serviceTimes = localTimes[props.service.id.toString()];
       if (serviceTimes.startTime > 0) {
         setStartTime(serviceTimes.startTime);
