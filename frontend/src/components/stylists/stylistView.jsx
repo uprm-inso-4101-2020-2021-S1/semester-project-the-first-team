@@ -13,7 +13,7 @@ function StylistView(props) {
 
   useEffect(() => {
     user = JSON.parse(sessionStorage.getItem("user"));
-    if (!user.first_name) {
+    if (!user || !user.first_name) {
       fetchActiveUser();
       user = JSON.parse(sessionStorage.getItem("user"));
     }

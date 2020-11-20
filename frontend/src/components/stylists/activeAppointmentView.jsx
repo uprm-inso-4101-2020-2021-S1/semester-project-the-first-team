@@ -220,7 +220,11 @@ function ActiveAppointmentView(props) {
       concludeActiveReservation();
     } catch (error) {
       console.log(error);
-      window.alert("Could not cancel the reservation. Try again later.");
+      window.alert(
+        error.message === "Request failed with status code 403"
+          ? "You do not have the required permissions to delete this reservation."
+          : "Could not delete the desired reservation. Try again later."
+      );
     }
   };
 
