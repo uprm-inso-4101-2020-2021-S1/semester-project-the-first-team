@@ -13,7 +13,7 @@ function Signup(props) {
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
 
-  const [successful, setSuccessful] = useState(true);
+  const [successful, setSuccessful] = useState(false);
 
   return (
     <Container fluid>
@@ -147,7 +147,7 @@ function Signup(props) {
           ) : (
             <Row>
               <Col
-                className="justify-content-center text-center"
+                className="justify-content-center text-center account-created"
                 style={{ marginTop: "100px" }}
               >
                 <Row>
