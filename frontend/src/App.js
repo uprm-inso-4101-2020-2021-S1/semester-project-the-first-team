@@ -10,7 +10,16 @@ import {
   Route,
   Redirect,
 } from "react-router-dom";
-import { faHome, faConciergeBell } from "@fortawesome/free-solid-svg-icons";
+import {
+  faHome,
+  faConciergeBell,
+  faExclamation,
+  faCalendarAlt,
+  faCalendarPlus,
+  faUsersCog,
+  faCut,
+  faSpa,
+} from "@fortawesome/free-solid-svg-icons";
 import Login from "./components/Login";
 import axios from "axios";
 
@@ -22,6 +31,7 @@ function App() {
   const [username, setUsername] = useState("");
   const [userId, setUserId] = useState(null);
   const [userRole, setUserRole] = useState(null);
+  const [isActiveAppointment, setIsActiveAppointment] = useState(false);
 
   // TODO: UPDATE THIS DURING DEPLOYMENT OR GET FROM OTHER FILE.
   const backendDomain = "http://localhost:8000/";
@@ -38,7 +48,7 @@ function App() {
           setUserRole(res.data.role);
           setUserId(res.data.id);
           setUsername(res.data.username);
-          setStylistsInfo(res.data);
+          setStylistsInfo(res.data); // If the user is a stylist, set it's data in Session Storage.
           setIsLoading(false);
         })
         .catch(() => {
@@ -71,16 +81,16 @@ function App() {
     // TODO: Add proper logout
   };
 
-  const setStylistsInfo = (stylistData) => {
+  const setStylistsInfo = async (stylistData) => {
+    sessionStorage.clear();
     if (stylistData.role !== 2) {
       stylistData.password = "";
-      sessionStorage.setItem("user", JSON.stringify(stylistData));
+      await sessionStorage.setItem("user", JSON.stringify(stylistData));
     }
   };
 
   // TODO: Move this to a separate file
   const temp = [
-    { title: "home", path: "/stylists/home", icon: faHome, cName: "nav-text" },
     {
       title: "Reservations",
       path: "/stylists/reservations",
@@ -90,37 +100,32 @@ function App() {
     {
       title: "Active Reservation",
       path: "/stylists/activereservation",
-      icon: faConciergeBell,
+      icon: isActiveAppointment ? faExclamation : faSpa,
       cName: "nav-text",
     },
     {
       title: "Manage Schedules",
       path: "/stylists/schedule/manage",
-      icon: faConciergeBell,
+      icon: faCalendarPlus,
       cName: "nav-text",
     },
     {
       title: "View Schedule",
       path: "/stylists/schedule",
-      icon: faConciergeBell,
+      icon: faCalendarAlt,
       cName: "nav-text",
     },
-    // {
-    //   title: "Statistics",
-    //   path: "/stylists/stats",
-    //   icon: faConciergeBell,
-    //   cName: "nav-text",
-    // },
+
     {
       title: "View Users",
       path: "/stylists/userlist",
-      icon: faConciergeBell,
+      icon: faUsersCog,
       cName: "nav-text",
     },
     {
       title: "Manage Services",
       path: "/stylists/manageservices",
-      icon: faConciergeBell,
+      icon: faCut,
       cName: "nav-text",
     },
   ];
@@ -137,7 +142,11 @@ function App() {
             {loggedIn ? (
               !isLoading ? (
                 <>
-                  <StylistView backendDomain={backendDomain} />
+                  <StylistView
+                    backendDomain={backendDomain}
+                    isLoading={isLoading}
+                    setIsActiveAppointment={setIsActiveAppointment}
+                  />
                 </>
               ) : (
                 <Container>

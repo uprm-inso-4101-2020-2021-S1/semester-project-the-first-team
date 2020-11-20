@@ -1,12 +1,13 @@
-import React, { Component } from "react";
-import { Switch, Route } from "react-router";
+import React from "react";
+import { Switch, Route, Redirect } from "react-router";
 import StylistAppointmentQueue from "./stylistAppointmentQueue";
 import ActiveAppointmentView from "./activeAppointmentView";
 import ScheduleManagementView from "./scheduleManagementView";
 import ViewScheduleComponent from "./viewScheduleComponent";
-import StatsView from "./statsView";
+// import StatsView from "./statsView";
 import ViewUsersComponent from "./viewUsersComponent";
 import ManageServicesView from "./manageServicesView";
+import PropTypes from "prop-types";
 
 import "../../style/stylistViewBody.scss";
 const path = "/stylists";
@@ -20,6 +21,7 @@ function StylistViewBody(props) {
             changeHeaderCard={props.changeHeaderCard}
             setActiveAppointment={props.setActiveAppointment}
             backendDomain={props.backendDomain}
+            setIsActiveAppointment={props.setIsActiveAppointment}
           />
         </Route>
         <Route path={`${path}/activereservation`}>
@@ -27,6 +29,7 @@ function StylistViewBody(props) {
             changeHeaderCard={props.changeHeaderCard}
             setActiveAppointment={props.setActiveAppointment}
             backendDomain={props.backendDomain}
+            setIsActiveAppointment={props.setIsActiveAppointment}
           />
         </Route>
         <Route path={`${path}/schedule/manage`}>
@@ -59,9 +62,23 @@ function StylistViewBody(props) {
             redirectIfNotManager={props.redirectIfNotManager}
           />
         </Route>
+
+        {/* Redirect any other matches to reservation queue */}
+        <Route>
+          <Redirect to="/stylists/reservations" />
+        </Route>
       </Switch>
     </div>
   );
 }
+
+StylistViewBody.propTypes = {
+  changeHeaderCard: PropTypes.func.isRequired,
+  setActiveAppointment: PropTypes.func.isRequired,
+  headerCard: PropTypes.object.isRequired,
+  backendDomain: PropTypes.string.isRequired,
+  redirectIfNotManager: PropTypes.func,
+  setIsActiveAppointment: PropTypes.func.isRequired,
+};
 
 export default StylistViewBody;

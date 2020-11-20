@@ -6,6 +6,7 @@ import { faClock } from "@fortawesome/free-solid-svg-icons";
 import { Switch, Route } from "react-router";
 import axios from "axios";
 import "../../style/card.scss";
+import PropTypes from "prop-types";
 
 const defaultProfileImg =
   "https://images.pexels.com/photos/194446/pexels-photo-194446.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940";
@@ -59,11 +60,16 @@ class HeaderBarCard extends Component {
   }
 }
 
+HeaderBarCard.propTypes = {
+  headerCard: PropTypes.object,
+  changeHeaderCard: PropTypes.func,
+  backendDomain: PropTypes.string.isRequired,
+};
+
 export default HeaderBarCard;
 
-function HeaderCardAppointmentTime(appTime) {
-  console.log(appTime);
-  let time = appTime.appTime;
+function HeaderCardAppointmentTime(props) {
+  let time = props.appTime;
   if (typeof time === "string") {
     time = new Date(time);
   }
@@ -95,9 +101,7 @@ function HeaderCardDropRight(props) {
   }, []);
 
   const getStylistsForDropdown = async () => {
-    console.log("getting stylists from backend...");
     try {
-      console.log(props);
       let response = await axios.get(props.backendDomain + "stylist", {
         headers: {
           Authorization: "JWT " + localStorage.getItem("token"),

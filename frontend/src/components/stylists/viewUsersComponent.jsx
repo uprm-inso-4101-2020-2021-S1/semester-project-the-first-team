@@ -5,6 +5,7 @@ import axios from "axios";
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
 import { Row, Col } from "react-bootstrap";
+import PropTypes from "prop-types";
 
 const dropdownFilters = [
   "First Name",
@@ -410,5 +411,10 @@ function ViewUsersComponent(props) {
     </div>
   );
 }
+
+ViewUsersComponent.propTypes = {
+  backendDomain: PropTypes.string.isRequired,
+  redirectIfNotManager: PropTypes.func.isRequired,
+};
 
 export default ViewUsersComponent;

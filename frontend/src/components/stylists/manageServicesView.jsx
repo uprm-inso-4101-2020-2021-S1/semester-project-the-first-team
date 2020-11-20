@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
 import axios from "axios";
+import PropTypes from "prop-types";
 
 const emptyService = {
   serviceName: "",
@@ -287,5 +288,9 @@ class ManageServicesView extends Component {
     );
   }
 }
+ManageServicesView.propTypes = {
+  backendDomain: PropTypes.string.isRequired,
+  redirectIfNotManager: PropTypes.func.isRequired,
+};
 
 export default ManageServicesView;

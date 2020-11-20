@@ -5,6 +5,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faClock } from "@fortawesome/free-solid-svg-icons";
 import { Modal, Button } from "react-bootstrap";
 import axios from "axios";
+import PropTypes from "prop-types";
 
 const defaultProfileImg =
   "https://images.pexels.com/photos/194446/pexels-photo-194446.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940";
@@ -152,6 +153,7 @@ function StylistAppointmentQueue(props) {
           "activeAppointment",
           JSON.stringify(responseIP.data[0])
         );
+        props.setIsActiveAppointment(true);
 
         // Build the reservation data.
         let reservationsWithUserInfo = await getUserInfo(
@@ -166,6 +168,8 @@ function StylistAppointmentQueue(props) {
         reservationsToSave = reservationsToSave.concat(
           reservationsWithServiceInfo
         );
+      } else {
+        props.setIsActiveAppointment(false);
       }
 
       // Handle errors with In Progress fetching.
@@ -428,5 +432,12 @@ function StylistAppointmentQueue(props) {
     </div>
   );
 }
+
+StylistAppointmentQueue.propTypes = {
+  changeHeaderCard: PropTypes.func.isRequired,
+  setActiveAppointment: PropTypes.func.isRequired,
+  backendDomain: PropTypes.string.isRequired,
+  setIsActiveAppointment: PropTypes.func.isRequired,
+};
 
 export default StylistAppointmentQueue;

@@ -1,37 +1,37 @@
-import React, { Component } from "react";
+import React from "react";
 import HeaderBarClock from "./headerBarClock";
 import HeaderBarCard from "./headerBarCard";
 import { Switch, Route, useRouteMatch } from "react-router";
 import "../../style/stylistHeaderBar.scss";
+import PropTypes from "prop-types";
 
-class StylistHeaderBar extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {};
-  }
-
-  render() {
-    return (
-      <nav className="navbar-inverse navbar-expand-lg navbar-dark stylist-headerbar headerbar-content">
-        <HeaderBarTitle />
-        <div className="headerbar-card-div">
-          <span>
-            <HeaderBarCard
-              headerCard={this.props.headerCard}
-              changeHeaderCard={this.props.changeHeaderCard}
-              backendDomain={this.props.backendDomain}
-            />
-          </span>
-        </div>
-        <div className="headerbar-clock-div">
-          <span>
-            <HeaderBarClock />
-          </span>
-        </div>
-      </nav>
-    );
-  }
+function StylistHeaderBar(props) {
+  return (
+    <nav className="navbar-inverse navbar-expand-lg navbar-dark stylist-headerbar headerbar-content">
+      <HeaderBarTitle />
+      <div className="headerbar-card-div">
+        <span>
+          <HeaderBarCard
+            headerCard={props.headerCard}
+            changeHeaderCard={props.changeHeaderCard}
+            backendDomain={props.backendDomain}
+          />
+        </span>
+      </div>
+      <div className="headerbar-clock-div">
+        <span>
+          <HeaderBarClock />
+        </span>
+      </div>
+    </nav>
+  );
 }
+
+StylistHeaderBar.propTypes = {
+  headerCard: PropTypes.object,
+  changeHeaderCard: PropTypes.func,
+  backendDomain: PropTypes.string.isRequired,
+};
 
 export default StylistHeaderBar;
 

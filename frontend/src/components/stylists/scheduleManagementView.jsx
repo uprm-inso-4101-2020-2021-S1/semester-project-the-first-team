@@ -4,6 +4,7 @@ import "react-big-calendar/lib/css/react-big-calendar.css";
 import moment from "moment";
 import ScheduleManagmentModal from "./scheduleManagementModal";
 import axios from "axios";
+import PropTypes from "prop-types";
 
 const localizer = momentLocalizer(moment);
 var todayAt7 = new Date();
@@ -216,7 +217,6 @@ function ScheduleManagementView(props) {
         selectedStylist[0].first_name + " " + selectedStylist[0].last_name;
       tempEvent.stylist = userID;
 
-      // TODO: ADD PARENTID FROM RESPONSE.
       let responseData = await createEventInBackend(
         tempEvent.start,
         tempEvent.end,
@@ -246,7 +246,6 @@ function ScheduleManagementView(props) {
     let responseData = null;
     if (checkEventsArr.length === 0) {
       // POST event
-      // todo: return new schedule object id
       responseData = await postNewEvent(
         dateString,
         startTimeString,
@@ -284,7 +283,6 @@ function ScheduleManagementView(props) {
     }
   };
 
-  // TODO: FINISH METHOD WHEN NEW ROUTE IS CREATED.
   const putNewEvent = async (
     dateString,
     startTimeString,
@@ -370,7 +368,6 @@ function ScheduleManagementView(props) {
   };
 
   const deleteEvent = async () => {
-    // TODO: send data to backend.
     try {
       // First, get schedule object that matches the event.
       let response = await axios.get(
@@ -458,5 +455,9 @@ function ScheduleManagementView(props) {
     </Fragment>
   );
 }
+ScheduleManagementView.propTypes = {
+  backendDomain: PropTypes.string.isRequired,
+  redirectIfNotManager: PropTypes.func.isRequired,
+};
 
 export default ScheduleManagementView;

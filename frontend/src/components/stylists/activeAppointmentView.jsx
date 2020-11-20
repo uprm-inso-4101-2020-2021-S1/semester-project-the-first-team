@@ -4,6 +4,7 @@ import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
 import "../../style/stylistViewBody.scss";
 import axios from "axios";
+import PropTypes from "prop-types";
 
 const defaultProfileImg =
   "https://images.pexels.com/photos/194446/pexels-photo-194446.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940";
@@ -21,7 +22,6 @@ function ActiveAppointmentView(props) {
 
   const setupActiveReservationView = async () => {
     let actApp = JSON.parse(sessionStorage.getItem("activeAppointment"));
-    console.log(actApp);
     if (actApp === null || actApp === "" || !actApp) {
       actApp = await fetchActiveReservationsForUser(activeUser);
     }
@@ -29,9 +29,11 @@ function ActiveAppointmentView(props) {
       window.alert(
         "No active reservations at the moment. You will now be redirected to the Reservation Queue."
       );
+      props.setIsActiveAppointment(false);
       window.location.href = "/stylists/reservations";
     } else {
       buildAppointment(actApp);
+      props.setIsActiveAppointment(true);
     }
   };
 
@@ -295,5 +297,12 @@ function ActiveAppointmentView(props) {
     </div>
   );
 }
+
+ActiveAppointmentView.propTypes = {
+  changeHeaderCard: PropTypes.func.isRequired,
+  setActiveAppointment: PropTypes.func.isRequired,
+  backendDomain: PropTypes.string.isRequired,
+  setIsActiveAppointment: PropTypes.func.isRequired,
+};
 
 export default ActiveAppointmentView;

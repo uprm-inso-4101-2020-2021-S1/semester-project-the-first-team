@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Calendar, momentLocalizer, Views } from "react-big-calendar";
 import moment from "moment";
 import axios from "axios";
+import PropTypes from "prop-types";
 
 const localizer = momentLocalizer(moment);
 
@@ -190,5 +191,10 @@ function ViewScheduleComponent(props) {
     />
   );
 }
+
+ViewScheduleComponent.propTypes = {
+  headerCard: PropTypes.object.isRequired,
+  backendDomain: PropTypes.string.isRequired,
+};
 
 export default ViewScheduleComponent;

@@ -2,18 +2,23 @@ import React, { useState, useEffect } from "react";
 import StylistHeaderBar from "./stylistHeaderBar";
 import StylistViewBody from "./stylistViewBody";
 import axios from "axios";
-let user = JSON.parse(sessionStorage.getItem("user"));
+import PropTypes from "prop-types";
+
+let user = {};
 
 function StylistView(props) {
-  const [headerCard, setHeaderCard] = useState(user);
+  const [headerCard, setHeaderCard] = useState(
+    JSON.parse(sessionStorage.getItem("user"))
+  );
 
   useEffect(() => {
+    user = JSON.parse(sessionStorage.getItem("user"));
     if (!user) {
       fetchActiveUser();
       user = JSON.parse(sessionStorage.getItem("user"));
       setHeaderCard(user);
     }
-  }, []);
+  }, [props.isLoading]);
 
   const redirectIfNotManager = () => {
     let browserUser = JSON.parse(sessionStorage.getItem("user"));
@@ -35,6 +40,9 @@ function StylistView(props) {
       });
 
       response.data.password = "";
+      if (response.data.role === 2) {
+        window.location.href = "/customers";
+      }
       sessionStorage.setItem("user", JSON.stringify(response.data));
     } catch (error) {
       console.log(error);
@@ -47,6 +55,7 @@ function StylistView(props) {
   const setActiveAppointment = async (appointment) => {
     if (!appointment) {
       sessionStorage.removeItem("activeAppointment");
+      props.setIsActiveAppointment(false);
     } else {
       try {
         console.log();
@@ -64,6 +73,7 @@ function StylistView(props) {
           "activeAppointment",
           JSON.stringify(appointment)
         );
+        props.setIsActiveAppointment(true);
         return true;
       } catch (error) {
         console.log(error);
@@ -86,9 +96,16 @@ function StylistView(props) {
         headerCard={headerCard}
         backendDomain={props.backendDomain}
         redirectIfNotManager={redirectIfNotManager}
+        setIsActiveAppointment={props.setIsActiveAppointment}
       />
     </div>
   );
 }
+
+StylistView.propTypes = {
+  backendDomain: PropTypes.string.isRequired,
+  isLoading: PropTypes.bool,
+  setIsActiveAppointment: PropTypes.func,
+};
 
 export default StylistView;

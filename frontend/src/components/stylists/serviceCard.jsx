@@ -7,8 +7,8 @@ import {
   faHandSparkles,
   faHandScissors,
 } from "@fortawesome/free-solid-svg-icons";
-
 import "../../style/card.scss";
+import PropTypes from "prop-types";
 
 const SERVICEICONS = {
   Wash: faSoap,
@@ -164,5 +164,9 @@ function ServiceCard(props) {
     </card>
   );
 }
-
+ServiceCard.propTypes = {
+  service: PropTypes.object.isRequired,
+  handleCulmination: PropTypes.func.isRequired,
+  key: PropTypes.number,
+};
 export default ServiceCard;
