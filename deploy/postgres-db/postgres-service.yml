@@ -8,7 +8,7 @@ metadata:
     role: db
     group: express-cuts
 spec:
-  type: NodePort 
+  # type: NodePort 
   ports:
   - port: 5432
     protocol: TCP

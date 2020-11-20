@@ -8,7 +8,7 @@ metadata:
     role: backend
     group: express-cuts
 spec:
-  type: NodePort 
+  # type: NodePort 
   ports:
   - port: 8000
     protocol: TCP
