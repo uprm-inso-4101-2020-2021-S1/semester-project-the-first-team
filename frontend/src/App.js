@@ -22,6 +22,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import Login from "./components/Login";
 import axios from "axios";
+import Signup from "./components/Signup";
 
 function App() {
   const [loggedIn, setLoggedIn] = useState(
@@ -32,10 +33,9 @@ function App() {
   const [userId, setUserId] = useState(null);
   const [userRole, setUserRole] = useState(null);
   const [isActiveAppointment, setIsActiveAppointment] = useState(false);
+  const [signupSuccessful, setSignupSuccessful] = useState(false);
 
-  //  const backendDomain = "http://localhost:8000/";
   const backendDomain = window._env_.REST_API_URI.toString();
-  // TODO: Get auth token (username:password) from login page and save here in session storage.
 
   useEffect(() => {
     if (loggedIn) {
@@ -55,7 +55,7 @@ function App() {
           setLoggedIn(false);
         });
     }
-  }, [loggedIn]);
+  }, [backendDomain, loggedIn]);
 
   const handleLogin = (e, data) => {
     e.preventDefault();
@@ -81,12 +81,27 @@ function App() {
     // TODO: Add proper logout
   };
 
-  const setStylistsInfo = async (stylistData) => {
+  const setStylistsInfo =  (stylistData) => {
     sessionStorage.removeItem("user");
     if (stylistData.role !== 2) {
       stylistData.password = "";
-      await sessionStorage.setItem("user", JSON.stringify(stylistData));
+       sessionStorage.setItem("user", JSON.stringify(stylistData));  
     }
+    };
+
+  const handleCustomerSignup = (e, data) => {
+    e.preventDefault();
+    data.role = 2;
+    axios
+      .post(`${backendDomain}user/signup`, data)
+      .then(() => {
+        setSignupSuccessful(true);
+      })
+      .catch((err) => {
+        console.log(err);
+        window.alert("Please try again.");
+        setSignupSuccessful(false);
+      });
   };
 
   // TODO: Move this to a separate file
@@ -203,6 +218,12 @@ function App() {
               handleLogin={handleLogin}
               loggedIn={loggedIn}
               userRole={userRole}
+            />
+          </Route>
+          <Route path="/sign-up">
+            <Signup
+              signup={handleCustomerSignup}
+              successful={signupSuccessful}
             />
           </Route>
         </Switch>
