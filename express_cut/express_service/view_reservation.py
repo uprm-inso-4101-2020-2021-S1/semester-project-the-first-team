@@ -27,9 +27,9 @@ from .utils import calculate_estimated_wait_time
 @api_view(['GET', 'PUT', 'DELETE'])
 @authentication_classes([JSONWebTokenAuthentication, SessionAuthentication, BasicAuthentication])
 @permission_classes([IsAuthenticated])
-def reservation_views(request, pk):
+def reservation_views(request, reservation_id):
     try:
-        obj = Reservation.objects.get(pk=pk)
+        obj = Reservation.objects.get(pk=reservation_id)
     except Reservation.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
     if request.method == 'PUT':
@@ -102,6 +102,8 @@ def reservations_by_stylist(request, stylist_id):
             stylist = User.objects.get(pk=stylist_id, role=User.STYLIST)
         except User.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
+        print(request.user)
+        print(stylist)
         if not ReservationPermissions().GET_all_by_stylist(request, stylist):
             return Response(status=status.HTTP_403_FORBIDDEN)
         query_status = request.query_params.get('status', None)
@@ -115,15 +117,17 @@ def reservations_by_stylist(request, stylist_id):
 
 @swagger_auto_schema(methods=['DELETE'],
                      responses={**swagResp.commonResponses,}, tags=['reservation'], operation_summary="Cancel an Express Cuts Reservation")
+@api_view(['DELETE'])
 @authentication_classes([JSONWebTokenAuthentication, SessionAuthentication, BasicAuthentication])
 @permission_classes([IsAuthenticated])
-@api_view(['DELETE'])
-def cancel_reservation(request, pk):
+def cancel_reservation(request, reservation_id):
     if request.method == 'DELETE':
         try:
-            obj = Reservation.objects.get(pk=pk)
+            obj = Reservation.objects.get(pk=reservation_id)
         except Reservation.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
+        print(request)
+        print(obj)
         if not ReservationPermissions().CANCEL_permissions(request, obj):
             return Response(status=status.HTTP_403_FORBIDDEN)
         if obj.status == Reservation.PENDING or obj.status == Reservation.IN_PROCESS:
@@ -151,7 +155,7 @@ def estimate_reservation_time(request):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-@swagger_auto_schema(methods=['PUT'], request_body=DurationSerializer, responses=swagResp.commonPOSTResponses,
+@swagger_auto_schema(methods=['PUT'], request_body=DurationSerializer, responses={**swagResp.commonResponses, **swagResp.getResponse(ReservationSerializer)},
                      tags=['reservation'], operation_summary="Completes reservation and updates service(s) duration.")
 @api_view(['PUT'])
 @authentication_classes([JSONWebTokenAuthentication, SessionAuthentication, BasicAuthentication])
@@ -200,7 +204,7 @@ def get_daily_reservations(request, stylist_id):
     return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-@swagger_auto_schema(methods=['PUT'], responses=swagResp.commonPOSTResponses,
+@swagger_auto_schema(methods=['PUT'], responses={**swagResp.commonResponses,  **swagResp.getResponse(ReservationSerializer)},
                      tags=['reservation'], operation_summary="Start the process of a reservation.")
 @api_view(['PUT'])
 @authentication_classes([JSONWebTokenAuthentication, SessionAuthentication, BasicAuthentication])
@@ -228,6 +232,7 @@ def start_reservation(request, reservation_id):
                      tags=['reservation'], operation_summary="Get Feedback of given reservation.")
 @api_view(['POST', 'GET'])
 @authentication_classes([JSONWebTokenAuthentication, SessionAuthentication, BasicAuthentication])
+@permission_classes([IsAuthenticated])
 def feedback_views(request, reservation_id):
     try:
         obj = Reservation.objects.get(pk=reservation_id)

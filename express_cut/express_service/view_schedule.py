@@ -60,7 +60,7 @@ def schedule_views(request):
                      tags=['dailySchedule'], operation_summary="Get an Express Cuts Schedule")
 @swagger_auto_schema(methods=['DELETE'], responses={**swagResp.commonResponses, **swagResp.getResponse(DailyScheduleSerializer)},
                      tags=['dailySchedule'], operation_summary="Delete an Express Cuts Schedule")
-@swagger_auto_schema(methods=['PUT'], request_body=DailyScheduleSerializer, responses=swagResp.commonPOSTResponses,
+@swagger_auto_schema(methods=['PUT'], request_body=DailyScheduleSerializer, responses={**swagResp.commonResponses,  **swagResp.getResponse(DailyScheduleSerializer)},
                      tags=['dailySchedule'], operation_summary="Update an Express Cuts Schedule")
 @api_view(['GET', 'PUT', 'DELETE'])
 @authentication_classes([JSONWebTokenAuthentication, SessionAuthentication, BasicAuthentication])
@@ -120,17 +120,4 @@ def get_all_schedule_by_stylist(request, stylist_id):
             schedules = schedules.filter(date__lte=end_date)
         serializer = DailyScheduleSerializer(schedules, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
-    return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-
-@swagger_auto_schema(methods=['GET'],
-                     responses={**swagResp.commonResponses, **swagResp.getResponse(DailyScheduleSerializer)},
-                     tags=['dailySchedule'], manual_parameters=[SwagParmDef.schedule_start_date,
-                                                                SwagParmDef.schedule_end_date],
-                     operation_summary="Get all reservations, filtered by date range.")
-@api_view(['GET'])
-@authentication_classes([JSONWebTokenAuthentication, SessionAuthentication, BasicAuthentication])
-@permission_classes([IsAuthenticated])
-def get_all_schedules(request):
-
     return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
