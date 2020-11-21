@@ -13,7 +13,6 @@ function Signup(props) {
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
 
-  const [successful, setSuccessful] = useState(false);
 
   return (
     <Container fluid>
@@ -25,12 +24,11 @@ function Signup(props) {
               <h2 className="logo-title">express cuts</h2>
             </Col>
           </Row>
-          {!successful ? (
+          {!props.successful ? (
             <Row>
               <Col>
                 <Form
                   onSubmit={(e) => {
-                    setSuccessful(
                       props.signup(e, {
                         firstName: firstName,
                         lastName: lastName,
@@ -38,7 +36,6 @@ function Signup(props) {
                         username: username,
                         password: password,
                       })
-                    );
                   }}
                   className="signup-form"
                 >
@@ -186,6 +183,7 @@ function Signup(props) {
 
 Signup.propTypes = {
   signup: PropTypes.func.isRequired,
+  successful: PropTypes.bool.isRequired,
 };
 
 export default Signup;

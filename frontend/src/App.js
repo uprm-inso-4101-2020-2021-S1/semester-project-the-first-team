@@ -23,6 +23,7 @@ function App() {
   const [username, setUsername] = useState("");
   const [userId, setUserId] = useState(null);
   const [userRole, setUserRole] = useState(null);
+  const [signupSuccessful, setSignupSuccessful] = useState(false);
 
   const backendDomain = window._env_.REST_API_URI.toString();
 
@@ -74,12 +75,12 @@ function App() {
     axios
       .post(`${backendDomain}user/signup`, data)
       .then(() => {
-        return true;
+        setSignupSuccessful(true);
       })
       .catch((err) => {
         console.log(err);
         window.alert("Please try again.");
-        return false;
+        setSignupSuccessful(false);
       });
   };
 
@@ -244,7 +245,10 @@ function App() {
             />
           </Route>
           <Route path="/sign-up">
-            <Signup signup={handleCustomerSignup} />
+            <Signup
+              signup={handleCustomerSignup}
+              successful={signupSuccessful}
+            />
           </Route>
         </Switch>
       </div>
