@@ -67,9 +67,31 @@ function ActiveAppointmentView(props) {
       let appWCustomer = await getCustomerInfo(appointment);
       await props.changeHeaderCard(appWCustomer.customer);
       let fullApp = await getServiceInfo(appWCustomer);
+      await initializeLocalServiceTimes(fullApp.service);
       setAppointment(fullApp);
       sessionStorage.setItem("activeAppointment", JSON.stringify(fullApp));
     }
+  };
+
+  const initializeLocalServiceTimes = async (serviceArray) => {
+    let localTimes = JSON.parse(localStorage.getItem("serviceTimes"));
+    if (!localTimes) {
+      localTimes = {};
+    }
+    let tempServTime = {};
+    for (const servKey in serviceArray) {
+      tempServTime = localTimes[serviceArray[servKey].id.toString()];
+
+      tempServTime = {
+        startTime:
+          tempServTime && tempServTime.startTime ? tempServTime.startTime : 0,
+        endTime:
+          tempServTime && tempServTime.endTime ? tempServTime.endTime : 0,
+      };
+
+      localTimes[serviceArray[servKey].id.toString()] = tempServTime;
+    }
+    localStorage.setItem("serviceTimes", JSON.stringify(localTimes));
   };
 
   const getServiceInfo = async (appointment) => {
