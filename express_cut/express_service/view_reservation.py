@@ -102,8 +102,6 @@ def reservations_by_stylist(request, stylist_id):
             stylist = User.objects.get(pk=stylist_id, role=User.STYLIST)
         except User.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
-        print(request.user)
-        print(stylist)
         if not ReservationPermissions().GET_all_by_stylist(request, stylist):
             return Response(status=status.HTTP_403_FORBIDDEN)
         query_status = request.query_params.get('status', None)
@@ -126,8 +124,6 @@ def cancel_reservation(request, reservation_id):
             obj = Reservation.objects.get(pk=reservation_id)
         except Reservation.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
-        print(request)
-        print(obj)
         if not ReservationPermissions().CANCEL_permissions(request, obj):
             return Response(status=status.HTTP_403_FORBIDDEN)
         if obj.status == Reservation.PENDING or obj.status == Reservation.IN_PROCESS:
