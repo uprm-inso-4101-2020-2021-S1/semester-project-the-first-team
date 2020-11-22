@@ -10,7 +10,7 @@ class Permissions:
         return False
 
     @staticmethod
-    def has_client_permission(request):
+    def has_customer_permission(request):
         if request.user.role == User.CUSTOMER:
             return True
         return False
@@ -37,7 +37,7 @@ class UserViewPermissions(Permissions):
     def GET_permissions(self, request, obj):
         if self.has_owner_permission(request, obj):
             return True
-        elif obj.role == User.STYLIST and (self.has_manager_permission(request) or self.has_client_permission(request)):
+        elif obj.role == User.STYLIST and (self.has_manager_permission(request) or self.has_customer_permission(request)):
             return True
         elif (obj.role == User.MANAGER or obj.role == User.CUSTOMER) and self.has_manager_permission(request):
             return True
@@ -88,14 +88,14 @@ class ReservationPermissions(Permissions):
     def POST_permissions(self, request, data):
         if request.user.is_authenticated and self.has_manager_permission(request):
             return True
-        elif request.user.is_authenticated and self.has_client_permission(request) and data.get('customer') == request.user.pk:
+        elif request.user.is_authenticated and self.has_customer_permission(request) and data.get('customer') == request.user.pk:
             return True
         return False
 
     def GET_permissions(self, request, obj):
         if request.user.is_authenticated and self.has_manager_permission(request):
             return True
-        elif request.user.is_authenticated and self.has_client_permission(request) and request.user.pk == obj.customer.pk:
+        elif request.user.is_authenticated and self.has_customer_permission(request) and request.user.pk == obj.customer.pk:
             return True
         elif request.user.is_authenticated and self.has_stylist_permission(request) and request.user.pk == obj.stylist.pk:
             return True
@@ -104,7 +104,7 @@ class ReservationPermissions(Permissions):
     def PUT_permissions(self, request, obj):
         if request.user.is_authenticated and self.has_manager_permission(request):
             return True
-        elif request.user.is_authenticated and self.has_client_permission(request) and obj.customer.pk == request.user.pk:
+        elif request.user.is_authenticated and self.has_customer_permission(request) and obj.customer.pk == request.user.pk:
             return True
         return False
 
@@ -118,10 +118,17 @@ class ReservationPermissions(Permissions):
             return True
         return False
 
+    def GET_all_by_customer(self, request, customer_id):
+        if request.user.is_authenticated and self.has_manager_permission(request):
+            return True
+        elif request.user.is_authenticated and self.has_customer_permission(request) and request.user.pk == customer_id:
+            return True
+        return False
+
     def CANCEL_permissions(self, request, obj):
         if request.user.is_authenticated and self.has_manager_permission(request):
             return True
-        elif request.user.is_authenticated and self.has_client_permission(request) and \
+        elif request.user.is_authenticated and self.has_customer_permission(request) and \
                 request.user.pk == obj.customer.pk:
             return True
         return False
@@ -150,12 +157,12 @@ class ReservationPermissions(Permissions):
 class FeedbackPermissions(Permissions):
 
     def POST_permissions(self, request, obj):
-        if request.user.is_authenticated and self.has_client_permission(request) and request.user.pk == obj.customer.pk:
+        if request.user.is_authenticated and self.has_customer_permission(request) and request.user.pk == obj.customer.pk:
             return True
         return False
 
     def GET_permissions(self, request, obj):
-        if request.user.is_authenticated and self.has_client_permission(request) and request.user.pk == obj.customer.pk:
+        if request.user.is_authenticated and self.has_customer_permission(request) and request.user.pk == obj.customer.pk:
             return True
         elif request.user.is_authenticated and self.has_manager_permission(request):
             return True
@@ -167,6 +174,8 @@ class FeedbackPermissions(Permissions):
 class CustomerViewPermissions(Permissions):
 
     def GET_permissions(self, request, obj):
+        if request.user.is_authenticated and self.has_customer_permission(request) and request.user.pk == obj.pk:
+            return True
         if request.user.is_authenticated and self.has_manager_permission(request):
             return True
         if request.user.is_authenticated and self.has_stylist_permission(request):

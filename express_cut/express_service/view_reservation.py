@@ -1,6 +1,6 @@
 from .models import User, Reservation, Feedback
 from .serializers import ReservationSerializer, DurationSerializer, FeedbackSerializer
-import datetime
+import datetime, re
 
 from .models import User, Reservation, Service
 from .serializers import ReservationSerializer, DurationSerializer, EstimateSerializer, ReservationTimeSlotsSerializer
@@ -92,7 +92,7 @@ def reservation_general(request):
 
 @swagger_auto_schema(methods=['GET'], responses={**swagResp.commonResponses,
                                                            **swagResp.getResponse(ReservationSerializer)},
-                     tags=['stylist'], manual_parameters=[SwagParmDef.reservation_status], operation_summary="Get all Reservations on a Stylist by Status")
+                     tags=['stylist'], manual_parameters=[SwagParmDef.reservation_status, SwagParmDef.reservation_start_date, SwagParmDef.reservation_end_date], operation_summary="Get all Reservations on a Stylist by Status")
 @api_view(['GET'])
 @authentication_classes([JSONWebTokenAuthentication, SessionAuthentication, BasicAuthentication])
 @permission_classes([IsAuthenticated])
@@ -105,9 +105,45 @@ def reservations_by_stylist(request, stylist_id):
         if not ReservationPermissions().GET_all_by_stylist(request, stylist):
             return Response(status=status.HTTP_403_FORBIDDEN)
         query_status = request.query_params.get('status', None)
+        start_date = request.query_params.get('start_date', None)
+        end_date = request.query_params.get('end_date', None)
         reservations = stylist.stylist_reservations.all()
         if query_status:
             reservations = reservations.filter(status=query_status)
+        if start_date and re.match(r"^\d{4}\-(0?[1-9]|1[012])\-(0?[1-9]|[12][0-9]|3[01])$", start_date):
+            reservations = reservations.filter(date__gte=start_date)
+        if end_date and re.match(r"^\d{4}\-(0?[1-9]|1[012])\-(0?[1-9]|[12][0-9]|3[01])$", end_date):
+            reservations = reservations.filter(date__lte=end_date)
+        serializer = ReservationSerializer(reservations, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+@swagger_auto_schema(methods=['GET'], responses={**swagResp.commonResponses,
+                                                           **swagResp.getResponse(ReservationSerializer)},
+                     tags=['customer'], manual_parameters=[SwagParmDef.reservation_status, SwagParmDef.reservation_start_date, SwagParmDef.reservation_end_date],
+                     operation_summary="Get all Reservations of a Customer by Status")
+@api_view(['GET'])
+@authentication_classes([JSONWebTokenAuthentication, SessionAuthentication, BasicAuthentication])
+@permission_classes([IsAuthenticated])
+def reservations_by_customer(request, customer_id):
+    if request.method == 'GET':
+        try:
+            customer = User.objects.get(pk=customer_id, role=User.CUSTOMER)
+        except User.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        if not ReservationPermissions().GET_all_by_customer(request, customer_id):
+            return Response(status=status.HTTP_403_FORBIDDEN)
+        query_status = request.query_params.get('status', None)
+        start_date = request.query_params.get('start_date', None)
+        end_date = request.query_params.get('end_date', None)
+        reservations = customer.customer_reservations.all()
+        if query_status:
+            reservations = reservations.filter(status=query_status)
+        if start_date and re.match(r"^\d{4}\-(0?[1-9]|1[012])\-(0?[1-9]|[12][0-9]|3[01])$", start_date):
+            reservations = reservations.filter(date__gte=start_date)
+        if end_date and re.match(r"^\d{4}\-(0?[1-9]|1[012])\-(0?[1-9]|[12][0-9]|3[01])$", end_date):
+            reservations = reservations.filter(date__lte=end_date)
         serializer = ReservationSerializer(reservations, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
     return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
