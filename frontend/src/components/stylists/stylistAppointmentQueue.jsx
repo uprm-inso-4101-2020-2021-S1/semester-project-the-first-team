@@ -377,6 +377,7 @@ function StylistAppointmentQueue(props) {
         showDelModal={showDelModal}
         displayTime={displayTime}
         statusOfAppointment={statusOfAppointment}
+        showDeleteButton={activeUser.role === 0 || activeUser.role === 3}
       />
       {renderDelAppModal(showDeleteAppointmentModal, hideDelModal)}
       {/* Map queue entries for all elements */}

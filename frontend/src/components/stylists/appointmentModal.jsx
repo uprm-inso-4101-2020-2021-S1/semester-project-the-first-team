@@ -18,6 +18,7 @@ const AppointmentModal = ({
   showDelModal,
   displayTime,
   statusOfAppointment,
+  showDeleteButton,
 }) => {
   const [allowStart, setAllowStart] = useState(false);
 
@@ -112,9 +113,11 @@ const AppointmentModal = ({
         </Row>
       </Modal.Body>
       <Modal.Footer>
-        <Button variant="danger" onClick={showDelModal}>
-          Delete
-        </Button>
+        {showDeleteButton && (
+          <Button variant="danger" onClick={showDelModal}>
+            Delete
+          </Button>
+        )}
         {(allowStart || appointment.status === "IP") && (
           <Button
             variant="primary"

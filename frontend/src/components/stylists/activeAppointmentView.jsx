@@ -14,10 +14,14 @@ function ActiveAppointmentView(props) {
   const [serviceDurations, setServiceDurations] = useState({});
   const [showFinish, setShowFinish] = useState(false);
   const [showDelModal, setShowDelModal] = useState(false);
+  const [showCancelButton, setShowCancelButton] = useState(false);
   const activeUser = JSON.parse(sessionStorage.getItem("user"));
 
   useEffect(() => {
     setupActiveReservationView();
+    if (activeUser) {
+      setShowCancelButton(activeUser.role === 0 || activeUser.role === 3);
+    }
   }, []);
 
   const setupActiveReservationView = async () => {
@@ -305,12 +309,14 @@ function ActiveAppointmentView(props) {
           >
             Finish
           </button>
-          <button
-            className={activeAppointment.id ? "cancel" : "hidden"}
-            onClick={() => setShowDelModal(true)}
-          >
-            Cancel
-          </button>
+          {showCancelButton && (
+            <button
+              className={activeAppointment.id ? "cancel" : "hidden"}
+              onClick={() => setShowDelModal(true)}
+            >
+              Cancel
+            </button>
+          )}
         </div>
       </div>
     </div>
