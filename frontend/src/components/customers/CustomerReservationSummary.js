@@ -57,14 +57,14 @@ function CustomerReservationSummary(props) {
                 </Col>
                 <Col className="align-items-center">
                   <div className="stylist-entry">
-                    {props.selectedStylist !== "" ? (
+                    {props.selectedStylist !== null ? (
                       <>
                         <FontAwesomeIcon
                           className="stylist-entry-icon"
                           icon={faUserCheck}
                         />
                         <span className="entry-name">
-                          {props.selectedStylist}
+                          {props.selectedStylist.first_name + " " + props.selectedStylist.last_name}
                         </span>
                       </>
                     ) : (

@@ -15,7 +15,10 @@ function Customer(props) {
     <>
       <Sidebar items={sidebarItems} logout={props.logout} />
       <Route path={`${match.url}/reservations`}>
-        <CustomerReservation />
+        <CustomerReservation
+          backendDomain={props.backendDomain}
+          customerId={props.userId}
+        />
       </Route>
     </>
   ) : (
@@ -23,6 +26,7 @@ function Customer(props) {
   );
 }
 Customer.propTypes = {
+  backendDomain: PropTypes.string.isRequired,
   loggedIn: PropTypes.bool,
   logout: PropTypes.func.isRequired,
   userRole: PropTypes.number.isRequired,

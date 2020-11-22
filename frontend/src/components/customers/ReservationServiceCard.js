@@ -4,11 +4,10 @@ import { Card } from "react-bootstrap";
 import PropTypes from "prop-types";
 
 function ReservationServiceCard(props) {
-
   const handleClick = (e) => {
     e.preventDefault();
     props.setActive(props.id);
-    props.getServiceName(props.name, props.id);
+    props.getServiceId(props.serviceId, props.id);
   };
 
   return (
@@ -23,7 +22,7 @@ function ReservationServiceCard(props) {
         className="stretched-link service-content"
         onClick={handleClick}
       >
-        <h3 className="service-title">{props.name}</h3>
+        <h3 className="service-title">{props.serviceName}</h3>
       </a>
     </Card>
   );
@@ -32,10 +31,11 @@ function ReservationServiceCard(props) {
 ReservationServiceCard.propTypes = {
   active: PropTypes.bool,
   icon: PropTypes.object,
-  getServiceName: PropTypes.func,
+  getServiceId: PropTypes.func,
   id: PropTypes.number,
-  name: PropTypes.string,
+  serviceId: PropTypes.number,
   setActive: PropTypes.func,
+  serviceName: PropTypes.string,
 };
 
 export default ReservationServiceCard;

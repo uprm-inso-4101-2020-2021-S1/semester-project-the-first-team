@@ -3,85 +3,21 @@ import { Alert, Container, Row, Col } from "react-bootstrap";
 import ReservationForm from "./ReservationForm";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowRight, faArrowLeft } from "@fortawesome/free-solid-svg-icons";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import { SlideDown } from "react-slidedown";
 import "react-slidedown/lib/slidedown.css";
 import axios from "axios";
+import PropTypes from "prop-types";
 
 const numStages = 4;
 
-const temp = [
-  {
-    name: "Service0",
-    icon: faArrowRight,
-  },
-  {
-    name: "Service1",
-    icon: faArrowRight,
-  },
-  {
-    name: "Service2",
-    icon: faArrowRight,
-  },
-  {
-    name: "Service3",
-    icon: faArrowRight,
-  },
-  {
-    name: "Service4",
-    icon: faArrowRight,
-  },
-  {
-    name: "Service5",
-    icon: faArrowRight,
-  },
-];
-
-const temp2 = [
-  {
-    name: "Maria",
-    description: "lorem ipsilum",
-    portrait:
-      "https://i.pinimg.com/originals/80/e3/86/80e3869ea24b00b264ff0b075d1e9384.jpg",
-  },
-  {
-    name: "Juana Diaz",
-    description: "lorem ipsilum",
-    portrait:
-      "https://i.pinimg.com/564x/3e/2e/8c/3e2e8c6fa626636eb4e8bdfe78edab3b.jpg",
-  },
-  {
-    name: "Maria",
-    description: "lorem ipsilum",
-    portrait:
-      "https://i.pinimg.com/originals/80/e3/86/80e3869ea24b00b264ff0b075d1e9384.jpg",
-  },
-];
-
-const dummyDate = new Date("2020-10-19 13:30");
-const temp3 = [
-  {
-    stylistName: "Maria",
-    time: dummyDate,
-    timeSlotId: 1,
-  },
-  {
-    stylistName: "Maria",
-    time: dummyDate,
-    timeSlotId: 1,
-  },
-  {
-    stylistName: "Maria",
-    time: dummyDate,
-    timeSlotId: 1,
-  },
-];
-
 function CustomerReservation(props) {
+  // Data
   const [services, setServices] = useState(null);
   const [stylists, setStylists] = useState(null);
   const [timeSlots, setTimeSlots] = useState(null);
 
+  // Stage tracking
   const [reservationStage, setReservationStage] = useState(0);
   const [stageMinimumSelected, setStageMinimumSelected] = useState(
     Array(numStages).fill(false)
@@ -89,9 +25,20 @@ function CustomerReservation(props) {
   const [stageSelectionChanged, setStageSelectionChanged] = useState(
     Array(numStages).fill(false)
   );
+
+  // Stage state
   const [submitted, setSubmitted] = useState(false);
   const [selectWarning, setSelectWarning] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  // Selection tracking
+  const [serviceIsActive, setServiceIsActive] = useState([]);
+  const [portraitIsActive, setPortraitIsActive] = useState([]);
+  const [timeSlotIsActive, setTimeSlotIsActive] = useState([]);
+
+  const [serviceIds, setServiceIds] = useState([]);
+  const [stylistId, setStylistId] = useState(0);
+  const [timeSlotId, setTimeSlotId] = useState(null);
 
   const subHeaderTitles = [
     "Select a service",
@@ -99,6 +46,9 @@ function CustomerReservation(props) {
     "Select a time slot",
     "Review your reservation",
   ];
+
+  const history = useHistory();
+  const [reservationTimeEstimate, setReservationTimeEstimate] = useState(0);
 
   // Functions
   const stageChanged = useCallback(
@@ -109,58 +59,131 @@ function CustomerReservation(props) {
     [stageSelectionChanged]
   );
 
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    axios
+      .post(
+        `${props.backendDomain}reservation`,
+        {
+          date: new Date().toLocaleDateString(),
+          startTime: timeSlots.filter((timeSlot) => timeSlot.id === timeSlotId)
+            .start_time,
+          endTime: timeSlots.filter((timeSlot) => timeSlot.id === timeSlotId)
+            .end_time,
+          customer: props.customerId,
+          stylist: stylistId,
+          service: serviceIds,
+        },
+        {
+          headers: { Authorization: `JWT ${localStorage.getItem("token")}` },
+        }
+      )
+      .then(() => {
+        setSubmitted(true);
+      })
+      .catch((err) => {
+        window.alert("An error has occurred. Please try again.");
+        console.log(err);
+        history.push("/customers/home");
+      });
+  };
+
+  //TODO: Proper error handling
+
   // Get services
 
   useEffect(() => {
     if (services === null && reservationStage === 0) {
-      const getServices = async () => {
-        setLoading(true);
-        const result = await axios(
-          "https://hn.algolia.com/api/v1/search?query=redux"
-        );
-        console.log("services");
-        setServices(temp);
-        setLoading(false);
-      };
-      getServices();
+      setLoading(true);
+      axios
+        .get(`${props.backendDomain}service`, {
+          headers: { Authorization: `JWT ${localStorage.getItem("token")}` },
+        })
+        .then((res) => {
+          setServices(res.data);
+          setServiceIsActive(Array(res.data.length).fill(false));
+          setLoading(false);
+        })
+        .catch((err) => {
+          window.alert("An error has occurred. Please try again.");
+          console.log(err);
+          history.push("/customers/home");
+        });
     }
-  }, [reservationStage, services]);
+  }, [history, props.backendDomain, reservationStage, services]);
 
   // Get stylists
 
   useEffect(() => {
-    if (reservationStage === 1 && stageSelectionChanged[0]) {
-      const getStylists = async () => {
-        setLoading(true);
-        const result = await axios(
-          "https://hn.algolia.com/api/v1/search?query=redux"
-        );
-        console.log("stylists");
-        setStylists(temp2);
-        setLoading(false);
-      };
-      getStylists();
-      stageChanged(0, false);
+    if (reservationStage === 1 && stylists === null) {
+      setLoading(true);
+      axios
+        .get(`${props.backendDomain}stylist/available`, {
+          headers: { Authorization: `JWT ${localStorage.getItem("token")}` },
+        })
+        .then((res) => {
+          if (res.data.length === 0) {
+            window.alert("No stylists currently available. Try again later.");
+            history.push("/customers/home");
+          } else {
+            setStylists(res.data);
+            setPortraitIsActive(Array(res.data.length).fill(false));
+            setLoading(false);
+          }
+        })
+        .catch((err) => {
+          window.alert("An error has occurred. Please try again.");
+          console.log(err);
+          history.push("/customers/home");
+        });
     }
-  }, [reservationStage, stageChanged, stageSelectionChanged]);
+  }, [
+    props.backendDomain,
+    reservationStage,
+    stageChanged,
+    stageSelectionChanged,
+    history,
+    stylists,
+  ]);
 
   // Get time slots
 
   useEffect(() => {
-    if (reservationStage === 2 && stageSelectionChanged[1]) {
-      const getTimeSlots = async () => {
-        setLoading(true);
-        const result = await axios(
-          "https://hn.algolia.com/api/v1/search?query=redux"
-        );
-        console.log("time");
-        setTimeSlots(temp3);
-        setLoading(false);
-      };
-      getTimeSlots();
+    if (
+      reservationStage === 2 &&
+      (stageSelectionChanged[0] || stageSelectionChanged[1])
+    ) {
+      setLoading(true);
+      axios
+        .get(`${props.backendDomain}stylist/${stylistId}/schedule`)
+        .then((res) => {
+          setTimeSlots(res.data.timeslots);
+          setTimeSlotIsActive(Array(res.data.timeslots.length).fill(false));
+          setLoading(false);
+        })
+        .catch((err) => {
+          window.alert("An error has occurred. Please try again.");
+          console.log(err);
+          history.push("/customers/home");
+        });
       stageChanged(1, false);
     }
-  }, [reservationStage, stageChanged, stageSelectionChanged]);
+  }, [
+    history,
+    stylistId,
+    props.backendDomain,
+    reservationStage,
+    stageChanged,
+    stageSelectionChanged,
+  ]);
+
+  // TODO: Calculate time slots. Look into JS dates. Pick best fit. Or remove
+
+  //const calculateTimeSlots = (timeSlots) => {
+  //return timeSlots.filter(timeSlot => {
+
+  //})
+  //};
 
   return (
     <Container fluid>
@@ -239,16 +262,35 @@ function CustomerReservation(props) {
             timeSlots={timeSlots}
             reservationStage={reservationStage}
             setReservationStage={setReservationStage}
-            setSubmitted={setSubmitted}
+            handleSubmit={handleSubmit}
             stageMinimumSelected={stageMinimumSelected}
             setStageMinimumSelected={setStageMinimumSelected}
             stageChanged={stageChanged}
             stageSelectionChanged={stageSelectionChanged}
+            serviceIsActive={serviceIsActive}
+            setServiceIsActive={setServiceIsActive}
+            portraitIsActive={portraitIsActive}
+            setPortraitIsActive={setPortraitIsActive}
+            timeSlotIsActive={timeSlotIsActive}
+            setTimeSlotIsActive={setTimeSlotIsActive}
+            serviceIds={serviceIds}
+            setServiceIds={setServiceIds}
+            stylistId={stylistId}
+            setStylistId={setStylistId}
+            timeSlotId={timeSlotId}
+            setTimeSlotId={setTimeSlotId}
+            reservationTimeEstimate={reservationTimeEstimate}
+            setReservationTimeEstimate={setReservationTimeEstimate}
           />
         </Container>
       </Row>
     </Container>
   );
 }
+
+CustomerReservation.propTypes = {
+  backendDomain: PropTypes.string.isRequired,
+  customerId: PropTypes.number.isRequired,
+};
 
 export default CustomerReservation;

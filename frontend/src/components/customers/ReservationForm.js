@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import CustomerReservationServices from "./CustomerReservationServices";
 import CustomerRersevationStylists from "./CustomerReservationStylists";
 import PropTypes from "prop-types";
-import CustomerResevationTimeSlots from "./CustomerReservationTimeSlots";
+import CustomerReservationTimeSlots from "./CustomerReservationTimeSlots";
 import CustomerReservationSummary from "./CustomerReservationSummary";
 import { Link } from "react-router-dom";
 import { Row, Col, Spinner } from "react-bootstrap";
@@ -13,39 +13,7 @@ const maxServices = 3;
 
 function ReservationForm(props) {
   // State variables
-  const [serviceNames, setServiceNames] = useState([]);
-  const [serviceIsActive, setServiceIsActive] = useState([]);
   const [activeServiceCount, setActiveServiceCount] = useState(0);
-  const [stylistName, setStylistName] = useState("");
-  const [portraitIsActive, setPortraitIsActive] = useState([]);
-  const [timeSlotId, setTimeSlotId] = useState(null);
-  const [timeSlotIsActive, setTimeSlotIsActive] = useState([]);
-
-  // Initialize arrays once props are available or reset once they change
-  useEffect(() => {
-    if (serviceIsActive.length === 0 && props.services) {
-      setServiceIsActive(Array(props.services.length).fill(false));
-    }
-  }, [serviceIsActive, props.services]);
-
-  console.log(props.stageSelectionChanged);
-  useEffect(() => {
-    if (
-      (portraitIsActive.length === 0 || props.stageSelectionChanged[0]) &&
-      props.stylists
-    ) {
-      setPortraitIsActive(Array(props.stylists.length).fill(false));
-    }
-  }, [portraitIsActive, props.stylists, props.stageSelectionChanged]);
-
-  useEffect(() => {
-    if (
-      (timeSlotIsActive.length === 0 || props.stageSelectionChanged[1]) &&
-      props.timeSlots
-    ) {
-      setTimeSlotIsActive(Array(props.timeSlots.length).fill(false));
-    }
-  }, [timeSlotIsActive, props.timeSlots, props.stageSelectionChanged]);
 
   // Handlers
   const updateStageMinimumSelected = (status) => {
@@ -57,30 +25,30 @@ function ReservationForm(props) {
   };
 
   const setServiceActive = (index) => {
-    if (!serviceIsActive[index]) {
+    if (!props.serviceIsActive[index]) {
       if (activeServiceCount < maxServices) {
-        serviceIsActive[index] = true;
+        props.serviceIsActive[index] = true;
         setActiveServiceCount(activeServiceCount + 1);
       } else {
-        serviceIsActive[
+        props.serviceIsActive[
           props.services
-            .map((service) => service.name)
-            .indexOf(serviceNames[serviceNames.length - 1])
+            .map((service) => service.id)
+            .indexOf(props.serviceIds[props.serviceIds.length - 1])
         ] = false;
-        serviceIsActive[index] = true;
-        setServiceIsActive(serviceIsActive);
+        props.serviceIsActive[index] = true;
+        props.setServiceIsActive(props.serviceIsActive);
       }
     } else {
-      serviceIsActive[index] = false;
+      props.serviceIsActive[index] = false;
       setActiveServiceCount(activeServiceCount - 1);
     }
-    updateStageMinimumSelected(serviceIsActive.includes(true));
+    updateStageMinimumSelected(props.serviceIsActive.includes(true));
     props.stageChanged(props.reservationStage);
   };
 
   const setPortraitActive = (index) => {
-    setPortraitIsActive(
-      portraitIsActive.map((_, i) => {
+    props.setPortraitIsActive(
+      props.portraitIsActive.map((_, i) => {
         if (i === index) return true;
         else return false;
       })
@@ -91,8 +59,8 @@ function ReservationForm(props) {
   };
 
   const setTimeSlotActive = (index) => {
-    setTimeSlotIsActive(
-      timeSlotIsActive.map((_, i) => {
+    props.setTimeSlotIsActive(
+      props.timeSlotIsActive.map((_, i) => {
         if (i === index) return true;
         else return false;
       })
@@ -101,30 +69,47 @@ function ReservationForm(props) {
       updateStageMinimumSelected(true);
   };
 
-  const getSelectedService = (name, index) => {
-    const isActive = serviceIsActive[index];
+  const getSelectedService = (id, index) => {
+    const isActive = props.serviceIsActive[index];
     if (isActive) {
       if (activeServiceCount < maxServices) {
-        setServiceNames([...serviceNames, name]);
+        props.setServiceIds([...props.serviceIds, id]);
+        props.setReservationTimeEstimate(
+          props.reservationTimeEstimate +
+            props.services.filter((service) => service.id === id)[0]
+              .defaultDuration
+        );
       } else {
-        serviceNames.pop();
-        setServiceNames([...serviceNames, name]);
+        let oldId = props.serviceIds.pop();
+        props.setServiceIds([...props.serviceIds, id]);
+        props.setReservationTimeEstimate(
+          props.reservationTimeEstimate +
+            props.services.filter((service) => service.id === id)[0]
+              .defaultDuration -
+            props.services.filter((service) => service.id === oldId)[0]
+              .defaultDuration
+        );
       }
     } else {
-      setServiceNames(
-        serviceNames.filter((serviceName) => {
-          return serviceName !== name;
+      props.setServiceIds(
+        props.serviceIds.filter((serviceId) => {
+          return serviceId !== id;
         })
+      );
+      props.setReservationTimeEstimate(
+        props.reservationTimeEstimate -
+          props.services.filter((service) => service.id === id)[0]
+            .defaultDuration
       );
     }
   };
 
-  const getSelectedStylist = (name) => {
-    setStylistName(name);
+  const getSelectedStylist = (id) => {
+    props.setStylistId(id);
   };
 
   const getSelectedTimeSlot = (id) => {
-    setTimeSlotId(id);
+    props.setTimeSlotId(id);
   };
 
   const dataAvailable = () => {
@@ -141,21 +126,17 @@ function ReservationForm(props) {
     }
   };
 
-  const handleSubmit = () => {
-    props.setSubmitted(true);
-  };
-
   return (
-    <form onSubmit={handleSubmit} method="POST">
+    <form onSubmit={props.handleSubmit} method="POST">
       {dataAvailable() &&
         !props.loading &&
         !props.submitted &&
         props.reservationStage === 0 && (
           <CustomerReservationServices
-            name="serviceName"
-            getServiceName={getSelectedService}
+            name="serviceId"
+            getServiceId={getSelectedService}
             services={props.services}
-            cardActive={serviceIsActive}
+            cardActive={props.serviceIsActive}
             setActive={setServiceActive}
           />
         )}
@@ -164,10 +145,10 @@ function ReservationForm(props) {
         !props.submitted &&
         props.reservationStage === 1 && (
           <CustomerRersevationStylists
-            name="stylistName"
-            getStylistName={getSelectedStylist}
+            name="stylistId"
+            getStylistId={getSelectedStylist}
             stylists={props.stylists}
-            portraitIsActive={portraitIsActive}
+            portraitIsActive={props.portraitIsActive}
             setActive={setPortraitActive}
           />
         )}
@@ -175,24 +156,36 @@ function ReservationForm(props) {
         !props.loading &&
         !props.submitted &&
         props.reservationStage === 2 && (
-          <CustomerResevationTimeSlots
+          <CustomerReservationTimeSlots
             name="timeSlotId"
             getTimeSlotId={getSelectedTimeSlot}
             timeSlots={props.timeSlots}
-            timeSlotIsActive={timeSlotIsActive}
+            timeSlotIsActive={props.timeSlotIsActive}
             setActive={setTimeSlotActive}
+            stylistName={() => {
+              let temp = props.stylists.filter(
+                (stylist) => stylist.id === props.stylistId
+              )[0];
+              return temp.first_name + " " + temp.last_name;
+            }}
             reservationStage={props.reservationStage}
             setReservationStage={props.setReservationStage}
           />
         )}
       {!props.loading && !props.submitted && props.reservationStage === 3 && (
         <CustomerReservationSummary
-          selectedServices={serviceNames}
-          selectedStylist={stylistName}
-          selectedTimeSlot={
-            timeSlotId ? props.timeSlots[timeSlotId].time : null
+          selectedServices={props.services.filter((service) =>
+            props.serviceIds.includes(service.id)
+          )}
+          selectedStylist={
+            props.stylists.filter(
+              (stylist) => stylist.id === props.stylistId
+            )[0]
           }
-          handleSubmit={handleSubmit}
+          selectedTimeSlot={
+            props.timeSlotId ? props.timeSlots[props.timeSlotId].time : null
+          }
+          handleSubmit={props.handleSubmit}
         />
       )}
       {!props.loading && props.submitted && (
@@ -241,12 +234,26 @@ ReservationForm.propTypes = {
   setReservationStage: PropTypes.func,
   setStageMinimumSelected: PropTypes.func,
   stageChanged: PropTypes.func,
-  setSubmitted: PropTypes.func,
+  handleSubmit: PropTypes.func,
   stageMinimumSelected: PropTypes.array,
   stageSelectionChanged: PropTypes.array,
   stylists: PropTypes.array,
   submitted: PropTypes.bool,
   timeSlots: PropTypes.array,
+  serviceIsActive: PropTypes.array,
+  setServiceIsActive: PropTypes.func,
+  portraitIsActive: PropTypes.array,
+  setPortraitIsActive: PropTypes.func,
+  timeSlotIsActive: PropTypes.array,
+  setTimeSlotIsActive: PropTypes.func,
+  serviceIds: PropTypes.array,
+  setServiceIds: PropTypes.func,
+  stylistId: PropTypes.number,
+  setStylistId: PropTypes.func,
+  timeSlotId: PropTypes.number,
+  setTimeSlotId: PropTypes.func,
+  reservationTimeEstimate: PropTypes.number,
+  setReservationTimeEstimate: PropTypes.func,
 };
 
 export default ReservationForm;
