@@ -10,7 +10,7 @@ from rest_framework_jwt.authentication import JSONWebTokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from .permissions import Permissions, ReservationPermissions, FeedbackPermissions
 from rest_framework import status
-from rest_framework.decorators import api_view, permission_classes, authentication_classes
+from rest_framework.decorators import api_view, permission_classes, authentication_classes, schema
 from drf_yasg.utils import swagger_auto_schema
 from .swagger_models import SwagResponses as swagResp
 from .swagger_models import SwagParmDef
@@ -258,9 +258,11 @@ def feedback_views(request, reservation_id):
     return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-@swagger_auto_schema(methods=['GET'], responses={**swagResp.commonResponses, **swagResp.getResponse(EstimateSerializer)},
+@swagger_auto_schema(methods=['POST'], request_body=EstimateSerializer, responses={**swagResp.commonResponses,
+                    **swagResp.getResponse(PossibleTimeSlots)},
                      tags=['reservation'], operation_summary="Get available slots to allocate a reservation.")
-@api_view(['POST', 'GET'])
+# @schema(AvailableSlotSchema())
+@api_view(['POST'])
 @authentication_classes([JSONWebTokenAuthentication, SessionAuthentication, BasicAuthentication])
 @permission_classes([IsAuthenticated])
 def available_slots(request):
