@@ -84,7 +84,8 @@ function CustomerReservation(props) {
       .catch((err) => {
         window.alert("An error has occurred. Please try again.");
         console.log(err);
-        history.push("/customers/home");
+        history.
+          push("/customers/home");
       });
   };
 
