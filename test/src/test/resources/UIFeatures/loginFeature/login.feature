@@ -10,10 +10,10 @@ Feature: UI login page
   |   Manager    |   Manager  |
   |   Stylist    |   Stylist  |
 
-#   Scenario Outline: Customers should be able to login and redirect to appropriate page
-#     Given The user goes to the UI website
-#     When The user logins as <user> and <pass>
-#     Then The user should see the customers page
-#   Examples:
-#   |   user       |    pass    |
-#   |   Customer   |   Customer |
+  Scenario Outline: Customers should be able to login and redirect to appropriate page
+    Given The user goes to the UI website
+    When The user logins as <user> and <pass>
+    Then The user should see the customers page
+  Examples:
+  |   user       |    pass    |
+  |   Customer   |   Customer |
