@@ -57,7 +57,7 @@ def get_all_customers(request):
 
 
 @swagger_auto_schema(methods=['GET'], responses={**swagResp.commonResponses, **swagResp.getResponse(CustomerSerializer)},
-                    tags=['customer'], operation_summary="A basic info. of Customer by id")
+                    tags=['customer'], operation_summary="Get basic information of an Express Cuts Customer")
 @api_view(['GET'])
 @authentication_classes([JSONWebTokenAuthentication, SessionAuthentication, BasicAuthentication])
 @permission_classes([IsAuthenticated])

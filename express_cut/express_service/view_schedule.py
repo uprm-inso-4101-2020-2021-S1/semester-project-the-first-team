@@ -14,13 +14,14 @@ from rest_framework.decorators import api_view, permission_classes, authenticati
 from drf_yasg.utils import swagger_auto_schema
 from .swagger_models import SwagResponses as swagResp
 from .swagger_models import SwagParmDef
+from rest_framework.exceptions import ValidationError
 
 
 @swagger_auto_schema(methods=['GET'],
                      responses={**swagResp.commonResponses, **swagResp.getResponse(DailyScheduleSerializer)},
                      tags=['dailySchedule'], manual_parameters=[SwagParmDef.schedule_start_date,
                                                                 SwagParmDef.schedule_end_date],
-                     operation_summary="Get all reservations, filtered by date range.")
+                     operation_summary="Get all schedules, filtered by date range.")
 @swagger_auto_schema(methods=['POST'], request_body=DailyScheduleSerializer, responses=swagResp.commonPOSTResponses,
                      tags=['dailySchedule'], operation_summary="Create an Express Cuts Schedule")
 @api_view(['POST', 'GET'])
@@ -39,6 +40,8 @@ def schedule_views(request):
         try:
             schedule = serializer.save()
             return Response(data={"id": schedule.pk}, status=status.HTTP_201_CREATED)
+        except ValidationError as e:
+            return Response(e.detail, status=status.HTTP_400_BAD_REQUEST)
         except:
             return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     elif request.method == 'GET':
@@ -81,8 +84,13 @@ def schedule_views_put(request, pk):
         data = request.data
         serializer = DailyScheduleSerializer(schedule, data)
         if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
+            try:
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            except ValidationError as e:
+                return Response(e.detail, status=status.HTTP_400_BAD_REQUEST)
+            except:
+                return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     elif request.method == 'DELETE':
@@ -97,9 +105,9 @@ def schedule_views_put(request, pk):
 
 @swagger_auto_schema(methods=['GET'],
                      responses={**swagResp.commonResponses, **swagResp.getResponse(DailyScheduleSerializer)},
-                     tags=['dailySchedule'], manual_parameters=[SwagParmDef.schedule_start_date,
+                     tags=['stylist'], manual_parameters=[SwagParmDef.schedule_start_date,
                                                                 SwagParmDef.schedule_end_date],
-                     operation_summary="Get all reservations of a stylist, filtered by date range.")
+                     operation_summary="Get all schedules of a stylist, filtered by date range.")
 @api_view(['GET'])
 @authentication_classes([JSONWebTokenAuthentication, SessionAuthentication, BasicAuthentication])
 @permission_classes([IsAuthenticated])
