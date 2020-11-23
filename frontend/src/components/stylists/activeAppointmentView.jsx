@@ -42,28 +42,30 @@ function ActiveAppointmentView(props) {
   };
 
   const fetchActiveReservationsForUser = async (stylist) => {
-    try {
-      let response = await axios.get(
-        props.backendDomain +
-          "stylist/" +
-          stylist.id +
-          "/reservation?status=IP",
-        {
-          headers: {
-            Authorization: "JWT " + localStorage.getItem("token"),
-          },
-        }
-      );
+    if(stylist.role == 1){
+      try {
+        let response = await axios.get(
+          props.backendDomain +
+            "stylist/" +
+            stylist.id +
+            "/reservation?status=IP",
+          {
+            headers: {
+              Authorization: "JWT " + localStorage.getItem("token"),
+            },
+          }
+        );
 
-      if (response.data.length > 0) {
-        return response.data[0];
-      } else {
-        props.changeHeaderCard(stylist);
-        return null;
+        if (response.data.length > 0) {
+          return response.data[0];
+        } else {
+          props.changeHeaderCard(stylist);
+          return null;
+        }
+      } catch (error) {
+        console.log(error);
+        window.alert("Could not fetch appointments.");
       }
-    } catch (error) {
-      console.log(error);
-      window.alert("Could not fetch appointments.");
     }
   };
   const buildAppointment = async (appointment) => {
