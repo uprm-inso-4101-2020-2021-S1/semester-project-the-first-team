@@ -1,7 +1,7 @@
 from django.db.models import Sum
 from typing import List
 from django.db.models import Case, When, Max, BooleanField, Value
-from .models import Service, User, DailySchedule
+from .models import Service, User, DailySchedule, Reservation
 import datetime
 
 
@@ -51,7 +51,8 @@ def get_available_slots(duration, stylist):
         last_reservation_pk = reservations_all.last().pk
     for timeslot in timeslots:
         available_start_time = datetime.datetime.combine(date=today_date, time=timeslot.start_time)
-        reservations = reservations_all.filter(startTime__gte=timeslot.start_time, endTime__lte=timeslot.end_time)\
+        reservations = reservations_all.filter(startTime__gte=timeslot.start_time, endTime__lte=timeslot.end_time,
+                                               status__in=[Reservation.IN_PROCESS, Reservation.PENDING])\
             .order_by('startTime')
         for reservation in reservations:
             available_end_time = datetime.datetime.combine(date=today_date, time=reservation.startTime)

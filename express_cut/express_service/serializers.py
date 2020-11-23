@@ -134,15 +134,13 @@ class ReservationSerializer(serializers.ModelSerializer):
         # TODO: what if there is more than one schedule for a stylist in one day (this shouldn't happen)
         if not time_slot:
             raise ValidationError("Unable to find a slot for the given timeframe.")
-        reservations = Reservation.objects.filter(stylist=stylist.pk, date=date)
+        reservations = Reservation.objects.filter(stylist=stylist.pk, date=date, status__in=[Reservation.PENDING, Reservation.IN_PROCESS])
         if not reservations:
             return None
-        conflict_reserv = reservations.filter(startTime__gte=startTime, startTime__lt=endTime)
+        conflict_reserv = reservations.filter(startTime__lt=endTime, endTime__gt=startTime)
         if conflict_reserv:
             raise ValidationError("Unable to find a slot for the given timeframe.")
-        conflict_reserv = reservations.filter(endTime__gte=startTime, endTime__lt=endTime)
-        if conflict_reserv:
-            raise ValidationError("Unable to find a slot for the given timeframe.")
+
 
     def update(self, instance, validated_data):
         startTime = validated_data['startTime']
