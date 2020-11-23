@@ -1,62 +1,121 @@
-import React, { Component } from "react";
+import React, { useState, useEffect } from "react";
 import StylistHeaderBar from "./stylistHeaderBar";
 import StylistViewBody from "./stylistViewBody";
+import axios from "axios";
+import PropTypes from "prop-types";
 
-class StylistView extends Component {
-  state = {
-    headerCard: {}, // Stuff for the headercard
-    isManager: false,
-    activeAppointment: {}, // TODO: DELETE THIS, SINCE IT'S ID KEPT IN LOCAL STORAGE.
-    currUser: {},
-  };
+let user = {};
 
-  componentDidMount() {
-    this.setState({
-      currUser: JSON.parse(sessionStorage.getItem("user")),
-    });
-  }
+function StylistView(props) {
+  const [headerCard, setHeaderCard] = useState(
+    JSON.parse(sessionStorage.getItem("user"))
+  );
 
-  changeHeaderCard(cardInfo) {
-    console.log(cardInfo);
-    this.setState({ headerCard: cardInfo });
-  }
-
-  componentDidUpdate() {
-    if (!this.state.headerCard || !this.state.headerCard.first_name) {
-      this.changeHeaderCard(this.state.currUser);
+  useEffect(() => {
+    user = JSON.parse(sessionStorage.getItem("user"));
+    if (!user || !user.first_name) {
+      fetchActiveUser();
+      user = JSON.parse(sessionStorage.getItem("user"));
     }
-  }
 
-  setActiveAppointment = (appointment) => {
-    // this.setState({ activeAppointment: appointment });
-    localStorage.setItem(
-      "activeAppointmentID",
-      appointment.username ? appointment.username : ""
-    );
-    window.location.href = appointment.username
-      ? "/stylists/activeappointment"
-      : "/stylists/appointments";
+    setHeaderCard(user);
+  }, []);
+
+  const redirectIfNotManager = () => {
+    let browserUser = JSON.parse(sessionStorage.getItem("user"));
+
+    if (
+      browserUser.role &&
+      (browserUser.role !== 0 || browserUser.role !== 3)
+    ) {
+      window.location.href = "/stylists/reservations";
+    }
   };
-  //   TODO: HANDLE GETTING DATA BASED ON ROUTES FOR THE HEADERBAR.
 
-  render() {
-    return (
-      <div className="body-container">
-        <StylistHeaderBar
-          headerCard={this.state.headerCard}
-          changeHeaderCard={this.changeHeaderCard.bind(this)}
-          backendDomain={this.props.backendDomain}
-        />
-        <StylistViewBody
-          changeHeaderCard={this.changeHeaderCard.bind(this)}
-          setActiveAppointment={this.setActiveAppointment.bind(this)}
-          activeAppointment={this.state.activeAppointment}
-          headerCard={this.state.headerCard}
-          backendDomain={this.props.backendDomain}
-        />
-      </div>
-    );
-  }
+  const fetchActiveUser = async () => {
+    try {
+      let response = await axios.get(props.backendDomain + "user/current", {
+        headers: {
+          Authorization: "JWT " + localStorage.getItem("token"),
+        },
+      });
+
+      response.data.password = "";
+      if (response.data.role === 2) {
+        window.location.href = "/customers";
+      }
+      sessionStorage.setItem("user", JSON.stringify(response.data));
+    } catch (error) {
+      console.log(error);
+      window.alert(
+        "Something went wrong fetching your information for the stylist views."
+      );
+    }
+  };
+
+  const setActiveAppointment = async (appointment) => {
+    if (!appointment) {
+      sessionStorage.removeItem("activeAppointment");
+      props.setIsActiveAppointment(false);
+    } else {
+      try {
+        let response = await axios.put(
+          props.backendDomain + "reservation/" + appointment.id + "/start",
+          {},
+          {
+            headers: {
+              Authorization: "JWT " + localStorage.getItem("token"),
+            },
+          }
+        );
+
+        sessionStorage.setItem(
+          "activeAppointment",
+          JSON.stringify(appointment)
+        );
+        props.setIsActiveAppointment(true);
+        return true;
+      } catch (error) {
+        console.log(error);
+        window.alert("Something went wrong setting Active Appointment.");
+        return false;
+      }
+    }
+  };
+
+  const changeHeaderCard = (newUser) => {
+    if (!newUser || !newUser.first_name) {
+      if (headerCard.appTime) {
+        setHeaderCard(user);
+      }
+    } else {
+      setHeaderCard(newUser);
+    }
+  };
+
+  return (
+    <div className="body-container">
+      <StylistHeaderBar
+        headerCard={headerCard}
+        changeHeaderCard={changeHeaderCard}
+        backendDomain={props.backendDomain}
+      />
+      <StylistViewBody
+        changeHeaderCard={changeHeaderCard}
+        setActiveAppointment={setActiveAppointment}
+        headerCard={headerCard}
+        backendDomain={props.backendDomain}
+        redirectIfNotManager={redirectIfNotManager}
+        setIsActiveAppointment={props.setIsActiveAppointment}
+      />
+    </div>
+  );
 }
+
+StylistView.propTypes = {
+  backendDomain: PropTypes.string.isRequired,
+  isLoading: PropTypes.bool,
+  setIsActiveAppointment: PropTypes.func,
+};
 
 export default StylistView;

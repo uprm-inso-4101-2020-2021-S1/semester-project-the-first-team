@@ -3,17 +3,16 @@ import Sidebar from "./components/Sidebar";
 import StylistView from "./components/stylists/stylistView";
 import Customer from "./components/customers/Customer";
 import { Container, Row, Col, Spinner } from "react-bootstrap";
-
+import { stylistSidebarRoutes } from "./components/stylists/stylistSidebarRoutes";
+import Login from "./components/Login";
+import axios from "axios";
+import Signup from "./components/Signup";
 import {
   BrowserRouter as Router,
   Switch,
   Route,
   Redirect,
 } from "react-router-dom";
-import { faHome, faConciergeBell } from "@fortawesome/free-solid-svg-icons";
-import Login from "./components/Login";
-import axios from "axios";
-import Signup from "./components/Signup";
 
 function App() {
   const [loggedIn, setLoggedIn] = useState(
@@ -23,8 +22,8 @@ function App() {
   const [username, setUsername] = useState("");
   const [userId, setUserId] = useState(null);
   const [userRole, setUserRole] = useState(null);
+  const [isActiveAppointment, setIsActiveAppointment] = useState(false);
   const [signupSuccessful, setSignupSuccessful] = useState(false);
-
   const backendDomain = window._env_.REST_API_URI.toString();
 
   useEffect(() => {
@@ -38,6 +37,7 @@ function App() {
           setUserRole(res.data.role);
           setUserId(res.data.id);
           setUsername(res.data.username);
+          setStylistsInfo(res.data); // If the user is a stylist, set it's data in Session Storage.
           setIsLoading(false);
         })
         .catch(() => {
@@ -66,7 +66,16 @@ function App() {
     e.preventDefault();
     setLoggedIn(false);
     localStorage.clear();
+    sessionStorage.clear();
     // TODO: Add proper logout
+  };
+
+  const setStylistsInfo = (stylistData) => {
+    sessionStorage.removeItem("user");
+    if (stylistData.role !== 2) {
+      stylistData.password = "";
+      sessionStorage.setItem("user", JSON.stringify(stylistData));
+    }
   };
 
   const handleCustomerSignup = (e, data) => {
@@ -84,95 +93,6 @@ function App() {
       });
   };
 
-  sessionStorage.setItem(
-    "authToken",
-    new Buffer("Manager:Manager").toString("base64")
-  );
-
-  useEffect(() => {
-    logInUser();
-  }, [backendDomain]);
-
-  const logInUser = async () => {
-    //  todo: implement actual log in to get requests.
-    // todo: update this to not run every refresh.
-    // Getting hardcoded user from backend.
-    try {
-      console.log("Logging in");
-      const userPk = 3;
-      console.log("current domain: " + backendDomain);
-      console.log("Sending REquest: " + backendDomain + "user/" + userPk);
-      let userInfoResponse = await axios.get(backendDomain + "user/" + userPk, {
-        headers: {
-          Authorization: `basic ${sessionStorage.getItem("authToken")}`,
-        },
-      });
-      sessionStorage.setItem("user", JSON.stringify(userInfoResponse.data));
-    } catch (error) {
-      console.log(error);
-      window.alert("Could not sign in.");
-    }
-  };
-
-  // TODO: Move this to a separate file
-  const temp = [
-    { title: "home", path: "/stylists/home", icon: faHome, cName: "nav-text" },
-    {
-      title: "Appointments",
-      path: "/stylists/appointments",
-      icon: faConciergeBell,
-      cName: "nav-text",
-    },
-    {
-      title: "Active Appointment",
-      path: "/stylists/activeappointment",
-      icon: faConciergeBell,
-      cName: "nav-text",
-    },
-    // {
-    //   title: "New Stylist",
-    //   path: "/stylists/form/newstylist",
-    //   icon: faConciergeBell,
-    //   cName: "nav-text",
-    // },
-    // {
-    //   title: "Edit Stylist",
-    //   path: "/stylists/form/editstylist",
-    //   icon: faConciergeBell,
-    //   cName: "nav-text",
-    // },
-    {
-      title: "Manage Schedules",
-      path: "/stylists/schedule/manage",
-      icon: faConciergeBell,
-      cName: "nav-text",
-    },
-    {
-      title: "View Schedule",
-      path: "/stylists/schedule",
-      icon: faConciergeBell,
-      cName: "nav-text",
-    },
-    {
-      title: "Statistics",
-      path: "/stylists/stats",
-      icon: faConciergeBell,
-      cName: "nav-text",
-    },
-    {
-      title: "View Users",
-      path: "/stylists/userlist",
-      icon: faConciergeBell,
-      cName: "nav-text",
-    },
-    {
-      title: "Manage Services",
-      path: "/stylists/manageservices",
-      icon: faConciergeBell,
-      cName: "nav-text",
-    },
-  ];
-
   return (
     <Router>
       <div className="main-container">
@@ -181,11 +101,19 @@ function App() {
             <Redirect to="/login" />
           </Route>
           <Route path="/stylists">
-            <Sidebar items={temp} logout={handleLogout} />
+            <Sidebar
+              items={stylistSidebarRoutes(isActiveAppointment)}
+              logout={handleLogout}
+              userRole={userRole}
+            />
             {loggedIn ? (
               !isLoading ? (
                 <>
-                  <StylistView backendDomain={backendDomain} />
+                  <StylistView
+                    backendDomain={backendDomain}
+                    isLoading={isLoading}
+                    setIsActiveAppointment={setIsActiveAppointment}
+                  />
                 </>
               ) : (
                 <Container>

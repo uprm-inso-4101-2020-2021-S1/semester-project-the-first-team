@@ -2,6 +2,7 @@ import React from "react";
 import Modal from "react-bootstrap/Modal";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
+import PropTypes from "prop-types";
 
 function ScheduleManagementModal(props) {
   return (
@@ -65,4 +66,14 @@ function ScheduleManagementModal(props) {
     </Modal>
   );
 }
+
+ScheduleManagementModal.propTypes = {
+  showModal: PropTypes.bool.isRequired,
+  showEditModal: PropTypes.bool.isRequired,
+  onHide: PropTypes.func.isRequired,
+  event: PropTypes.object.isRequired,
+  createEvent: PropTypes.func.isRequired,
+  stylists: PropTypes.array.isRequired,
+  deleteEvent: PropTypes.func.isRequired,
+};
 export default ScheduleManagementModal;

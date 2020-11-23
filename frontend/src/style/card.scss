@@ -210,7 +210,8 @@ picture {
       }
 
       &.neg-btn {
-        &.deleted {
+        &.deleted,
+        &.pending {
           display: none;
         }
         background-color: $bgGray;

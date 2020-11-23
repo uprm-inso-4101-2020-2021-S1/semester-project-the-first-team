@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
 import Container from "react-bootstrap/Container";
@@ -17,7 +17,23 @@ const AppointmentModal = ({
   setActiveAppointment,
   showDelModal,
   displayTime,
+  statusOfAppointment,
+  showDeleteButton,
 }) => {
+  const [allowStart, setAllowStart] = useState(false);
+
+  useEffect(() => {
+    let activeAppointment = JSON.parse(
+      sessionStorage.getItem("activeAppointment")
+    );
+
+    let showStart = activeAppointment === null ? true : false;
+    setAllowStart(showStart);
+  }, [appointment]);
+
+  if (!appointment.customer) {
+    return <span></span>;
+  }
   return (
     <Modal show={show} onHide={hide} size="xl">
       <Modal.Header closeButton>
@@ -26,35 +42,40 @@ const AppointmentModal = ({
             <Col xs md="1">
               <picture>
                 {/* Customer's profile Pic */}
-                <img src={appointment.profilePic} alt="Appointment Modal"></img>
+                <img
+                  src={appointment.customer.profilePic}
+                  alt="Appointment Modal"
+                ></img>
               </picture>
             </Col>
             <Col>
               {/* Customer's User name */}
-              <Modal.Title>{appointment.username}</Modal.Title>
+              <Modal.Title>
+                {appointment.customer.first_name +
+                  " " +
+                  appointment.customer.last_name}
+              </Modal.Title>
             </Col>
             <Col>
               <Modal.Title>
                 <FontAwesomeIcon icon={faClock} />
                 {/* Appointment Scheduled time */}
-                {appointment.appTime ? displayTime(appointment.appTime) : ""}
+                {displayTime(appointment)}
               </Modal.Title>
               {/* Status: TODO: dynamically determine if on time or not. */}
               <Modal.Title>
-                Status:{" "}
-                {appointment.appTime &&
-                  (new Date().valueOf() < appointment.appTime.valueOf()
-                    ? "On Time"
-                    : "Waiting")}
+                Status: {statusOfAppointment(appointment)}
               </Modal.Title>
             </Col>
             <Col lg>
               <Modal.Title>
                 Num. of Services:{" "}
-                {appointment.services ? appointment.services.length : 0}
+                {appointment.service ? appointment.service.length : 0}
               </Modal.Title>
               {/* Estimated Appointment Duration */}
-              <Modal.Title>Est. Duration: {appointment.estWait}</Modal.Title>
+              <Modal.Title>
+                Est. Duration: {appointment.estWait} minutes
+              </Modal.Title>
             </Col>
           </Row>
         </Container>
@@ -65,14 +86,18 @@ const AppointmentModal = ({
             <div>
               <text>
                 Pref. Stylist:{" "}
-                <text className="boxed-txt">{appointment.stylist}</text>
+                <text className="boxed-txt">
+                  {appointment.stylist.first_name +
+                    " " +
+                    appointment.stylist.last_name}
+                </text>
               </text>
             </div>
             <div>
               <text>
                 Comments:
                 <div>
-                  <text className="boxed-txt">{appointment.comments}</text>
+                  <text className="boxed-txt">{appointment.note}</text>
                 </div>
               </text>
             </div>
@@ -80,25 +105,25 @@ const AppointmentModal = ({
           <Col sm lg="3">
             <ul>
               Services:
-              {appointment.services
-                ? appointment.services.map((service) => (
-                    <li key={service}>{service}</li>
-                  ))
-                : ""}
+              {appointment.service.map((service) => (
+                <li key={service.id}>{service.serviceName}</li>
+              ))}
             </ul>
           </Col>
         </Row>
       </Modal.Body>
       <Modal.Footer>
-        <Button variant="danger" onClick={showDelModal}>
-          Delete
-        </Button>
-        {!localStorage.getItem("activeAppointmentID") && (
+        {showDeleteButton && (
+          <Button variant="danger" onClick={showDelModal}>
+            Delete
+          </Button>
+        )}
+        {(allowStart || appointment.status === "IP") && (
           <Button
             variant="primary"
             onClick={() => setActiveAppointment(appointment)}
           >
-            Start
+            {appointment.status === "IP" ? "Continue" : "Start"}
           </Button>
         )}
       </Modal.Footer>

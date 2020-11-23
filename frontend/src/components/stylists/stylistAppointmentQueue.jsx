@@ -1,11 +1,14 @@
 import React, { Fragment, useState, useEffect } from "react";
 import AppointmentModal from "./appointmentModal";
 import "../../style/queue.scss";
-
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faClock } from "@fortawesome/free-solid-svg-icons";
 import { Modal, Button } from "react-bootstrap";
 import axios from "axios";
+import PropTypes from "prop-types";
+
+const defaultProfileImg =
+  "https://images.pexels.com/photos/194446/pexels-photo-194446.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940";
 
 function StylistAppointmentQueue(props) {
   const [showModal, setShowModal] = useState(false);
@@ -15,12 +18,20 @@ function StylistAppointmentQueue(props) {
   );
   const [appointments, setAppointments] = useState([]);
   const [stylists, setStylists] = useState([]);
+  const [noReservationsText, setNoReservationsText] = useState(
+    "Fetching reservations..."
+  );
 
   const activeUser = JSON.parse(sessionStorage.getItem("user"));
 
   useEffect(() => {
+    // On load page, fetch the reservations for the logged in user.
     if (activeUser.id) {
-      fetchReservationsForUser(activeUser.id);
+      fetchReservationsForUser(activeUser);
+    }
+
+    if (activeUser.role === 0 || activeUser.role === 3) {
+      fetchStylists();
     }
   }, []);
 
@@ -39,11 +50,21 @@ function StylistAppointmentQueue(props) {
   }
 
   const setNextAppointment = (appointments) => {
-    // Sort elements by the soonest appointment time first.
-    appointments.sort(function (a, b) {
-      return a.appTime.valueOf() - b.appTime.valueOf();
-    });
-    props.changeHeaderCard(appointments[0]);
+    if (appointments.length == 0) {
+      props.changeHeaderCard({});
+    } else {
+      // Sort elements by the soonest appointment time first.
+      appointments.sort(function (a, b) {
+        let aStart = new Date(a.date + "T" + a.startTime);
+        let bStart = new Date(b.date + "T" + b.startTime);
+        return aStart.valueOf() - bStart.valueOf();
+      });
+      let customer = appointments[0].customer;
+      customer.appTime = new Date(
+        appointments[0].date + "T" + appointments[0].startTime
+      );
+      props.changeHeaderCard(appointments[0].customer);
+    }
     return appointments;
   };
 
@@ -64,69 +85,242 @@ function StylistAppointmentQueue(props) {
     setShowDeleteAppointmentModal(false);
   };
 
-  // const target = event.target;
-  //   const stylist = target.value;
-
-  const fetchReservationsForUser = async (userID) => {
-    console.log("Fetching Appointment Queue for: ", userID);
-    console.log(props);
-    // TODO: ACTUALLY FETCH QUEUE FOR STYLIST.
+  const fetchReservationsForUser = async (stylist) => {
+    let reservationsToSave = [];
     try {
+      // Reset display and empty any cached values.
+      setNoReservationsText("Fetching reservations...");
+      setAppointments([]);
+
+      // Get Pending reservations.
       let response = await axios.get(
-        props.backendDomain + "stylist/" + userID + "/reservation?status=P",
+        props.backendDomain + "stylist/" + stylist.id + "/reservation?status=P",
         {
           headers: {
-            Authorization: `basic ${sessionStorage.getItem("authToken")}`,
+            Authorization: "JWT " + localStorage.getItem("token"),
           },
         }
       );
-      console.log(response.data);
-      setAppointments(response.data);
+
+      // If there are any reservations pending, process them.
+      if (response.data.length > 0) {
+        let reservationsWithUserInfo = await getUserInfo(
+          response.data,
+          stylist
+        );
+        let reservationsWithServiceInfo = await getServiceInfo(
+          reservationsWithUserInfo
+        );
+
+        // Set the appointments to save.
+        reservationsToSave = reservationsWithServiceInfo;
+
+        // if no reservations
+      } else {
+        setNoReservationsText("No reservations at the moment.");
+        props.changeHeaderCard(stylist);
+      }
+
+      // Handle Error responses.
     } catch (error) {
+      setNoReservationsText("No reservations at the moment.");
       console.log(error);
-      window.alert("Could not fetch appointments.");
+
+      // Error 404 has been reserved for meaning the stylist does not have any reservations at this moment.
+      // If error is 404, show nothing. Else, show alert.
+      if (error.message !== "Request failed with status code 404") {
+        window.alert("Could not fetch reservations.");
+      }
     }
 
-    // props.changeHeaderCard({
-    //   profilePic:
-    //     "https://images.pexels.com/photos/1841819/pexels-photo-1841819.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
-    //   username: "Fanola Winona",
-    //   appTime: new Date(2020, 9, 12, 17, 0),
-    // });
+    // Get In Progess Appointments.
+    try {
+      let responseIP = await axios.get(
+        props.backendDomain +
+          "stylist/" +
+          stylist.id +
+          "/reservation?status=IP",
+        {
+          headers: {
+            Authorization: "JWT " + localStorage.getItem("token"),
+          },
+        }
+      );
+
+      if (responseIP.data.length > 0) {
+        // Set the active reservation in the session storage.
+        sessionStorage.setItem(
+          "activeAppointment",
+          JSON.stringify(responseIP.data[0])
+        );
+        props.setIsActiveAppointment(true);
+
+        // Build the reservation data.
+        let reservationsWithUserInfo = await getUserInfo(
+          responseIP.data,
+          stylist
+        );
+        let reservationsWithServiceInfo = await getServiceInfo(
+          reservationsWithUserInfo
+        );
+
+        // Add the In Progress reservation data to the list of reservations to show.
+        reservationsToSave = reservationsToSave.concat(
+          reservationsWithServiceInfo
+        );
+      } else {
+        props.setIsActiveAppointment(false);
+      }
+
+      // Handle errors with In Progress fetching.
+    } catch (error) {
+      console.log(error);
+      if (error.message !== "Request failed with status code 404") {
+        window.alert(
+          "Could not verify if there are any active reservations; please go to the active reservations view or reload the page."
+        );
+      }
+    }
+
+    // Set appointments to show.
+    setAppointments(setNextAppointment(reservationsToSave));
+  };
+
+  const getServiceInfo = async (appointmentArr) => {
+    let serviceID = null;
+    let serviceList = [];
+    let response = {};
+    for (const appIndex in appointmentArr) {
+      serviceList = appointmentArr[appIndex].service;
+      for (const servIndex in serviceList) {
+        serviceID = serviceList[servIndex];
+        response = await axios.get(
+          props.backendDomain + "service/" + serviceID,
+          {
+            headers: {
+              Authorization: "JWT " + localStorage.getItem("token"),
+            },
+          }
+        );
+        serviceList[servIndex] = response.data;
+      }
+      appointmentArr[appIndex].estWait = calculateEstDur(serviceList);
+    }
+    return appointmentArr;
+  };
+
+  const calculateEstDur = (serviceList) => {
+    let estDur = 0;
+    for (const servIndex in serviceList) {
+      estDur = estDur + serviceList[servIndex].defaultDuration;
+    }
+    return estDur;
+  };
+
+  const getUserInfo = async (appointmentArr, stylist) => {
+    let customerID = null;
+    for (const appIndex in appointmentArr) {
+      appointmentArr[appIndex].stylist = stylist;
+      customerID = appointmentArr[appIndex].customer;
+      try {
+        let response = await axios.get(
+          props.backendDomain + "customer/" + customerID,
+          {
+            headers: {
+              Authorization: "JWT " + localStorage.getItem("token"),
+            },
+          }
+        );
+        appointmentArr[appIndex].customer = response.data;
+        appointmentArr[appIndex].customer.profilePic = appointmentArr[appIndex]
+          .customer.profilePic
+          ? appointmentArr[appIndex].customer.profilePic
+          : defaultProfileImg;
+      } catch (error) {
+        console.log(error);
+        window.alert(
+          "Could not fetch customer information for a received reservation."
+        );
+      }
+    }
+    return appointmentArr;
+  };
+
+  const fetchStylists = async () => {
+    try {
+      let response = await axios.get(props.backendDomain + "stylist", {
+        headers: {
+          Authorization: "JWT " + localStorage.getItem("token"),
+        },
+      });
+      setStylists(response.data);
+    } catch (error) {
+      console.log(error);
+      window.alert("Could not fetch stylists for manager dropdown.");
+    }
+  };
+
+  const handleDropdownChange = (event) => {
+    let dropdownStylistID = event.target.value;
+    let desiredStylist = stylists.filter(
+      (stylist) => stylist.id.toString() === dropdownStylistID.toString()
+    );
+
+    fetchReservationsForUser(desiredStylist[0]);
   };
 
   const selectStylistQueueDropdown = () => {
-    // TODO: UPDATE THIS IF
-    if (activeUser.role === 1 || true) {
+    let activeUser = JSON.parse(sessionStorage.getItem("user"));
+    if (activeUser.role === 0 || activeUser.role === 3) {
       return (
         <Fragment>
           <label style={{ color: "white" }}>Select a stylist: </label>
           <select
             className="form-control "
             name="utype"
-            onChange={(value) => console.log(value)}
+            onChange={(event) => handleDropdownChange(event)}
           >
             <option value="" selected disabled hidden>
               Choose here
             </option>
             {stylists.map((stylist) => (
-              <option value={stylist} key={stylist}>
-                {stylist}
+              <option value={stylist.id} key={stylist.id}>
+                {stylist.first_name + " " + stylist.last_name}
               </option>
             ))}
           </select>
         </Fragment>
       );
+    } else {
+      return <span></span>;
     }
   };
 
-  const deleteAppointment = () => {
-    // TODO: REMOVE FROM BACKEND.
+  const deleteAppointment = async () => {
     // Remove appointment in the active modal.
-    var tempApps = appointments.filter(
-      (appointment) => appointment !== modalAppointment
-    );
-    setAppointments(setNextAppointment(tempApps));
+    try {
+      let response = await axios.delete(
+        props.backendDomain + "reservation/" + modalAppointment.id + "/cancel",
+        {
+          headers: {
+            Authorization: "JWT " + localStorage.getItem("token"),
+          },
+        }
+      );
+
+      var tempApps = appointments.filter(
+        (appointment) => appointment !== modalAppointment
+      );
+      setAppointments(setNextAppointment(tempApps));
+    } catch (error) {
+      console.log(error);
+
+      window.alert(
+        error.message === "Request failed with status code 403"
+          ? "You do not have the required permissions to delete this reservation."
+          : "Could not delete the desired reservation. Try again later."
+      );
+    }
     setShowDeleteAppointmentModal(false);
     setShowModal(false);
   };
@@ -136,7 +330,7 @@ function StylistAppointmentQueue(props) {
       <Modal show={show} onHide={hide}>
         <Modal.Header closeButton></Modal.Header>
         <Modal.Body>
-          <div>Are you sure you want to delete this appointment?</div>
+          <div>Are you sure you want to delete this reservation?</div>
         </Modal.Body>{" "}
         <Modal.Footer>
           <Button
@@ -151,12 +345,26 @@ function StylistAppointmentQueue(props) {
     );
   };
 
-  const statusOfAppointment = (appointment) => {
-    // new Date().valueOf() < appointment.appTime.valueOf()
-    //                   ? "On Time"
-    //                   : "Waiting"
-    return "On Time";
+  const setActiveAppointment = async (appointment) => {
+    let success = false;
+    if (appointment.status === "IP") {
+      success = true;
+    } else {
+      success = await props.setActiveAppointment(appointment);
+    }
+    if (success) {
+      window.location.href = "/stylists/activereservation";
+    }
   };
+
+  const statusOfAppointment = (appointment) => {
+    let stat = "Pending";
+    if (appointment.status === "IP") {
+      stat = "In Progress";
+    }
+    return stat;
+  };
+
   return (
     <div className="queue-div">
       {selectStylistQueueDropdown()}
@@ -165,47 +373,63 @@ function StylistAppointmentQueue(props) {
         show={showModal}
         hide={hideModal}
         appointment={modalAppointment}
-        setActiveAppointment={props.setActiveAppointment}
+        setActiveAppointment={setActiveAppointment}
         showDelModal={showDelModal}
         displayTime={displayTime}
+        statusOfAppointment={statusOfAppointment}
+        showDeleteButton={activeUser.role === 0 || activeUser.role === 3}
       />
       {renderDelAppModal(showDeleteAppointmentModal, hideDelModal)}
       {/* Map queue entries for all elements */}
       <div className="appointment-queue-container">
-        {appointments.map((appointment) => (
-          <div className="appointment-container" key={appointment.username}>
+        {appointments.length === 0 && (
+          <h2 style={{ color: "white", marginTop: "3rem" }}>
+            {noReservationsText}
+          </h2>
+        )}
+        {appointments.map((reservation) => (
+          <div className="appointment-container" key={reservation.username}>
             <div className="appointment-time-container">
               <div className="card">
-                {/* Time of appointment */}
+                {/* Time of reservation */}
                 <div>
                   <FontAwesomeIcon icon={faClock} />
-                  <p>{displayTime(appointment)}</p>
+                  <p>{displayTime(reservation)}</p>
                 </div>
               </div>
             </div>
             <div
               className=" appointment-card"
-              onClick={() => enableModal(appointment)}
+              onClick={() => enableModal(reservation)}
             >
               <div className="card-body">
                 <picture>
                   {/* Customer's profile Pic */}
                   <img
-                    src={appointment.profilePic}
+                    src={reservation.customer.profilePic}
                     alt="Appointment Profile"
                   ></img>
                 </picture>
                 <div className="username-div">
                   {/* Customer's display name */}
-                  <p>{appointment.username}</p>
+                  <p>
+                    {reservation.customer.first_name +
+                      " " +
+                      reservation.customer.last_name}
+                  </p>
                 </div>
                 <div className="card-div" />
                 <div className="appointment-info-div">
-                  {/* Appointment Information: num services, duration, status. */}
-                  <p>Num. of Services: {appointment.service.length}</p>
-                  <p>Est. Duration: {appointment.estWait} min.</p>
-                  {/*DYNAMICALLY DETERMINE IF APPOINTMENT IS ON TIME OR WAITING. */}
-                  <p>Status: {statusOfAppointment(appointment)}</p>
+                  {/* reservation Information: num services, duration, status. */}
+                  <p>Num. of Services: {reservation.service.length}</p>
+                  <p>Est. Duration: {reservation.estWait} min.</p>
+                  {/*DYNAMICALLY DETERMINE IF reservation IS ON TIME OR WAITING. */}
+                  <p>
+                    Status:{" "}
+                    <span className={reservation.status}>
+                      {statusOfAppointment(reservation)}
+                    </span>
+                  </p>
                 </div>
               </div>
             </div>
@@ -215,5 +439,12 @@ function StylistAppointmentQueue(props) {
     </div>
   );
 }
+
+StylistAppointmentQueue.propTypes = {
+  changeHeaderCard: PropTypes.func.isRequired,
+  setActiveAppointment: PropTypes.func.isRequired,
+  backendDomain: PropTypes.string.isRequired,
+  setIsActiveAppointment: PropTypes.func.isRequired,
+};
 
 export default StylistAppointmentQueue;
