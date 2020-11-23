@@ -207,3 +207,8 @@ class FeedbackSerializer(serializers.ModelSerializer):
     class Meta:
         model = Feedback
         fields = "__all__"
+
+
+class PossibleTimeSlots(serializers.Serializer):
+    startTime = serializers.TimeField()
+    endTime = serializers.TimeField()

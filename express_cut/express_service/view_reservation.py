@@ -3,7 +3,7 @@ from .serializers import ReservationSerializer, DurationSerializer, FeedbackSeri
 import datetime
 
 from .models import User, Reservation, Service
-from .serializers import ReservationSerializer, DurationSerializer, EstimateSerializer, ReservationTimeSlotsSerializer
+from .serializers import ReservationSerializer, DurationSerializer, EstimateSerializer, ReservationTimeSlotsSerializer, PossibleTimeSlots
 from rest_framework.response import Response
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 from rest_framework_jwt.authentication import JSONWebTokenAuthentication
@@ -14,7 +14,7 @@ from rest_framework.decorators import api_view, permission_classes, authenticati
 from drf_yasg.utils import swagger_auto_schema
 from .swagger_models import SwagResponses as swagResp
 from .swagger_models import SwagParmDef
-from .utils import calculate_estimated_wait_time
+from .utils import calculate_estimated_wait_time, get_available_slots
 
 
 @swagger_auto_schema(methods=['PUT'], request_body=ReservationSerializer,
@@ -256,3 +256,15 @@ def feedback_views(request, reservation_id):
         serializer = FeedbackSerializer(feedback)
         return Response(serializer.data, status=status.HTTP_200_OK)
     return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+@swagger_auto_schema(methods=['GET'], responses={**swagResp.commonResponses, **swagResp.getResponse(FeedbackSerializer)},
+                     tags=['reservation'], operation_summary="Get available slots to allocate a reservation.")
+@api_view(['POST', 'GET'])
+@authentication_classes([JSONWebTokenAuthentication, SessionAuthentication, BasicAuthentication])
+def available_slots(request):
+    sty = User.objects.get(pk=3)
+    duration = datetime.timedelta(minutes=40)
+    results = get_available_slots(duration, sty)
+    serializer = PossibleTimeSlots(results, many=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)
