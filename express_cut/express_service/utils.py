@@ -44,12 +44,11 @@ def get_available_slots(duration, stylist):
     if not timeslots:
         return []
     reservations_all = stylist.stylist_reservations.filter(date=today_date, endTime__gte=min_start_time.time())\
-                        .annotate(is_last=Case(
-                                    When(endTime=Max('endTime'), then=Value(True)),
-                                    default=Value(False),
-                                    output_field=BooleanField()))
+        .order_by('startTime')
     if not reservations_all:
         is_last = True
+    else:
+        last_reservation_pk = reservations_all.last().pk
     for timeslot in timeslots:
         available_start_time = datetime.datetime.combine(date=today_date, time=timeslot.start_time)
         reservations = reservations_all.filter(startTime__gte=timeslot.start_time, endTime__lte=timeslot.end_time)\
@@ -57,7 +56,7 @@ def get_available_slots(duration, stylist):
         for reservation in reservations:
             available_end_time = datetime.datetime.combine(date=today_date, time=reservation.startTime)
             slot = AvailableSlots(available_start_time, available_end_time)
-            if reservation.is_last:
+            if reservation.pk == last_reservation_pk:
                 is_last = True
                 last_slot = slot.get_possible_reservation_slots(duration, many=False)
                 if last_slot:
@@ -96,10 +95,14 @@ class AvailableSlots:
 
     def get_possible_reservation_slots(self, duration, time_now=datetime.datetime.now(), many=True):
         results = []
-        temp_start = self.dateTimeStart
+        if self.dateTimeStart < time_now:
+            temp_start = time_now + datetime.timedelta(minutes=5)
+        else:
+            temp_start = self.dateTimeStart
+        temp_start = temp_start.replace(second=0, microsecond=0)
+        if temp_start.minute % 5:
+            temp_start = temp_start + datetime.timedelta(minutes=(5 - (temp_start.minute % 5)))
         while temp_start < self.dateTimeEnd:
-            if temp_start < time_now:
-                temp_start = time_now
             if temp_start + duration <= self.dateTimeEnd:
                 results.append(TimeSlot(startTime=temp_start.time(), endTime=(temp_start+duration).time()))
                 if not many:
