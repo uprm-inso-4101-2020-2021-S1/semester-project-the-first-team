@@ -3,26 +3,16 @@ import Sidebar from "./components/Sidebar";
 import StylistView from "./components/stylists/stylistView";
 import Customer from "./components/customers/Customer";
 import { Container, Row, Col, Spinner } from "react-bootstrap";
-
+import { stylistSidebarRoutes } from "./components/stylists/stylistSidebarRoutes";
+import Login from "./components/Login";
+import axios from "axios";
+import Signup from "./components/Signup";
 import {
   BrowserRouter as Router,
   Switch,
   Route,
   Redirect,
 } from "react-router-dom";
-import {
-  faHome,
-  faConciergeBell,
-  faExclamation,
-  faCalendarAlt,
-  faCalendarPlus,
-  faUsersCog,
-  faCut,
-  faSpa,
-} from "@fortawesome/free-solid-svg-icons";
-import Login from "./components/Login";
-import axios from "axios";
-import Signup from "./components/Signup";
 
 function App() {
   const [loggedIn, setLoggedIn] = useState(
@@ -34,7 +24,6 @@ function App() {
   const [userRole, setUserRole] = useState(null);
   const [isActiveAppointment, setIsActiveAppointment] = useState(false);
   const [signupSuccessful, setSignupSuccessful] = useState(false);
-
   const backendDomain = window._env_.REST_API_URI.toString();
 
   useEffect(() => {
@@ -81,13 +70,13 @@ function App() {
     // TODO: Add proper logout
   };
 
-  const setStylistsInfo =  (stylistData) => {
+  const setStylistsInfo = (stylistData) => {
     sessionStorage.removeItem("user");
     if (stylistData.role !== 2) {
       stylistData.password = "";
-       sessionStorage.setItem("user", JSON.stringify(stylistData));  
+      sessionStorage.setItem("user", JSON.stringify(stylistData));
     }
-    };
+  };
 
   const handleCustomerSignup = (e, data) => {
     e.preventDefault();
@@ -104,47 +93,6 @@ function App() {
       });
   };
 
-  // TODO: Move this to a separate file
-  const temp = [
-    {
-      title: "Reservations",
-      path: "/stylists/reservations",
-      icon: faConciergeBell,
-      cName: "nav-text",
-    },
-    {
-      title: "Active Reservation",
-      path: "/stylists/activereservation",
-      icon: isActiveAppointment ? faExclamation : faSpa,
-      cName: "nav-text",
-    },
-    {
-      title: "Manage Schedules",
-      path: "/stylists/schedule/manage",
-      icon: faCalendarPlus,
-      cName: "nav-text",
-    },
-    {
-      title: "View Schedule",
-      path: "/stylists/schedule",
-      icon: faCalendarAlt,
-      cName: "nav-text",
-    },
-
-    {
-      title: "View Users",
-      path: "/stylists/userlist",
-      icon: faUsersCog,
-      cName: "nav-text",
-    },
-    {
-      title: "Manage Services",
-      path: "/stylists/manageservices",
-      icon: faCut,
-      cName: "nav-text",
-    },
-  ];
-
   return (
     <Router>
       <div className="main-container">
@@ -153,7 +101,11 @@ function App() {
             <Redirect to="/login" />
           </Route>
           <Route path="/stylists">
-            <Sidebar items={temp} logout={handleLogout} userRole={userRole} />
+            <Sidebar
+              items={stylistSidebarRoutes(isActiveAppointment)}
+              logout={handleLogout}
+              userRole={userRole}
+            />
             {loggedIn ? (
               !isLoading ? (
                 <>
