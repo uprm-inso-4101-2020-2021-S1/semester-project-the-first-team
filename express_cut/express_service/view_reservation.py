@@ -258,13 +258,17 @@ def feedback_views(request, reservation_id):
     return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-@swagger_auto_schema(methods=['GET'], responses={**swagResp.commonResponses, **swagResp.getResponse(FeedbackSerializer)},
+@swagger_auto_schema(methods=['GET'], responses={**swagResp.commonResponses, **swagResp.getResponse(EstimateSerializer)},
                      tags=['reservation'], operation_summary="Get available slots to allocate a reservation.")
 @api_view(['POST', 'GET'])
 @authentication_classes([JSONWebTokenAuthentication, SessionAuthentication, BasicAuthentication])
+@permission_classes([IsAuthenticated])
 def available_slots(request):
-    sty = User.objects.get(pk=3)
-    duration = datetime.timedelta(minutes=40)
-    results = get_available_slots(duration, sty)
-    serializer = PossibleTimeSlots(results, many=True)
-    return Response(serializer.data, status=status.HTTP_200_OK)
+    serializer = EstimateSerializer(data=request.data)
+    if serializer.is_valid():
+        stylist = serializer.validated_data['stylist']
+        duration_estimate = calculate_estimated_wait_time(serializer.initial_data['services'], stylist)
+        results = get_available_slots(duration_estimate, stylist)
+        serializer = PossibleTimeSlots(results, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
