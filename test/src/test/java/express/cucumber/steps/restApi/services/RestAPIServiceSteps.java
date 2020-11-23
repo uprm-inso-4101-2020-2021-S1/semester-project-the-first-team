@@ -37,7 +37,7 @@ import express.cucumber.steps.restApi.RestAPICommonSteps;
 public class RestAPIServiceSteps {
 
 	// Routes for service rest api
-	private final String servicePath="/service";
+	private final String servicePath="/api/service";
 
 	// Initial number of objects in db
 	private int testStartServiceNumber = 1;

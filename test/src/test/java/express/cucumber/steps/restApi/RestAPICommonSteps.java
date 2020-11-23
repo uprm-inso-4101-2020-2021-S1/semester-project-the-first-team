@@ -36,7 +36,7 @@ import cucumber.api.java.en.When;
 public class RestAPICommonSteps {
 
 	// URI for backend
-	private String url = System.getenv("REST_API_URL");
+	private String url = System.getenv("REST_API_URI");
 
 	// Used for testing
 	public static Client client;
@@ -45,7 +45,7 @@ public class RestAPICommonSteps {
 
 	private void user_login(String user, String pass) throws Throwable {
 		if(url==null)
-			url=System.getenv("REST_API_URL");
+			url=System.getenv("REST_API_URI");
 		// Disable SSL cert check
 		SSLContext sslcontext = SSLContext.getInstance("TLS");
 		sslcontext.init(null, new TrustManager[]{new X509TrustManager() {

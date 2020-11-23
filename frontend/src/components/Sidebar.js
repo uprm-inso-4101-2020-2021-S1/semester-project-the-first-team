@@ -2,7 +2,12 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { Nav } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCut, faBars, faTimes } from "@fortawesome/free-solid-svg-icons";
+import {
+  faCut,
+  faBars,
+  faTimes,
+  faSignOutAlt,
+} from "@fortawesome/free-solid-svg-icons";
 import { useLocation } from "react-router-dom";
 import PropTypes from "prop-types";
 
@@ -31,8 +36,14 @@ function Sidebar(props) {
           </div>
           <div className="nav-menu-header">
             <div className="header-container">
-              <FontAwesomeIcon icon={faCut} className="icon" />
-              <h3>express cuts</h3>
+              <a href="/#" className="logout" onClick={(e) => props.logout(e)}>
+                {"Logout"}
+                <FontAwesomeIcon icon={faSignOutAlt} className="logout-icon" />
+              </a>
+              <div className="logo-container">
+                <FontAwesomeIcon icon={faCut} className="icon" />
+                <h3>express cuts</h3>
+              </div>
             </div>
           </div>
           {props.items.map((item, index) => {
@@ -57,6 +68,7 @@ function Sidebar(props) {
 
 Sidebar.propTypes = {
   items: PropTypes.array,
+  logout: PropTypes.func.isRequired,
 };
 
 export default Sidebar;

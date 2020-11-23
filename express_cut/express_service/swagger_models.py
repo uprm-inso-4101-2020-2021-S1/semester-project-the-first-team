@@ -39,6 +39,11 @@ class SwagParmDef:
                                             type=openapi.FORMAT_DATE)
     schedule_end_date = openapi.Parameter('end_date', openapi.IN_QUERY,
                                           description="Date of the oldest schedule possible.", type=openapi.FORMAT_DATE)
+    reservation_start_date = openapi.Parameter('start_date', openapi.IN_QUERY,
+                                            description="Date of the youngest reservation wanted.",
+                                            type=openapi.FORMAT_DATE)
+    reservation_end_date = openapi.Parameter('end_date', openapi.IN_QUERY,
+                                          description="Date of the oldest reservation wanted.", type=openapi.FORMAT_DATE)
 
 
 # class AvailableSlotSchema(AutoSchema):
