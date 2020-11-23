@@ -3,18 +3,18 @@ from .serializers import ReservationSerializer, DurationSerializer, FeedbackSeri
 import datetime, re
 
 from .models import User, Reservation, Service
-from .serializers import ReservationSerializer, DurationSerializer, EstimateSerializer, ReservationTimeSlotsSerializer
+from .serializers import ReservationSerializer, DurationSerializer, EstimateSerializer, ReservationTimeSlotsSerializer, PossibleTimeSlots
 from rest_framework.response import Response
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 from rest_framework_jwt.authentication import JSONWebTokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from .permissions import Permissions, ReservationPermissions, FeedbackPermissions
 from rest_framework import status
-from rest_framework.decorators import api_view, permission_classes, authentication_classes
+from rest_framework.decorators import api_view, permission_classes, authentication_classes, schema
 from drf_yasg.utils import swagger_auto_schema
 from .swagger_models import SwagResponses as swagResp
 from .swagger_models import SwagParmDef
-from .utils import calculate_estimated_wait_time
+from .utils import calculate_estimated_wait_time, get_available_slots
 
 
 @swagger_auto_schema(methods=['PUT'], request_body=ReservationSerializer,
@@ -293,3 +293,21 @@ def feedback_views(request, reservation_id):
         serializer = FeedbackSerializer(feedback)
         return Response(serializer.data, status=status.HTTP_200_OK)
     return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+@swagger_auto_schema(methods=['POST'], request_body=EstimateSerializer, responses={**swagResp.commonResponses,
+                    **swagResp.getResponse(PossibleTimeSlots)},
+                     tags=['reservation'], operation_summary="Get available slots to allocate a reservation.")
+# @schema(AvailableSlotSchema())
+@api_view(['POST'])
+@authentication_classes([JSONWebTokenAuthentication, SessionAuthentication, BasicAuthentication])
+@permission_classes([IsAuthenticated])
+def available_slots(request):
+    serializer = EstimateSerializer(data=request.data)
+    if serializer.is_valid():
+        stylist = serializer.validated_data['stylist']
+        duration_estimate = calculate_estimated_wait_time(serializer.initial_data['services'], stylist)
+        results = get_available_slots(duration_estimate, stylist)
+        serializer = PossibleTimeSlots(results, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)

@@ -3,7 +3,11 @@
 # Path params
 
 # Responses go here
+from typing import List
+
+from coreschema import String, Integer
 from drf_yasg import openapi
+from rest_framework.schemas import AutoSchema, coreapi
 
 
 class SwagResponses:
@@ -40,3 +44,19 @@ class SwagParmDef:
                                             type=openapi.FORMAT_DATE)
     reservation_end_date = openapi.Parameter('end_date', openapi.IN_QUERY,
                                           description="Date of the oldest reservation wanted.", type=openapi.FORMAT_DATE)
+
+
+# class AvailableSlotSchema(AutoSchema):
+#     def __init__(self):
+#         super(AutoSchema, self).__init__()
+#
+#     def get_manual_fields(self, path, method):
+#         extra_fields = [
+#             coreapi.Field('stylist', required=True, location='form', schema=String(), description='Stylist Id', type=Integer,
+#                           example='3'),
+#             coreapi.Field('services', required=True, location='form', schema=String(), description="List of Service's Ids"
+#                                                                                             ,
+#                                         type='', example='[1,2]')
+#         ]
+#         manual_fields = super().get_manual_fields(path, method)
+#         return manual_fields + extra_fields
