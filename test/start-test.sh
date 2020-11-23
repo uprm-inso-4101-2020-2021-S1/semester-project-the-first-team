@@ -28,6 +28,14 @@ sleep 2s
 # Test the  UI
 echo -e "${PURPLE}**************************\n${PURPLE}**************************\n${PURPLE}** Testing the frontend **\n${PURPLE}**************************\n${PURPLE}**************************\n${NC}"
 # No tests defined yet. Change to frontend runner when defined
-# java -cp /usr/share/tag/tester.jar:/usr/share/tag/libs/* org.testng.TestNG -testclass express.cucumber.runners.RestAPITestRunner
-echo -e "${RED}No UI tests ran.\n${NC}"
-exit 0
+java -cp /usr/share/tag/tester.jar:/usr/share/tag/libs/* org.testng.TestNG -testclass express.cucumber.runners.UITestRunner
+if [ $? -ne 0 ]
+then
+    echo -e "${RED}UI test failed.${NC}"
+    mv target/report.html /output/reports/UI-report.html
+    exit 1
+else
+    echo -e "${GREEN}UI test passed.${NC}"
+    mv target/report.html /output/reports/UI-report.html
+fi
+exit 0;
