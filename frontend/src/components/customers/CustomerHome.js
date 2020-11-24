@@ -16,8 +16,6 @@ function CustomerHome(props) {
 
   // TODO: Proper error handling
 
-  console.log(serviceNames, loading);
-
   // Get active reservations, service names from id list, and stylist name from id
   useEffect(() => {
     setLoading(true);
@@ -140,9 +138,9 @@ function CustomerHome(props) {
                         >
                           <ActiveReservation
                             timeRange={
-                              reservation.startTime +
+                              reservation.startTime.substr(0, 5) +
                               " - " +
-                              reservation.endTime
+                              reservation.endTime.substr(0, 5)
                             }
                             serviceNames={
                               serviceNames.filter((obj) => {

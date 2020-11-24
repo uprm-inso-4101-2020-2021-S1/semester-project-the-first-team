@@ -18,9 +18,9 @@ function CustomerResevationTimeSlots(props) {
                   <TimeSlot
                     getTimeSlotId={props.getTimeSlotId}
                     stylistName={props.stylistName}
-                    startTime={timeSlot.start_time}
-                    endTime={timeSlot.end_time}
-                    timeSlotId={timeSlot.id}
+                    startTime={timeSlot.startTime}
+                    endTime={timeSlot.endTime}
+                    timeSlotId={i}
                     id={i}
                     active={props.timeSlotIsActive[i]}
                     setActive={props.setActive}

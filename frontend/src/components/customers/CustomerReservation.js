@@ -36,6 +36,8 @@ function CustomerReservation(props) {
   const [portraitIsActive, setPortraitIsActive] = useState([]);
   const [timeSlotIsActive, setTimeSlotIsActive] = useState([]);
 
+  console.log(timeSlotIsActive);
+
   const [serviceIds, setServiceIds] = useState([]);
   const [stylistId, setStylistId] = useState(0);
   const [timeSlotId, setTimeSlotId] = useState(null);
@@ -48,7 +50,6 @@ function CustomerReservation(props) {
   ];
 
   const history = useHistory();
-  const [reservationTimeEstimate, setReservationTimeEstimate] = useState(0);
 
   // Functions
   const stageChanged = useCallback(
@@ -58,18 +59,18 @@ function CustomerReservation(props) {
     },
     [stageSelectionChanged]
   );
-
   const handleSubmit = (e) => {
     e.preventDefault();
+    let date = new Date().toISOString();
+    date = date.substr(0, date.indexOf("T"));
+
     axios
       .post(
         `${props.backendDomain}reservation`,
         {
-          date: new Date().toLocaleDateString(),
-          startTime: timeSlots.filter((timeSlot) => timeSlot.id === timeSlotId)
-            .start_time,
-          endTime: timeSlots.filter((timeSlot) => timeSlot.id === timeSlotId)
-            .end_time,
+          date: date,
+          startTime: timeSlots[timeSlotId].startTime,
+          endTime: timeSlots[timeSlotId].endTime,
           customer: props.customerId,
           stylist: stylistId,
           service: serviceIds,
@@ -84,8 +85,7 @@ function CustomerReservation(props) {
       .catch((err) => {
         window.alert("An error has occurred. Please try again.");
         console.log(err);
-        history.
-          push("/customers/home");
+        history.push("/customers/home");
       });
   };
 
@@ -156,14 +156,27 @@ function CustomerReservation(props) {
     ) {
       setLoading(true);
       axios
-        .get(`${props.backendDomain}stylist/${stylistId}/schedule`)
+        .post(
+          `${props.backendDomain}reservation/available`,
+          {
+            stylist: stylistId,
+            services: serviceIds,
+          },
+          {
+            headers: {
+              Authorization: `JWT ${localStorage.getItem("token")}`,
+            },
+          }
+        )
         .then((res) => {
-          setTimeSlots(res.data.timeslots);
-          setTimeSlotIsActive(Array(res.data.timeslots.length).fill(false));
+          setTimeSlots(res.data);
+          setTimeSlotIsActive(Array(res.data.length).fill(false));
           setLoading(false);
         })
         .catch((err) => {
-          window.alert("An error has occurred. Please try again.");
+          window.alert(
+            "An error has occurred in time slots. Please try again."
+          );
           console.log(err);
           history.push("/customers/home");
         });
@@ -172,19 +185,12 @@ function CustomerReservation(props) {
   }, [
     history,
     stylistId,
+    serviceIds,
     props.backendDomain,
     reservationStage,
     stageChanged,
     stageSelectionChanged,
   ]);
-
-  // TODO: Calculate time slots. Look into JS dates. Pick best fit. Or remove
-
-  //const calculateTimeSlots = (timeSlots) => {
-  //return timeSlots.filter(timeSlot => {
-
-  //})
-  //};
 
   return (
     <Container fluid>
@@ -280,8 +286,6 @@ function CustomerReservation(props) {
             setStylistId={setStylistId}
             timeSlotId={timeSlotId}
             setTimeSlotId={setTimeSlotId}
-            reservationTimeEstimate={reservationTimeEstimate}
-            setReservationTimeEstimate={setReservationTimeEstimate}
           />
         </Container>
       </Row>

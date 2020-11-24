@@ -74,32 +74,14 @@ function ReservationForm(props) {
     if (isActive) {
       if (activeServiceCount < maxServices) {
         props.setServiceIds([...props.serviceIds, id]);
-        props.setReservationTimeEstimate(
-          props.reservationTimeEstimate +
-            props.services.filter((service) => service.id === id)[0]
-              .defaultDuration
-        );
       } else {
-        let oldId = props.serviceIds.pop();
         props.setServiceIds([...props.serviceIds, id]);
-        props.setReservationTimeEstimate(
-          props.reservationTimeEstimate +
-            props.services.filter((service) => service.id === id)[0]
-              .defaultDuration -
-            props.services.filter((service) => service.id === oldId)[0]
-              .defaultDuration
-        );
       }
     } else {
       props.setServiceIds(
         props.serviceIds.filter((serviceId) => {
           return serviceId !== id;
         })
-      );
-      props.setReservationTimeEstimate(
-        props.reservationTimeEstimate -
-          props.services.filter((service) => service.id === id)[0]
-            .defaultDuration
       );
     }
   };
@@ -120,10 +102,16 @@ function ReservationForm(props) {
         return props.stylists;
       case 2:
         return props.timeSlots;
-
       default:
         return true;
     }
+  };
+
+  const getStylistName = () => {
+    let temp = props.stylists.filter(
+      (stylist) => stylist.id === props.stylistId
+    )[0];
+    return temp.first_name + " " + temp.last_name;
   };
 
   return (
@@ -162,12 +150,7 @@ function ReservationForm(props) {
             timeSlots={props.timeSlots}
             timeSlotIsActive={props.timeSlotIsActive}
             setActive={setTimeSlotActive}
-            stylistName={() => {
-              let temp = props.stylists.filter(
-                (stylist) => stylist.id === props.stylistId
-              )[0];
-              return temp.first_name + " " + temp.last_name;
-            }}
+            stylistName={getStylistName()}
             reservationStage={props.reservationStage}
             setReservationStage={props.setReservationStage}
           />
@@ -176,14 +159,18 @@ function ReservationForm(props) {
         <CustomerReservationSummary
           selectedServices={props.services.filter((service) =>
             props.serviceIds.includes(service.id)
-          )}
+          ).map((service) => {
+            return service.serviceName;
+          })}
           selectedStylist={
             props.stylists.filter(
               (stylist) => stylist.id === props.stylistId
             )[0]
           }
           selectedTimeSlot={
-            props.timeSlotId ? props.timeSlots[props.timeSlotId].time : null
+            props.timeSlots[props.timeSlotId].startTime +
+            " - " +
+            props.timeSlots[props.timeSlotId].endTime
           }
           handleSubmit={props.handleSubmit}
         />
@@ -252,8 +239,6 @@ ReservationForm.propTypes = {
   setStylistId: PropTypes.func,
   timeSlotId: PropTypes.number,
   setTimeSlotId: PropTypes.func,
-  reservationTimeEstimate: PropTypes.number,
-  setReservationTimeEstimate: PropTypes.func,
 };
 
 export default ReservationForm;

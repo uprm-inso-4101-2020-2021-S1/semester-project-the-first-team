@@ -64,7 +64,9 @@ function CustomerReservationSummary(props) {
                           icon={faUserCheck}
                         />
                         <span className="entry-name">
-                          {props.selectedStylist.first_name + " " + props.selectedStylist.last_name}
+                          {props.selectedStylist.first_name +
+                            " " +
+                            props.selectedStylist.last_name}
                         </span>
                       </>
                     ) : (
@@ -89,7 +91,7 @@ function CustomerReservationSummary(props) {
                           icon={faCalendarCheck}
                         />
                         <span className="entry-name">
-                          {props.selectedTimeSlot.toLocaleTimeString()}
+                          {props.selectedTimeSlot}
                         </span>
                       </>
                     ) : (
@@ -127,8 +129,8 @@ function CustomerReservationSummary(props) {
 CustomerReservationSummary.propTypes = {
   handleSubmit: PropTypes.func,
   selectedServices: PropTypes.array,
-  selectedStylist: PropTypes.string,
-  selectedTimeSlot: PropTypes.object,
+  selectedStylist: PropTypes.object,
+  selectedTimeSlot: PropTypes.string,
 };
 
 export default CustomerReservationSummary;
