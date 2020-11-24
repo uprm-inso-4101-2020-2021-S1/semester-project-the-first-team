@@ -94,8 +94,9 @@ class AvailableSlots:
         self.dateTimeStart = dateTimeStart
         self.dateTimeEnd = dateTimeEnd
 
-    def get_possible_reservation_slots(self, duration, time_now= datetime.datetime.now(tz=timezone.get_current_timezone()), many=True):
+    def get_possible_reservation_slots(self, duration, many=True):
         results = []
+        time_now= datetime.datetime.now(tz=timezone.get_current_timezone())
         if self.dateTimeStart < time_now:
             temp_start = time_now + datetime.timedelta(minutes=5)
         else:
