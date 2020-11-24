@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import PropTypes from "prop-types";
 import { useHistory } from "react-router-dom";
 import axios from "axios";
@@ -16,6 +16,70 @@ function CustomerHome(props) {
 
   // TODO: Proper error handling
 
+  const getServiceNames = useCallback(
+    async (reservations) => {
+      let result = await axios
+        .get(`${props.backendDomain}service`, {
+          headers: {
+            Authorization: `JWT ${localStorage.getItem("token")}`,
+          },
+        })
+        .then((res) => {
+          let serviceNames = reservations.map((reservation) => {
+            return {
+              id: reservation.id,
+              names: reservation.service.map((id) => {
+                return res.data.filter((service) => {
+                  return service.id === id;
+                })[0].serviceName;
+              }),
+            };
+          });
+          return serviceNames;
+        })
+        .catch((err) => {
+          window.alert("An error has occurred. Please try again.");
+          console.log(err);
+          return [];
+        });
+      setServiceNames(result);
+    },
+    [props.backendDomain]
+  );
+
+  const getStylistNames = useCallback(
+    async (reservations) => {
+      let result = await axios
+        .get(`${props.backendDomain}stylist/available`, {
+          headers: {
+            Authorization: `JWT ${localStorage.getItem("token")}`,
+          },
+        })
+        .then((res) => {
+          let stylistNames = reservations.map((reservation) => {
+            let stylist = res.data.filter((stylist) => {
+              return stylist.id === reservation.stylist;
+            })[0];
+            return {
+              id: reservation.id,
+              firstName: stylist.first_name,
+              lastName: stylist.last_name,
+            };
+          });
+          return stylistNames;
+        })
+        .catch((err) => {
+          window.alert("An error has occurred. Please try again.");
+          console.log(err);
+          return [];
+        });
+
+      setStylistNames(result);
+      setLoading(false);
+    },
+    [props.backendDomain]
+  );
+
   // Get active reservations, service names from id list, and stylist name from id
   useEffect(() => {
     setLoading(true);
@@ -26,62 +90,6 @@ function CustomerHome(props) {
       .then((res) => {
         if (res.data.length > 0) {
           setActiveReservations(res.data);
-          let getServiceNames = async (reservations) => {
-            let result = await axios
-              .get(`${props.backendDomain}service`, {
-                headers: {
-                  Authorization: `JWT ${localStorage.getItem("token")}`,
-                },
-              })
-              .then((res) => {
-                let serviceNames = reservations.map((reservation) => {
-                  return {
-                    id: reservation.id,
-                    names: reservation.service.map((id) => {
-                      return res.data.filter((service) => {
-                        return service.id === id;
-                      })[0].serviceName;
-                    }),
-                  };
-                });
-                return serviceNames;
-              })
-              .catch((err) => {
-                window.alert("An error has occurred. Please try again.");
-                console.log(err);
-                return [];
-              });
-            setServiceNames(result);
-          };
-          let getStylistNames = async (reservations) => {
-            let result = await axios
-              .get(`${props.backendDomain}stylist/available`, {
-                headers: {
-                  Authorization: `JWT ${localStorage.getItem("token")}`,
-                },
-              })
-              .then((res) => {
-                let stylistNames = reservations.map((reservation) => {
-                  let stylist = res.data.filter((stylist) => {
-                    return stylist.id === reservation.stylist;
-                  })[0];
-                  return {
-                    id: reservation.id,
-                    firstName: stylist.first_name,
-                    lastName: stylist.last_name,
-                  };
-                });
-                return stylistNames;
-              })
-              .catch((err) => {
-                window.alert("An error has occurred. Please try again.");
-                console.log(err);
-                return [];
-              });
-
-            setStylistNames(result);
-            setLoading(false);
-          };
           getServiceNames(res.data);
           getStylistNames(res.data);
         } else {
@@ -93,7 +101,13 @@ function CustomerHome(props) {
         window.alert("An error has occurred. Please try again.");
         console.log(err);
       });
-  }, [history, props.backendDomain]);
+  }, [
+    history,
+    props.backendDomain,
+    getServiceNames,
+    getStylistNames,
+    props.customerId,
+  ]);
 
   const constructStylistString = (reservationId) => {
     let stylistNameEntry = stylistNames.filter((obj) => {

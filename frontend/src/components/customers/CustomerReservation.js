@@ -36,8 +36,6 @@ function CustomerReservation(props) {
   const [portraitIsActive, setPortraitIsActive] = useState([]);
   const [timeSlotIsActive, setTimeSlotIsActive] = useState([]);
 
-  console.log(timeSlotIsActive);
-
   const [serviceIds, setServiceIds] = useState([]);
   const [stylistId, setStylistId] = useState(0);
   const [timeSlotId, setTimeSlotId] = useState(null);
@@ -51,7 +49,6 @@ function CustomerReservation(props) {
 
   const history = useHistory();
 
-  // Functions
   const stageChanged = useCallback(
     (stage, value = true) => {
       stageSelectionChanged[stage] = value;
@@ -59,37 +56,10 @@ function CustomerReservation(props) {
     },
     [stageSelectionChanged]
   );
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    let date = new Date().toISOString();
-    date = date.substr(0, date.indexOf("T"));
-
-    axios
-      .post(
-        `${props.backendDomain}reservation`,
-        {
-          date: date,
-          startTime: timeSlots[timeSlotId].startTime,
-          endTime: timeSlots[timeSlotId].endTime,
-          customer: props.customerId,
-          stylist: stylistId,
-          service: serviceIds,
-        },
-        {
-          headers: { Authorization: `JWT ${localStorage.getItem("token")}` },
-        }
-      )
-      .then(() => {
-        setSubmitted(true);
-      })
-      .catch((err) => {
-        window.alert("An error has occurred. Please try again.");
-        console.log(err);
-        history.push("/customers/home");
-      });
-  };
 
   //TODO: Proper error handling
+
+  /*** EFFECTS ***/
 
   // Get services
 
@@ -175,7 +145,7 @@ function CustomerReservation(props) {
         })
         .catch((err) => {
           window.alert(
-            "An error has occurred in time slots. Please try again."
+            "An error has occurred. Please try again."
           );
           console.log(err);
           history.push("/customers/home");
@@ -192,6 +162,35 @@ function CustomerReservation(props) {
     stageSelectionChanged,
   ]);
 
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    let date = new Date().toISOString();
+    date = date.substr(0, date.indexOf("T"));
+
+    axios
+      .post(
+        `${props.backendDomain}reservation`,
+        {
+          date: date,
+          startTime: timeSlots[timeSlotId].startTime,
+          endTime: timeSlots[timeSlotId].endTime,
+          customer: props.customerId,
+          stylist: stylistId,
+          service: serviceIds,
+        },
+        {
+          headers: { Authorization: `JWT ${localStorage.getItem("token")}` },
+        }
+      )
+      .then(() => {
+        setSubmitted(true);
+      })
+      .catch((err) => {
+        window.alert("An error has occurred. Please try again.");
+        console.log(err);
+        history.push("/customers/home");
+      });
+  };
   return (
     <Container fluid>
       <Row className="justify-content-center">
