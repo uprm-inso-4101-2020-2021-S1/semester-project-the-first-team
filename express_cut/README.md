@@ -24,6 +24,7 @@ These are the environment variables used by the Rest API for running
 | DATABASE_PASSWORD | true | The Postgres database password which the Rest API will use along with DATABASE_USER to connect to the database. |
 | DATABASE_HOST | true | The host domain or ip on which the Postgres database is deployed. |
 | DATABASE_PORT | true | The port on which the Postgres database is deployed. |
+| DJANGO_TIME_ZONE | true | The timezone where the Express Cuts salon is located. |
 
 ## Usage
 
