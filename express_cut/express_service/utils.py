@@ -3,7 +3,7 @@ from typing import List
 from django.db.models import Case, When, Max, BooleanField, Value
 from .models import Service, User, DailySchedule, Reservation
 import datetime
-
+from django.utils import timezone
 
 def calculate_estimated_wait_time(services_id: List[int], stylist: User) -> datetime.timedelta:
     """
@@ -32,14 +32,14 @@ def calculate_estimated_wait_time(services_id: List[int], stylist: User) -> date
 
 
 def get_available_slots(duration, stylist):
-    today_date = datetime.date.today()
+    today_date = datetime.datetime.now(tz=timezone.get_current_timezone()).date()
     is_last = False
     results = []
     try:
         schedule = stylist.dailyschedule_set.get(date=today_date)
     except DailySchedule.DoesNotExist:
         return []
-    min_start_time = datetime.datetime.now() + datetime.timedelta(minutes=5)
+    min_start_time = datetime.datetime.now(tz=timezone.get_current_timezone()) + datetime.timedelta(minutes=5)
     timeslots = schedule.timeslots.filter(end_time__gte=min_start_time.time()).order_by('start_time')
     if not timeslots:
         return []
@@ -50,12 +50,12 @@ def get_available_slots(duration, stylist):
     else:
         last_reservation_pk = reservations_all.last().pk
     for timeslot in timeslots:
-        available_start_time = datetime.datetime.combine(date=today_date, time=timeslot.start_time)
+        available_start_time = timezone.make_aware(datetime.datetime.combine(date=today_date, time=timeslot.start_time))
         reservations = reservations_all.filter(startTime__gte=timeslot.start_time, endTime__lte=timeslot.end_time,
                                                status__in=[Reservation.IN_PROCESS, Reservation.PENDING])\
             .order_by('startTime')
         for reservation in reservations:
-            available_end_time = datetime.datetime.combine(date=today_date, time=reservation.startTime)
+            available_end_time = timezone.make_aware(datetime.datetime.combine(date=today_date, time=reservation.startTime))
             slot = AvailableSlots(available_start_time, available_end_time)
             if reservation.pk == last_reservation_pk:
                 is_last = True
@@ -64,8 +64,8 @@ def get_available_slots(duration, stylist):
                     return results + last_slot
             else:
                 results = results + slot.get_possible_reservation_slots(duration)
-            available_start_time = datetime.datetime.combine(date=today_date, time=reservation.endTime)
-        available_end_time = datetime.datetime.combine(date=today_date, time=timeslot.end_time)
+            available_start_time = timezone.make_aware(datetime.datetime.combine(date=today_date, time=reservation.endTime))
+        available_end_time = timezone.make_aware(datetime.datetime.combine(date=today_date, time=timeslot.end_time))
         slot = AvailableSlots(available_start_time, available_end_time)
         if is_last:
             last_slot = slot.get_possible_reservation_slots(duration, many=False)
@@ -94,7 +94,7 @@ class AvailableSlots:
         self.dateTimeStart = dateTimeStart
         self.dateTimeEnd = dateTimeEnd
 
-    def get_possible_reservation_slots(self, duration, time_now=datetime.datetime.now(), many=True):
+    def get_possible_reservation_slots(self, duration, time_now= datetime.datetime.now(tz=timezone.get_current_timezone()), many=True):
         results = []
         if self.dateTimeStart < time_now:
             temp_start = time_now + datetime.timedelta(minutes=5)
