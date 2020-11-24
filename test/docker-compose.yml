@@ -35,6 +35,7 @@ services:
       - DJANGO_CORS_ORIGIN_WHITELIST=http://*
       - DEBUG=true
       - CORS_ALLOW_ALL=true
+      # - DJANGO_TIME_ZONE=America/Puerto_Rico
 
       # Connection settings
       - DATABASE_NAME=test-db
