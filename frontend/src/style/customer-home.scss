@@ -1,0 +1,50 @@
+.col-main {
+  margin: 3rem 20% 0 20%;
+}
+
+.customer-home-header {
+  margin-bottom: 3.5rem;
+  border-bottom: 1px solid rgba($color: #b0b0b0, $alpha: 0.38);
+
+  h1 {
+    color: white;
+    font-weight: 500;
+    font-size: 2.7rem;
+  }
+}
+
+.active-reservation {
+  background-color: #565d76;
+  padding: 1.5rem 0 1.5rem 0;
+  border: none;
+  border-left: 10px solid;
+  border-color: #6d45a4;
+  -webkit-box-shadow: 0px 0px 6px 6px rgba(0, 0, 0, 0.12);
+  box-shadow: 0px 0px 6px 6px rgba(0, 0, 0, 0.12);
+
+  .time-string {
+    color: rgba($color: white, $alpha: 0.9);
+    font-size: 1.7rem;
+    font-weight: 500;
+  }
+  .reservation-details {
+    border-left: 1.5px solid rgba($color: #b0b0b0, $alpha: 0.36);
+    .service-list {
+      font-weight: 400;
+      font-size: 1.5rem;
+      color: rgba($color: white, $alpha: 0.9);
+    }
+
+    .stylist-name {
+      font-size: 1.4rem;
+      font-weight: 400;
+      color: rgba($color: white, $alpha: 0.5);
+    }
+  }
+}
+
+.empty-text {
+    color: rgba($color: white, $alpha: 0.6);
+    font-size: 2rem;
+    font-weight: 500;
+}

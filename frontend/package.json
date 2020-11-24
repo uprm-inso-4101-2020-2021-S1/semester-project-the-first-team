@@ -13,6 +13,7 @@
     "@testing-library/user-event": "^7.2.1",
     "axios": "^0.21.0",
     "bootstrap": "^4.5.2",
+    "datejs": "^1.0.0-rc3",
     "moment": "^2.29.1",
     "nivo": "^0.7.0",
     "prop-types": "^15.7.2",

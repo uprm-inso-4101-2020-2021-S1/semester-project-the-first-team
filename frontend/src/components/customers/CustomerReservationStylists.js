@@ -1,7 +1,10 @@
 import React from "react";
-import { Container, Row, Col } from "react-bootstrap";
+import { Row, Col } from "react-bootstrap";
 import PropTypes from "prop-types";
 import ReservationStylistPortrait from "./ReservationStylistPortrait";
+
+const defaultPortrait =
+  "https://external-content.duckduckgo.com/iu/?u=http%3A%2F%2Fwww.stickpng.com%2Fassets%2Fimages%2F585e4beacb11b227491c3399.png&f=1&nofb=1";
 
 function CustomerReservationStylists(props) {
   return (
@@ -18,10 +21,11 @@ function CustomerReservationStylists(props) {
                 sm={8}
               >
                 <ReservationStylistPortrait
-                  name={stylist.name}
-                  image={stylist.portrait}
+                  name={stylist.first_name + " " + stylist.last_name}
+                  stylistId={stylist.id}
+                  image={stylist.portrait || defaultPortrait}
                   id={i}
-                  getStylistName={props.getStylistName}
+                  getStylistId={props.getStylistId}
                   active={props.portraitIsActive[i]}
                   setActive={props.setActive}
                 />
@@ -35,7 +39,7 @@ function CustomerReservationStylists(props) {
 }
 
 CustomerReservationStylists.propTypes = {
-  getStylistName: PropTypes.func,
+  getStylistId: PropTypes.func,
   portraitIsActive: PropTypes.array,
   setActive: PropTypes.func,
   stylists: PropTypes.array,
