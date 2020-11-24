@@ -102,7 +102,7 @@ function App() {
           </Route>
           <Route path="/stylists">
             <Sidebar
-              items={stylistSidebarRoutes(isActiveAppointment)}
+              items={stylistSidebarRoutes(isActiveAppointment, userRole==1)}
               logout={handleLogout}
               userRole={userRole}
             />

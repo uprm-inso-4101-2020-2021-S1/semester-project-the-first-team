@@ -65,7 +65,7 @@ function ScheduleManagementView(props) {
   ) => {
     return (
       newDate.toDateString() === existingDate.toDateString() &&
-      newUserID === existingUserID
+      newUserID == existingUserID
     );
   };
 
@@ -224,7 +224,7 @@ function ScheduleManagementView(props) {
       );
 
       // display blocks after successfull post...
-      if (responseData.id) {
+      if (responseData && responseData.id) {
         tempEvent.parentID = responseData.id;
         let tempEvents = events;
         tempEvents.push(tempEvent);
