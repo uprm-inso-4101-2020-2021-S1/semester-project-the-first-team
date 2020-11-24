@@ -84,4 +84,6 @@ spec:
           value: "true"
         - name: JWT_EXPIRATION_TIME
           value: "600"
+        - name: DJANGO_TIME_ZONE
+          value: "America/Puerto_Rico"
         

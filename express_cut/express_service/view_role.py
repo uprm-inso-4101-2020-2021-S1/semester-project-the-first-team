@@ -12,6 +12,7 @@ from rest_framework.decorators import api_view, permission_classes, authenticati
 from drf_yasg.utils import swagger_auto_schema
 from .swagger_models import SwagResponses as swagResp
 import datetime
+from django.utils import timezone
 
 
 @swagger_auto_schema(methods=['GET'], responses={**swagResp.commonResponses, **swagResp.getResponse(StylistSerializer)}, 
@@ -34,7 +35,7 @@ def get_all_stylists(request):
 @permission_classes([IsAuthenticated])
 def get_all_available_stylists(request):
     if request.method == 'GET':
-        stylists = User.objects.filter(dailyschedule__date=datetime.date.today())
+        stylists = User.objects.filter(dailyschedule__date=datetime.datetime.now(tz=timezone.get_current_timezone()).date())
         serializer = StylistSerializer(stylists, many=True)
         return Response(serializer.data)
     return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)

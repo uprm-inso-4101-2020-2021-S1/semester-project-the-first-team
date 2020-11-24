@@ -15,6 +15,7 @@ from drf_yasg.utils import swagger_auto_schema
 from .swagger_models import SwagResponses as swagResp
 from .swagger_models import SwagParmDef
 from .utils import calculate_estimated_wait_time, get_available_slots
+from django.utils import timezone
 
 
 @swagger_auto_schema(methods=['PUT'], request_body=ReservationSerializer,
@@ -37,10 +38,10 @@ def reservation_views(request, reservation_id):
             return Response(status=status.HTTP_403_FORBIDDEN)
         serializer = ReservationSerializer(obj, data=request.data)
         if serializer.is_valid():
-            endTime = (datetime.datetime.combine(datetime.date.today(),
+            endTime = (timezone.make_aware(datetime.datetime.combine(datetime.datetime.now(tz=timezone.get_current_timezone()).date(),
                                                  serializer.validated_data['startTime']) +
                        calculate_estimated_wait_time(serializer.initial_data['service'],
-                                                     serializer.validated_data['stylist'])).time()
+                                                     serializer.validated_data['stylist']))).time()
             serializer.validated_data['endTime'] = endTime
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
@@ -72,10 +73,10 @@ def reservation_general(request):
             return Response(status=status.HTTP_403_FORBIDDEN)
         serializer = ReservationSerializer(data=request.data)
         if serializer.is_valid():
-            endTime = (datetime.datetime.combine(datetime.date.today(),
+            endTime = (timezone.make_aware(datetime.datetime.combine(datetime.datetime.now(tz=timezone.get_current_timezone()).date(),
                                                  serializer.validated_data['startTime']) +
                        calculate_estimated_wait_time(serializer.initial_data['service'],
-                                                     serializer.validated_data['stylist'])).time()
+                                                     serializer.validated_data['stylist']))).time()
             serializer.validated_data['endTime'] = endTime
             reservation = serializer.save()
             return Response(data={'id': reservation.pk}, status = status.HTTP_201_CREATED)
@@ -225,7 +226,7 @@ def get_daily_reservations(request, stylist_id):
             return Response({"mesage":"Stylist with ID=%d not found." %stylist_id}, status=status.HTTP_404_NOT_FOUND)
         if not ReservationPermissions().GET_stylist_reservation_today_permissions(request):
             return Response(status=status.HTTP_403_FORBIDDEN)
-        reservations = Reservation.objects.filter(stylist=stylist_id, date=datetime.date.today(),
+        reservations = Reservation.objects.filter(stylist=stylist_id, date=datetime.datetime.now(tz=timezone.get_current_timezone()).date(),
                                                   status__in=[Reservation.PENDING, Reservation.IN_PROCESS])
         if reservations:
             serializer = ReservationTimeSlotsSerializer(reservations, many=True)
