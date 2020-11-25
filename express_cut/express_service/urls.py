@@ -33,8 +33,8 @@ urlpatterns = [
     path('service/<int:pk>', view_service.get_service_views),
 
     path('reservation', view_reservation.reservation_general),
-    path('reservation/<int:pk>', view_reservation.reservation_views),
-    path('reservation/<int:pk>/cancel', view_reservation.cancel_reservation),
+    path('reservation/<int:reservation_id>', view_reservation.reservation_views),
+    path('reservation/<int:reservation_id>/cancel', view_reservation.cancel_reservation),
     path('reservation/estimate', view_reservation.estimate_reservation_time),
     path('reservation/<int:reservation_id>/complete', view_reservation.complete_reservation),
     path('reservation/<int:reservation_id>/start', view_reservation.start_reservation),
@@ -47,6 +47,7 @@ urlpatterns = [
     path('stylist/available', view_role.get_all_available_stylists),
     path('customer', view_role.get_all_customers),
     path('customer/<int:pk>', view_role.get_customer_by_id),
+    path('customer/<int:customer_id>/reservation', view_reservation.reservations_by_customer),
     path('manager', view_role.get_all_managers),
 
 ]

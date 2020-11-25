@@ -4,6 +4,7 @@ import "react-big-calendar/lib/css/react-big-calendar.css";
 import moment from "moment";
 import ScheduleManagmentModal from "./scheduleManagementModal";
 import axios from "axios";
+import PropTypes from "prop-types";
 
 const localizer = momentLocalizer(moment);
 var todayAt7 = new Date();
@@ -18,6 +19,7 @@ function ScheduleManagementView(props) {
 
   // EFFECTS ==================================================
   useEffect(() => {
+    props.redirectIfNotManager();
     getStylistsFromBackend();
   }, []);
 
@@ -63,7 +65,7 @@ function ScheduleManagementView(props) {
   ) => {
     return (
       newDate.toDateString() === existingDate.toDateString() &&
-      newUserID === existingUserID
+      newUserID == existingUserID
     );
   };
 
@@ -131,7 +133,7 @@ function ScheduleManagementView(props) {
           saturdayDateString,
         {
           headers: {
-            Authorization: `basic ${sessionStorage.getItem("authToken")}`,
+            Authorization: "JWT " + localStorage.getItem("token"),
           },
         }
       );
@@ -215,7 +217,6 @@ function ScheduleManagementView(props) {
         selectedStylist[0].first_name + " " + selectedStylist[0].last_name;
       tempEvent.stylist = userID;
 
-      // TODO: ADD PARENTID FROM RESPONSE.
       let responseData = await createEventInBackend(
         tempEvent.start,
         tempEvent.end,
@@ -223,7 +224,7 @@ function ScheduleManagementView(props) {
       );
 
       // display blocks after successfull post...
-      if (responseData.id) {
+      if (responseData && responseData.id) {
         tempEvent.parentID = responseData.id;
         let tempEvents = events;
         tempEvents.push(tempEvent);
@@ -245,7 +246,6 @@ function ScheduleManagementView(props) {
     let responseData = null;
     if (checkEventsArr.length === 0) {
       // POST event
-      // todo: return new schedule object id
       responseData = await postNewEvent(
         dateString,
         startTimeString,
@@ -270,7 +270,7 @@ function ScheduleManagementView(props) {
     try {
       let response = await axios.get(props.backendDomain + "stylist", {
         headers: {
-          Authorization: `basic ${sessionStorage.getItem("authToken")}`,
+          Authorization: "JWT " + localStorage.getItem("token"),
         },
       });
 
@@ -283,7 +283,6 @@ function ScheduleManagementView(props) {
     }
   };
 
-  // TODO: FINISH METHOD WHEN NEW ROUTE IS CREATED.
   const putNewEvent = async (
     dateString,
     startTimeString,
@@ -297,7 +296,7 @@ function ScheduleManagementView(props) {
         props.backendDomain + "schedule/" + parentID,
         {
           headers: {
-            Authorization: `basic ${sessionStorage.getItem("authToken")}`,
+            Authorization: "JWT " + localStorage.getItem("token"),
           },
         }
       );
@@ -324,7 +323,7 @@ function ScheduleManagementView(props) {
         scheduleObj,
         {
           headers: {
-            Authorization: `basic ${sessionStorage.getItem("authToken")}`,
+            Authorization: "JWT " + localStorage.getItem("token"),
           },
         }
       );
@@ -356,7 +355,7 @@ function ScheduleManagementView(props) {
         tempSchedule,
         {
           headers: {
-            Authorization: `basic ${sessionStorage.getItem("authToken")}`,
+            Authorization: "JWT " + localStorage.getItem("token"),
           },
         }
       );
@@ -369,14 +368,13 @@ function ScheduleManagementView(props) {
   };
 
   const deleteEvent = async () => {
-    // TODO: send data to backend.
     try {
       // First, get schedule object that matches the event.
       let response = await axios.get(
         props.backendDomain + "schedule/" + activeEvent.parentID,
         {
           headers: {
-            Authorization: `basic ${sessionStorage.getItem("authToken")}`,
+            Authorization: "JWT " + localStorage.getItem("token"),
           },
         }
       );
@@ -394,7 +392,7 @@ function ScheduleManagementView(props) {
           response.data,
           {
             headers: {
-              Authorization: `basic ${sessionStorage.getItem("authToken")}`,
+              Authorization: "JWT " + localStorage.getItem("token"),
             },
           }
         );
@@ -405,7 +403,7 @@ function ScheduleManagementView(props) {
           props.backendDomain + "schedule/" + activeEvent.parentID,
           {
             headers: {
-              Authorization: `basic ${sessionStorage.getItem("authToken")}`,
+              Authorization: "JWT " + localStorage.getItem("token"),
             },
           }
         );
@@ -457,5 +455,9 @@ function ScheduleManagementView(props) {
     </Fragment>
   );
 }
+ScheduleManagementView.propTypes = {
+  backendDomain: PropTypes.string.isRequired,
+  redirectIfNotManager: PropTypes.func.isRequired,
+};
 
 export default ScheduleManagementView;

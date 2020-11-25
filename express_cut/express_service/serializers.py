@@ -75,8 +75,51 @@ class DailyScheduleSerializer(serializers.ModelSerializer):
         model = DailySchedule
         fields = ['id', 'date', 'stylist', 'timeslots']
 
+    @staticmethod
+    def validate_schedule(timeslots, stylist, date, update = False):
+        schedule = None
+        reservations = None
+        try:
+            schedule = stylist.dailyschedule_set.get(date=date)
+        except DailySchedule.DoesNotExist:
+            pass
+        except Exception as e:
+            print(e)
+            raise ValidationError("Error validating timeslot times. Error getting schedule")
+
+        if update and not schedule: # Check for updating non existing schedule
+            raise ValidationError("Error validating timeslot times. Can not update non existing schedule")
+        elif update: # Check for updating schedule with timeslots
+            try:
+                reservations = Reservation.objects.filter(stylist=stylist.pk, date=date)
+            except:
+                print(e)
+                raise ValidationError("Error validating timeslot times. Error getting reservations")
+            if reservations:
+                raise ValidationError("Can not update schedule if reservations already exists")
+        elif not update and schedule:
+            raise ValidationError("Error validating timeslot times. Can not create schedule if it already exists")
+
+        # This should be ok even if its O(n^2) since not a lot of timeslots should be on each schedule.
+        for i, time in enumerate(timeslots):
+            startTime = time.get('start_time')
+            endTime = time.get('end_time')
+            if not startTime or not endTime or startTime > endTime:
+                raise ValidationError("Timeslot start time greater than end time")
+            for j in range(i+1, len(timeslots)):
+                time_compare = dict(timeslots[j])
+                startTimeComp = time_compare.get('start_time')
+                endTimeComp = time_compare.get('end_time')
+                if not startTimeComp or not endTimeComp or \
+                    (startTimeComp > startTime and startTimeComp < endTime) or \
+                    (endTimeComp > startTime and endTimeComp < endTime) or \
+                    (startTime > startTimeComp and startTime < endTimeComp) or \
+                    (endTime > endTimeComp and endTime < endTimeComp): # Found conflicting timeslots
+                    raise ValidationError("Conflict between timeslots")
+
     def create(self, validated_data):
         timeslots_data = validated_data.pop('timeslots')
+        self.validate_schedule(timeslots_data, validated_data['stylist'], validated_data['date'],)
         dailyschedule = DailySchedule.objects.create(**validated_data)
         for timeslot_data in timeslots_data:
             TimeSlot.objects.create(dailySchedule=dailyschedule, **timeslot_data)
@@ -84,10 +127,9 @@ class DailyScheduleSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         timeslots_data = validated_data.pop('timeslots')
-        instance.timeslots.all().delete()
-        instance.date = validated_data.get('date', instance.date)
+        self.validate_schedule(timeslots_data, validated_data['stylist'], instance.date, True) # Date will not be updated
+        instance.timeslots.all().delete() # All previous timeslots will be deleted
         instance.save()
-
         for timeslot_data in timeslots_data:
             TimeSlot.objects.create(dailySchedule=instance, **timeslot_data)
         return instance

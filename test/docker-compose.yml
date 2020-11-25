@@ -8,7 +8,7 @@ services:
       test: pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB
       interval: 5s
       timeout: 5s
-      retries: 10
+      retries: 20
     environment:
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: password
@@ -20,10 +20,10 @@ services:
       context: ../express_cut
     container_name: express-API
     healthcheck:
-      test: curl http://127.0.0.1:8000
+      test: curl http://127.0.0.1:8000/api
       interval: 5s
       timeout: 5s
-      retries: 20
+      retries: 30
     ports:
       - 8000:8000
     depends_on:
@@ -35,6 +35,7 @@ services:
       - DJANGO_CORS_ORIGIN_WHITELIST=http://*
       - DEBUG=true
       - CORS_ALLOW_ALL=true
+      # - DJANGO_TIME_ZONE=America/Puerto_Rico
 
       # Connection settings
       - DATABASE_NAME=test-db
@@ -46,9 +47,26 @@ services:
       # For initial populating DB
       - GENERATE_TEST_DATA=true
 
-  # ui:
-  #   image: node
-  #   container_name: User-Interface
+  ui:
+    image: express-cuts-ui:latest
+    build:
+      context: ../frontend
+    container_name: express-UI
+    ports:
+      - 8080:80
+    healthcheck:
+      test: curl http://127.0.0.1:80/login
+      interval: 5s
+      timeout: 5s
+      retries: 50
+    depends_on:
+      rest:
+        condition: service_healthy
+    environment:
+      # - REST_API_URI=http://localhost:8080/api/ # Run locally
+      - REST_API_URI=http://ui:80/api/ # Run on containers
+    volumes:
+      - "./frontend/:/etc/nginx/conf.d/"
 
   tester:
     # Create image from Dockerfile if image not created.
@@ -57,49 +75,32 @@ services:
     image: verification-tests:latest
     container_name: express-TEST
     depends_on:
-      rest:
+      ui:
         condition: service_healthy
     environment:
-      - REST_API_URL=http://rest:8000
+      - REST_API_URI=http://rest:8000
+      - EXPRESS_UI_URL=http://ui:80
+      - SELENIUM_HUB_URL=http://selenium-hub:4444/wd/hub
     volumes:
       - "./docker-test-out:/output/reports/"
 
   #### SELENIUM Containers
 
-  chrome:
-    image: selenium/node-chrome:4.0.0
-    depends_on:
-      - selenium-hub
-    environment:
-      - SE_EVENT_BUS_HOST=selenium-hub
-      # - SE_EVENT_BUS_PUBLISH_PORT=4442
-      # - SE_EVENT_BUS_SUBSCRIBE_PORT=4443
-    # ports:
-    #   - "6900:5900"
-
   selenium-hub:
-    image: selenium/hub:4.0.0
+    image: selenium/hub:4.0.0-alpha-7-prerelease-20200904
     container_name: selenium-hub
     # ports:
     #   - "4442:4442"
     #   - "4443:4443"
     #   - "4444:4444"
 
-  frontend:
-    image: express-cuts-frontend:latest
-    # Currently having issues with this; hardcoding in dockerfile
-    # environment:
-    #   - REST_API_URL=http://insert domain name and port in dockerfile.
-    build:
-      context: ../frontend
-    container_name: express-frontend
-    healthcheck:
-      test: curl http://localhost
-      interval: 5s
-      timeout: 5s
-      retries: 20
-    ports:
-      - 80:80
+  chrome:
+    image: selenium/node-chrome:4.0.0-alpha-7-prerelease-20200904
     depends_on:
-      rest:
-        condition: service_healthy
+      - selenium-hub
+    environment:
+      - SE_EVENT_BUS_HOST=selenium-hub
+      - SE_EVENT_BUS_PUBLISH_PORT=4442
+      - SE_EVENT_BUS_SUBSCRIBE_PORT=4443
+    # ports:
+    #   - "6900:5900"

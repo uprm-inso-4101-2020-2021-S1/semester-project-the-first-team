@@ -7,10 +7,9 @@ stringData:
   DJANGO_SECRET_KEY: # Secret app key
   DJANGO_ALLOWED_HOSTS: # Allowed hosts
   DJANGO_CORS_ORIGIN_WHITELIST: # Whitelisted Cors
+  REST_API_URI: # Public URI pointing to REST API for connecting to backend
 metadata:
   name: express-secret
   labels:
-    app: rest-api
-    role: backend
     group: express-cuts
 type: Opaque

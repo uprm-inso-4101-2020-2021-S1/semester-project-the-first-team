@@ -4,7 +4,7 @@ import PropTypes from "prop-types";
 function ReservationStylistPortrait(props) {
   const handleClick = (e) => {
     e.preventDefault();
-    props.getStylistName(props.name);
+    props.getStylistId(props.stylistId);
     props.setActive(props.id);
   };
 
@@ -30,9 +30,10 @@ ReservationStylistPortrait.propTypes = {
   active: PropTypes.bool,
   id: PropTypes.number,
   image: PropTypes.string,
-  getStylistName: PropTypes.func,
+  getStylistId: PropTypes.func,
   name: PropTypes.string,
   setActive: PropTypes.func,
+  stylistId: PropTypes.number,
 };
 
 export default ReservationStylistPortrait;

@@ -17,9 +17,10 @@ function CustomerResevationTimeSlots(props) {
                 <Col>
                   <TimeSlot
                     getTimeSlotId={props.getTimeSlotId}
-                    stylistName={timeSlot.stylistName}
-                    time={timeSlot.time}
-                    timeSlotId={timeSlot.timeSlotId}
+                    stylistName={props.stylistName}
+                    startTime={timeSlot.startTime}
+                    endTime={timeSlot.endTime}
+                    timeSlotId={i}
                     id={i}
                     active={props.timeSlotIsActive[i]}
                     setActive={props.setActive}
@@ -76,6 +77,7 @@ CustomerResevationTimeSlots.propTypes = {
   timeSlots: PropTypes.array,
   timeSlotId: PropTypes.number,
   timeSlotIsActive: PropTypes.array,
+  stylistName: PropTypes.string,
 };
 
 export default CustomerResevationTimeSlots;

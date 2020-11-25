@@ -28,7 +28,7 @@ function TimeSlot(props) {
           </Col>
           <Col>
             <div className="time-slot-time">
-              <span>{props.time.toLocaleTimeString()}</span>
+              <span>{props.startTime + " - " + props.endTime}</span>
             </div>
           </Col>
         </Row>
@@ -43,7 +43,8 @@ TimeSlot.propTypes = {
   getTimeSlotId: PropTypes.func,
   setActive: PropTypes.func,
   stylistName: PropTypes.string,
-  time: PropTypes.object,
+  startTime: PropTypes.string,
+  endTime: PropTypes.string,
   timeSlotId: PropTypes.number,
 };
 

@@ -140,7 +140,7 @@ JWT_AUTH = {
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = os.environ.get("DJANGO_TIME_ZONE")
 
 USE_I18N = True
 
@@ -152,6 +152,6 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
-STATIC_URL = '/static/'
+STATIC_URL = '/api/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 

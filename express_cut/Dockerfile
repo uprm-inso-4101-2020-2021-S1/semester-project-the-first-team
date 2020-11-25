@@ -20,6 +20,8 @@ ENV DATABASE_PASSWORD password
 ENV DATABASE_HOST localhost
 ENV DATABASE_PORT 5434
 
+ENV DJANGO_TIME_ZONE America/Puerto_Rico
+
 # Test variables
 ENV GENERATE_TEST_DATA false
 

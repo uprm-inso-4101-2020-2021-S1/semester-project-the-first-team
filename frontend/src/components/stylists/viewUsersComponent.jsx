@@ -4,6 +4,8 @@ import DropdownItem from "react-bootstrap/DropdownItem";
 import axios from "axios";
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
+import { Row, Col } from "react-bootstrap";
+import PropTypes from "prop-types";
 
 const dropdownFilters = [
   "First Name",
@@ -30,7 +32,7 @@ const emptyUser = {
   password: "",
 };
 
-function ViewUsersComponent(backendDomain) {
+function ViewUsersComponent(props) {
   const [userList, setUserList] = useState([]);
   const [filter, setFilter] = useState(defaultFilterString);
   const [modalUser, setModalUser] = useState(emptyUser);
@@ -39,15 +41,18 @@ function ViewUsersComponent(backendDomain) {
   const [createUser, setCreateUser] = useState(false);
 
   useEffect(() => {
+    props.redirectIfNotManager();
     updateUserList(filter);
   }, [filter]);
 
   const updateUserList = async (filter) => {
     let templist = await getUsers(filter);
-    templist = filterLocally(filter)
-      ? localSort(filter, templist.data)
-      : templist.data;
-    setUserList(templist);
+    if (templist) {
+      templist = filterLocally(filter)
+        ? localSort(filter, templist.data)
+        : templist.data;
+      setUserList(templist);
+    }
   };
 
   const filterLocally = (filter) => {
@@ -80,6 +85,10 @@ function ViewUsersComponent(backendDomain) {
     );
   };
   const areFieldsFilled = () => {
+    if (!modalUser.username) {
+      return false;
+    }
+
     if (createUser) {
       return (
         modalUser.username.length > 0 &&
@@ -105,13 +114,13 @@ function ViewUsersComponent(backendDomain) {
     if (user.id) {
       tempUser = await getUser(user.id);
       setCreateUser(false);
+      setModalUser(tempUser);
     } else {
+      setModalUser(tempUser);
       setCreateUser(true);
     }
-    if (tempUser) {
-      setModalUser(tempUser);
-      setShowModal(!showModal);
-    }
+
+    setShowModal(!showModal);
   };
 
   const updateModalUser = (event) => {
@@ -126,10 +135,10 @@ function ViewUsersComponent(backendDomain) {
     try {
       const uType = !filterLocally(userType) ? userType : "user";
       const result = await axios.get(
-        backendDomain.backendDomain + uType.toLowerCase(),
+        props.backendDomain + uType.toLowerCase(),
         {
           headers: {
-            Authorization: `basic ${sessionStorage.getItem("authToken")}`,
+            Authorization: "JWT " + localStorage.getItem("token"),
           },
         }
       );
@@ -141,9 +150,9 @@ function ViewUsersComponent(backendDomain) {
 
   const getUser = async (id) => {
     try {
-      const user = await axios.get(backendDomain.backendDomain + "user/" + id, {
+      const user = await axios.get(props.backendDomain + "user/" + id, {
         headers: {
-          Authorization: `basic ${sessionStorage.getItem("authToken")}`,
+          Authorization: "JWT " + localStorage.getItem("token"),
         },
       });
       return user.data;
@@ -163,20 +172,19 @@ function ViewUsersComponent(backendDomain) {
     try {
       if (modalUser.id) {
         let result = await axios.delete(
-          backendDomain.backendDomain + "user/" + modalUser.id,
+          props.backendDomain + "user/" + modalUser.id,
           {
             headers: {
-              Authorization: `basic ${sessionStorage.getItem("authToken")}`,
+              Authorization: "JWT " + localStorage.getItem("token"),
             },
           }
         );
-        console.log(result);
       }
       setShowDeleteModal(false);
       toggleModal(emptyUser);
     } catch (error) {
-      window.alert("Something went wrong. Could not delete user.");
       console.warn(error);
+      window.alert("Something went wrong. Could not delete user.");
     }
   };
 
@@ -185,22 +193,22 @@ function ViewUsersComponent(backendDomain) {
       if (modalUser.id) {
         // PUTTING
         let response = await axios.put(
-          backendDomain.backendDomain + "user/" + modalUser.id,
+          props.backendDomain + "user/" + modalUser.id,
           modalUser,
           {
             headers: {
-              Authorization: `basic ${sessionStorage.getItem("authToken")}`,
+              Authorization: "JWT " + localStorage.getItem("token"),
             },
           }
         );
       } else {
         // POSTING
         let response = await axios.post(
-          backendDomain.backendDomain + "user/signup",
+          props.backendDomain + "user/signup",
           modalUser,
           {
             headers: {
-              Authorization: `basic ${sessionStorage.getItem("authToken")}`,
+              Authorization: "JWT " + localStorage.getItem("token"),
             },
           }
         );
@@ -321,7 +329,6 @@ function ViewUsersComponent(backendDomain) {
                 />
               </Fragment>
             )}
-            {/* SHOULD ROLE BE CHANGEABLE FOR EXISTING USERS? */}
             {createUser && (
               <Fragment>
                 <label>Role:</label>
@@ -334,7 +341,20 @@ function ViewUsersComponent(backendDomain) {
                   value={modalUser.role}
                   onChange={(e) => updateModalUser(e)}
                 />
-                <i>0: "Manager", 1: "Stylist", 2: "Customer", 3: "Admin"</i>
+                <Row>
+                  <Col>
+                    <i>0 -{">"} Manager</i>
+                  </Col>
+                  <Col>
+                    <i> 1 -{">"} Stylist</i>
+                  </Col>
+                  <Col>
+                    <i> 2 -{">"} Customer</i>
+                  </Col>
+                  <Col>
+                    <i>3 -{">"} Admin</i>
+                  </Col>
+                </Row>
               </Fragment>
             )}
           </form>
@@ -347,7 +367,7 @@ function ViewUsersComponent(backendDomain) {
           <Button
             variant="primary"
             onClick={submitUser}
-            disabled={!validateEmail() || !areFieldsFilled()}
+            disabled={!showModal || !validateEmail() || !areFieldsFilled()}
           >
             Submit
           </Button>
@@ -389,5 +409,10 @@ function ViewUsersComponent(backendDomain) {
     </div>
   );
 }
+
+ViewUsersComponent.propTypes = {
+  backendDomain: PropTypes.string.isRequired,
+  redirectIfNotManager: PropTypes.func.isRequired,
+};
 
 export default ViewUsersComponent;

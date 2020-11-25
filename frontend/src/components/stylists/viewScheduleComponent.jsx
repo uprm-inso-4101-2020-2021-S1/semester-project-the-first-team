@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Calendar, momentLocalizer, Views } from "react-big-calendar";
 import moment from "moment";
 import axios from "axios";
+import PropTypes from "prop-types";
 
 const localizer = momentLocalizer(moment);
 
@@ -24,9 +25,7 @@ function ViewScheduleComponent(props) {
       lastSun.getMonth(),
       lastSun.getDate() + 6
     );
-    console.log("today: ", date.toString());
-    console.log("Last Sunday: ", lastSun.toString());
-    console.log("Next Saturday: ", nextSat.toString());
+
     return [lastSun, nextSat];
   };
 
@@ -76,16 +75,6 @@ function ViewScheduleComponent(props) {
       (saturday.getDate() > 9 ? saturday.getDate() : "0" + saturday.getDate());
 
     try {
-      console.log(
-        "Route to call: ",
-        props.backendDomain +
-          "stylist/" +
-          props.headerCard.id +
-          "/schedule?start_date=" +
-          sundayDateString +
-          "&end_date=" +
-          saturdayDateString
-      );
       let response = await axios.get(
         props.backendDomain +
           "stylist/" +
@@ -96,7 +85,7 @@ function ViewScheduleComponent(props) {
           saturdayDateString,
         {
           headers: {
-            Authorization: `basic ${sessionStorage.getItem("authToken")}`,
+            Authorization: "JWT " + localStorage.getItem("token"),
           },
         }
       );
@@ -104,7 +93,11 @@ function ViewScheduleComponent(props) {
       addScheduleToEvents(response.data);
     } catch (error) {
       console.log(error);
-      window.alert("There was an issue getting the schedules from the system.");
+      if (error.message !== "Request failed with status code 404") {
+        window.alert(
+          "There was an issue getting the schedules from the system."
+        );
+      }
     }
   };
 
@@ -188,5 +181,10 @@ function ViewScheduleComponent(props) {
     />
   );
 }
+
+ViewScheduleComponent.propTypes = {
+  headerCard: PropTypes.object.isRequired,
+  backendDomain: PropTypes.string.isRequired,
+};
 
 export default ViewScheduleComponent;
