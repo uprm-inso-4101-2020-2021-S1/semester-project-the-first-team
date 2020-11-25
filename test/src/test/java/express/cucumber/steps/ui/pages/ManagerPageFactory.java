@@ -14,18 +14,29 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import org.junit.Assert;
 
-public class CustomerPageFactory{
+public class ManagerPageFactory{
 	
-    private static Logger Log = Logger.getLogger(CustomerPageFactory.class.getName());
+    private static Logger Log = Logger.getLogger(StylistPageFactory.class.getName());
     WebDriver driver;
 
 	// Elements that identify page
 	@FindBy(xpath = "//a[@class='menu-bars']")
-    WebElement sidebar;
-		
+	WebElement sidebar;
+	
+	@FindBy(xpath = "//a[@data-rb-event-key='/stylists/userlist']")
+	WebElement userTab;
+
+	@FindBy(xpath = "//a[@data-rb-event-key='/stylists/schedule']")
+    WebElement viewScheduleTab;
+	
+	@FindBy(xpath = "//a[@data-rb-event-key='/stylists/schedule/manage']")
+	WebElement manageScheduleTab;
+	
+	@FindBy(xpath = "//a[@data-rb-event-key='/stylists/manageservices']")
+    WebElement manageServiceTab;
 	
 	// Steps
-	public CustomerPageFactory(WebDriver driver) {
+	public ManagerPageFactory(WebDriver driver) {
 		this.driver = driver;
 
 		// Initialize web elements
@@ -43,7 +54,7 @@ public class CustomerPageFactory{
 	    WebDriverWait wait = new WebDriverWait(driver, Constants.DEFAULT_WEBELEMENT_TIMEOUT);
 		// Wait for URL to be present
 		try {
-			wait.until(ExpectedConditions.urlContains("/customers"));
+			wait.until(ExpectedConditions.urlContains("/stylists"));
 			wait.until(ExpectedConditions.elementToBeClickable(sidebar));
 		} catch (Exception e) {
 			return false;

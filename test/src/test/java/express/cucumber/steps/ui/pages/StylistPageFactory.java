@@ -21,8 +21,13 @@ public class StylistPageFactory{
 
 	// Elements that identify page
 	@FindBy(xpath = "//a[@class='menu-bars']")
-    WebElement sidebar;
-		
+	WebElement sidebar;
+	
+	@FindBy(xpath = "//a[@data-rb-event-key='/stylists/userlist']")
+	WebElement userTab;
+
+	@FindBy(xpath = "//a[@data-rb-event-key='/stylists/schedule']")
+    WebElement viewScheduleTab;
 	
 	// Steps
 	public StylistPageFactory(WebDriver driver) {

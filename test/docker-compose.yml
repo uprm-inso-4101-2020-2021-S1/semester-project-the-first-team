@@ -63,8 +63,8 @@ services:
       rest:
         condition: service_healthy
     environment:
-      # - REST_API_URI=http://localhost:8080/api/ # Run locally
-      - REST_API_URI=http://ui:80/api/ # Run on containers
+      - REST_API_URI=http://localhost:8080/api/ # Run locally
+      # - REST_API_URI=http://ui:80/api/ # Run on containers
     volumes:
       - "./frontend/:/etc/nginx/conf.d/"
 

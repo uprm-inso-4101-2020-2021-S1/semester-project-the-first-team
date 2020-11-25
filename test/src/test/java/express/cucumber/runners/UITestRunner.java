@@ -8,7 +8,7 @@ import cucumber.api.testng.AbstractTestNGCucumberTests;
 @RunWith(Cucumber.class)
 @CucumberOptions(
 		features = { 
-			"src/test/resources/UIFeatures/"
+			"src/test/resources/UIFeatures/walkthroughs"
 		},
 		glue = "express.cucumber.steps.ui",
 		tags = {},

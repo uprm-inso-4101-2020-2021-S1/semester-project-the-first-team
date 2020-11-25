@@ -26,15 +26,17 @@ public class LoginPageFactory{
 
     @FindBy(id = "formPassword")
 	WebElement passbox;
-	
+
 	@FindBy(xpath = "//button[contains(.,'Log')]")
-    WebElement loginButton;
-		
-	
+	WebElement loginButton;
+
+	@FindBy(xpath = "//a[@class='sign-up link']")
+	WebElement signUp;
+
 	// Steps
 	public LoginPageFactory(WebDriver driver) {
 		this.driver = driver;
-
+		
 		// Initialize web elements
 		PageFactory.initElements(driver, this);
 	}
@@ -49,6 +51,12 @@ public class LoginPageFactory{
 		loginButton.click();
 	}
 
-	
+	public void signup() {
+		// Create WebDriver wait
+	    WebDriverWait wait = new WebDriverWait(driver, Constants.DEFAULT_WEBELEMENT_TIMEOUT);
+	    // Wait for login to be present
+		wait.until(ExpectedConditions.visibilityOf(signUp));
+		signUp.click();
+	}
 
 }
