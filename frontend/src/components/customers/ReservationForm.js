@@ -168,9 +168,9 @@ function ReservationForm(props) {
             )[0]
           }
           selectedTimeSlot={
-            props.timeSlots[props.timeSlotId].startTime +
+            props.timeSlots[props.timeSlotId].startTime.substr(0, 5) +
             " - " +
-            props.timeSlots[props.timeSlotId].endTime
+            props.timeSlots[props.timeSlotId].endTime.substr(0, 5)
           }
           handleSubmit={props.handleSubmit}
         />

@@ -88,10 +88,13 @@ function CustomerHome(props) {
         headers: { Authorization: `JWT ${localStorage.getItem("token")}` },
       })
       .then((res) => {
-        if (res.data.length > 0) {
-          setActiveReservations(res.data);
-          getServiceNames(res.data);
-          getStylistNames(res.data);
+        const reservations = res.data.filter((reservation) => {
+          return (reservation.status === "P") || (reservation.status === "IP");
+        });
+        if (reservations.length > 0) {
+          setActiveReservations(reservations);
+          getServiceNames(reservations);
+          getStylistNames(reservations);
         } else {
           setEmpty(true);
           setLoading(false);
@@ -156,10 +159,12 @@ function CustomerHome(props) {
                               " - " +
                               reservation.endTime.substr(0, 5)
                             }
-                            serviceNames={
+                            serviceNames={ serviceNames ? (
                               serviceNames.filter((obj) => {
                                 return obj.id === reservation.id;
-                              })[0].names
+                              })[0].names):(
+                                ["Service name unavailable"]
+                              )
                             }
                             stylistName={constructStylistString(reservation.id)}
                           />

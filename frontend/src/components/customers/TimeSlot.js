@@ -28,7 +28,7 @@ function TimeSlot(props) {
           </Col>
           <Col>
             <div className="time-slot-time">
-              <span>{props.startTime + " - " + props.endTime}</span>
+              <span>{props.startTime.substr(0, 5) + " - " + props.endTime.substr(0, 5)}</span>
             </div>
           </Col>
         </Row>
