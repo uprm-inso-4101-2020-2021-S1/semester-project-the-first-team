@@ -30,8 +30,8 @@ function Signup(props) {
                 <Form
                   onSubmit={(e) => {
                       props.signup(e, {
-                        firstName: firstName,
-                        lastName: lastName,
+                        first_name: firstName,
+                        last_name: lastName,
                         email: email,
                         username: username,
                         password: password,
