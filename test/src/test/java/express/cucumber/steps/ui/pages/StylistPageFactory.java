@@ -37,7 +37,7 @@ public class StylistPageFactory{
 		PageFactory.initElements(driver, this);
 	}
 
-	public boolean verifyLoaded() {
+	public boolean isLoaded() {
 		// Sleep to give chance for page to load
 		try {
 			Thread.sleep(Constants.QUICK_TIMEOUT);

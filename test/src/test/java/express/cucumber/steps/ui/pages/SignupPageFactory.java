@@ -62,7 +62,6 @@ public class SignupPageFactory{
 		userbox.sendKeys(user);
 		passbox.sendKeys(pass);
 		signupButton.click();
-
 	}
 
 	public void login() {
