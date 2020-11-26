@@ -117,6 +117,7 @@ class DailyScheduleSerializer(serializers.ModelSerializer):
                 startTimeComp = time_compare.get('start_time')
                 endTimeComp = time_compare.get('end_time')
                 if not startTimeComp or not endTimeComp or \
+                    (startTimeComp == startTime and endTimeComp == endTime) or \
                     (startTimeComp > startTime and startTimeComp < endTime) or \
                     (endTimeComp > startTime and endTimeComp < endTime) or \
                     (startTime > startTimeComp and startTime < endTimeComp) or \
