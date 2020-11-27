@@ -1,11 +1,9 @@
 from django.contrib import admin
 from .models import User, Service, StylistOfferServices, DailySchedule, Reservation, Notification, \
     ReservationContainsServices, TimeSlot
-from django.contrib import admin
-
+from django.contrib.auth.models import Group
 
 admin.site.site_header = "express cut: Admin Site"
-
 
 @admin.register(User)
 class UserAdmin(admin.ModelAdmin):
@@ -41,3 +39,6 @@ class ReservationAdmin(admin.ModelAdmin):
 @admin.register(Service)
 class ServiceAdmin(admin.ModelAdmin):
     list_display = ('serviceName', 'defaultDuration', 'description', )
+
+
+admin.site.unregister(Group)
