@@ -30,9 +30,12 @@ class GeneralUserSerializer(serializers.ModelSerializer):
 
 
 class SingUpUserSerializer(GeneralUserSerializer):
-    role = serializers.ChoiceField(choices=User.ROLE_CHOICES)
+    role = serializers.ChoiceField(choices=User.ROLE_CHOICES, required=True)
     password = serializers.CharField(write_only=True, required=True)
     username = serializers.CharField(required=True)
+    first_name = serializers.CharField(required=True)
+    last_name = serializers.CharField(required=True)
+    email = serializers.CharField(required=True)
 
     def create(self, validated_data):
         validated_data['password'] = make_password(validated_data.get('password'))
@@ -40,6 +43,8 @@ class SingUpUserSerializer(GeneralUserSerializer):
 
 
 class TimeSlotSerializer(serializers.ModelSerializer):
+    start_time = serializers.TimeField(required=True)
+    end_time = serializers.TimeField(required=True)
 
     class Meta:
         model = TimeSlot
@@ -70,6 +75,7 @@ class ManagerSerializer(GeneralUserSerializer):
 class DailyScheduleSerializer(serializers.ModelSerializer):
     id = serializers.PrimaryKeyRelatedField(read_only=True)
     timeslots = TimeSlotSerializer(many=True)
+    date = serializers.DateField(required=True)
 
     class Meta:
         model = DailySchedule
@@ -91,7 +97,7 @@ class DailyScheduleSerializer(serializers.ModelSerializer):
             raise ValidationError("Error validating timeslot times. Can not update non existing schedule")
         elif update: # Check for updating schedule with timeslots
             try:
-                reservations = Reservation.objects.filter(stylist=stylist.pk, date=date)
+                reservations = Reservation.objects.filter(stylist=stylist.pk, date=date).exclude(status=Reservation.CANCELLED)
             except:
                 print(e)
                 raise ValidationError("Error validating timeslot times. Error getting reservations")
@@ -111,6 +117,7 @@ class DailyScheduleSerializer(serializers.ModelSerializer):
                 startTimeComp = time_compare.get('start_time')
                 endTimeComp = time_compare.get('end_time')
                 if not startTimeComp or not endTimeComp or \
+                    (startTimeComp == startTime and endTimeComp == endTime) or \
                     (startTimeComp > startTime and startTimeComp < endTime) or \
                     (endTimeComp > startTime and endTimeComp < endTime) or \
                     (startTime > startTimeComp and startTime < endTimeComp) or \
