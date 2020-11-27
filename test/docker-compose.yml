@@ -83,6 +83,7 @@ services:
       - REST_API_URI=http://rest:8000
       - EXPRESS_UI_URL=http://ui:80
       - SELENIUM_HUB_URL=http://selenium-hub:4444/wd/hub
+      - TZ=America/Puerto_Rico
     volumes:
       - "./docker-test-out:/output/reports/"
 
