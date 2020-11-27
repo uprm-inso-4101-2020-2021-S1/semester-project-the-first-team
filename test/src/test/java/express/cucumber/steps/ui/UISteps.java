@@ -1,5 +1,7 @@
 package express.cucumber.steps.ui;
 
+import javax.security.sasl.SaslServer;
+
 import org.junit.Assert;
 
 import express.cucumber.steps.ui.pages.CustomerPageFactory;
@@ -54,10 +56,47 @@ public class UISteps {
 
     @And("^The manager goes to the (.*) tab$")
     public void the_manager_goes_to_the_tab(String tab) throws Throwable {
-        System.out.println(tab);
         managerPage.clickTab(tab);
         Assert.assertTrue(managerPage.verifyLoaded(tab));
     }
+
+    @And("^The customer sees the customer page$")
+    public void the_customer_sees_the_customer_page() throws Throwable {
+        customerPage = new CustomerPageFactory(SetupSteps.getWebDriver());
+        Assert.assertTrue(customerPage.isLoaded());
+    }
+
+    @When("^The customer goes to the (.*) tab$")
+    public void the_customer_goes_to_the_reservation_tab(String tab) throws Throwable {
+        customerPage.clickTab(tab);
+        Assert.assertTrue(customerPage.verifyLoaded(tab));
+    }
+
+    @Then("^The customer should be able to create a reservation for the services '(.*)' with the stylist (.*)$")
+    public void the_customer_should_be_able_to_create_a_reservation_for_the_service_with_the_stylist_stylist_name(String services, String stylist) throws Throwable {
+        // Write code here that turns the phrase above into concrete actions
+        String[] servicesPassed = services.split(",");
+        customerPage.chooseServices(servicesPassed);
+        customerPage.chooseStylist(stylist);
+        customerPage.chooseTime(stylist);
+        customerPage.confirmReservation(stylist, servicesPassed);
+        customerPage.returnFromConfirmation();
+        Assert.assertTrue(customerPage.verifyLoaded("home"));
+    }
+
+    @Then("^The customer should be able to see the reservation created with (.*) for '(.*)'$")
+    public void the_customer_should_be_able_to_see_the_reservation_created(String stylist, String services) throws Throwable {
+        String[] servicesPassed = services.split(",");
+        Assert.assertTrue(customerPage.verifyReservationExists(stylist, servicesPassed));
+    }
+
+    @Then("^The customer should be able to logout$")
+    public void the_customer_should_be_able_to_logout() throws Throwable {
+        customerPage.logout();
+        Assert.assertTrue(customerPage.verifyLogout());
+        customerPage = null;
+    }
+
 
     @Then("^The manager should be able to create the stylist (.*) (.*) (.*) (.*) (.*)$")
     public void the_Manager_should_be_able_to_create_the_stylist(String user, String pass, String first, String last, String email) throws Throwable {
@@ -94,6 +133,16 @@ public class UISteps {
     }
 
 
+    @Then("^The Manager should be able to create the service '(.*)' (.*) (.*)$")
+    public void the_Manager_should_be_able_to_create_the_service_Blower_Secado_de_pelo_con_blower(String description, String duration, String name) throws Throwable {
+        managerPage.createService(name, duration, description);
+        Assert.assertTrue(managerPage.verifyServiceJustCreated());
+    }
+
+    @Then("^The Manager should be able to see the service '(.*)' (.*) (.*)$")
+    public void the_Manager_should_be_able_to_see_the_service_Blower_Secado_de_pelo_con_blower(String description, String duration, String name) throws Throwable {
+        Assert.assertTrue(managerPage.verifyServiceExists(name, duration, description));
+    }
 
     @Then("^The customer should be able to sign up as (.*) (.*) (.*) (.*) (.*)$")
     public void the_customer_should_be_able_to_sign_up_as(String user, String pass, String first, String last, String email) throws Throwable {

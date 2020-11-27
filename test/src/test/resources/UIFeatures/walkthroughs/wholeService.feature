@@ -37,14 +37,27 @@ Feature: Walkthrough whole system
   |   user       |    pass    | stylist_name |
   |   Manager    |   Manager  | Maria Nieves |
 
-  # Add scenario of manager adding services
+  Scenario Outline: Managers should be able to add services
+    Given The user goes to the UI website
+    When The user logins as <user> and <pass>
+    And The manager sees the manager page
+    And The manager goes to the manage services tab
+    Then The Manager should be able to create the service <service_description> <service_duration> <service_name>
+    Then The Manager should be able to see the service <service_description> <service_duration> <service_name>
+    Then The Manager should be able to logout
+  Examples:
+  |   user       |    pass    | service_name | service_duration |     service_description     |
+  |   Manager    |   Manager  |    Blower    |        30        |  'Secado de pelo con blower'  |
 
-#   Scenario Outline: Customers should be able to create a reservation
-#     Given The user goes to the UI website
-#     When The user logins as <cust_user> and <cust_pass>
-#     And The customer goes to the reservation tab
-#     Then The customer should be able to create a reservation for the <service> with the stylist <stylist_name>  
-#     Then The customer should be able to see the reservation created
-#   Examples:
-#   |         cust_user     |     cust_pass     | cust_first | cust_last |        cust_email       |
-#   |    luisitotucupey23   |  luisitoelmejor37 |    Luis    |  Bambino  | luisBambino23@yahoo.com |
+
+  Scenario Outline: Customers should be able to create a reservation
+    Given The user goes to the UI website
+    When The user logins as <cust_user> and <cust_pass>
+    And The customer sees the customer page
+    And The customer goes to the reservation tab
+    Then The customer should be able to create a reservation for the services <services> with the stylist <stylist_name>  
+    Then The customer should be able to see the reservation created with <stylist_name> for <services>
+    Then The customer should be able to logout
+  Examples:
+  |         cust_user     |     cust_pass     |      services       |  stylist_name  |
+  |    luisitotucupey23   |  luisitoelmejor37 |    'Wash,Blower'    |  Maria Nieves  |

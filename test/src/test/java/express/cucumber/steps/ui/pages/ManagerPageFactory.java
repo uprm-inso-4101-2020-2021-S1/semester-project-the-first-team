@@ -6,6 +6,7 @@ import express.cucumber.common.Constants;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
@@ -116,6 +117,33 @@ public class ManagerPageFactory{
 		WebElement weekButton;
 
 		public ViewSchedulePage() {
+			// Initialize web elements
+			PageFactory.initElements(driver, this);
+		}
+
+	}
+
+	private class ManageServicePage{
+
+		// User tab components
+		@FindBy(xpath = "//input[@name='serviceName']")
+		WebElement namebox;
+
+		@FindBy(xpath = "//input[@name='defaultDuration']")
+		WebElement durationbox;
+
+		@FindBy(xpath = "//textarea[@name='description']")
+		WebElement descriptionbox;
+
+		@FindBy(xpath = "//button[@class='btn btn-primary']")
+		WebElement saveButton;
+
+		@FindBy(xpath = "//div[@class='service-lst-container']")
+		WebElement serviceCardsContainer;
+
+		String serviceCardXpathUnfinished = "//div[@class='service-lst-card card'";
+
+		public ManageServicePage() {
 			// Initialize web elements
 			PageFactory.initElements(driver, this);
 		}
@@ -290,27 +318,53 @@ public class ManagerPageFactory{
 			case users:
 				wait.until(ExpectedConditions.elementToBeClickable(sidebar));
 				sidebar.click();
+				try {
+					Thread.sleep(Constants.MEDIUM_TIMEOUT);
+				} catch (Exception e) {
+					System.err.println("Error sleeping");
+				}
 				wait.until(ExpectedConditions.elementToBeClickable(userTab));
 				userTab.click();
 			break;
 			case manageSchedule:
 				wait.until(ExpectedConditions.elementToBeClickable(sidebar));
 				sidebar.click();
+				try {
+					Thread.sleep(Constants.MEDIUM_TIMEOUT);
+				} catch (Exception e) {
+					System.err.println("Error sleeping");
+				}
 				wait.until(ExpectedConditions.elementToBeClickable(manageScheduleTab));
 				manageScheduleTab.click();
 			break;
 			case viewSchedule:
 				wait.until(ExpectedConditions.elementToBeClickable(sidebar));
 				sidebar.click();
+				try {
+					Thread.sleep(Constants.MEDIUM_TIMEOUT);
+				} catch (Exception e) {
+					System.err.println("Error sleeping");
+				}
 				wait.until(ExpectedConditions.elementToBeClickable(viewScheduleTab));
 				viewScheduleTab.click();
 			break;
 			case manageServices:
 				wait.until(ExpectedConditions.elementToBeClickable(sidebar));
 				sidebar.click();
+				try {
+					Thread.sleep(Constants.MEDIUM_TIMEOUT);
+				} catch (Exception e) {
+					System.err.println("Error sleeping");
+				}
 				wait.until(ExpectedConditions.elementToBeClickable(manageServiceTab));
 				manageServiceTab.click();
 			break;
+		}
+		// Give a chance for the views to load
+		try {
+			Thread.sleep(Constants.MEDIUM_TIMEOUT);
+		} catch (Exception e) {
+			System.err.println("Error sleeping");
 		}
 	}
 
@@ -363,7 +417,6 @@ public class ManagerPageFactory{
 		constructedXpath.append(email);
 		constructedXpath.append("')]");
 		UserPage page = new UserPage();
-		System.out.println(constructedXpath.toString());
 		WebElement user = page.userCards.findElement(By.xpath(constructedXpath.toString()));
 		// Create WebDriver wait
 	    WebDriverWait wait = new WebDriverWait(driver, Constants.DEFAULT_WEBELEMENT_TIMEOUT);
@@ -398,12 +451,30 @@ public class ManagerPageFactory{
 		// Wait for todays date to be present
 		wait.until(ExpectedConditions.elementToBeClickable(page.todaysDate));
 		List<WebElement> timeslots = page.todaysDate.findElements(By.xpath("//div[@class='rbc-day-slot rbc-time-column rbc-now rbc-today']//div[@class='rbc-time-slot']"));
+		JavascriptExecutor js = (JavascriptExecutor) driver;		
+		js.executeScript("arguments[0].scrollIntoView();", timeslots.get(0));
+		try {
+			Thread.sleep(Constants.QUICK_TIMEOUT);
+		} catch (Exception e) {
+			System.err.println("Error sleeping");
+		}
 		Actions action = new Actions(driver);
 		action.moveToElement(timeslots.get(0))
 			.clickAndHold()
-			.moveToElement(timeslots.get(timeslots.size()-1))
+			.perform();
+		try {
+			Thread.sleep(Constants.QUICK_TIMEOUT);
+		} catch (Exception e) {
+			System.err.println("Error sleeping");
+		}
+		action.moveToElement(timeslots.get(timeslots.size()/2))
 			.release()
 			.perform();
+		try {
+			Thread.sleep(Constants.QUICK_TIMEOUT);
+		} catch (Exception e) {
+			System.err.println("Error sleeping");
+		}
 		wait.until(ExpectedConditions.elementToBeClickable(page.stylistDropdown));
 		page.stylistDropdown.click();
 		StringBuilder stylistElement = new StringBuilder();
@@ -415,27 +486,58 @@ public class ManagerPageFactory{
 		stylist.click();
 		wait.until(ExpectedConditions.elementToBeClickable(page.submitButton));
 		page.submitButton.click();
+		try {
+			Thread.sleep(Constants.QUICK_TIMEOUT);
+		} catch (Exception e) {
+			System.err.println("Error sleeping");
+		}
+		js.executeScript("arguments[0].scrollIntoView();", timeslots.get(timeslots.size()-1));
+		try {
+			Thread.sleep(Constants.QUICK_TIMEOUT);
+		} catch (Exception e) {
+			System.err.println("Error sleeping");
+		}
+		action.moveToElement(timeslots.get(timeslots.size()/2+1))
+			.clickAndHold()
+			.perform();
+		try {
+			Thread.sleep(Constants.QUICK_TIMEOUT);
+		} catch (Exception e) {
+			System.err.println("Error sleeping");
+		}
+		action.moveToElement(timeslots.get(timeslots.size()-1))
+			.release()
+			.perform();
+		wait.until(ExpectedConditions.elementToBeClickable(page.stylistDropdown));
+		page.stylistDropdown.click();
+		stylist = page.stylistDropdown.findElement(By.xpath(stylistElement.toString()));
+		wait.until(ExpectedConditions.elementToBeClickable(stylist));
+		stylist.click();
+		wait.until(ExpectedConditions.elementToBeClickable(page.submitButton));
+		page.submitButton.click();
 	}
 
 	public boolean verifyScheduleCreated(String name){
+		try {
+			Thread.sleep(Constants.MEDIUM_TIMEOUT);
+		} catch (Exception e) {
+			System.err.println("Error sleeping");
+		}
 		ManageSchedulePage page = new ManageSchedulePage();
 		WebDriverWait wait = new WebDriverWait(driver, Constants.DEFAULT_WEBELEMENT_TIMEOUT);
 		StringBuilder schedule = new StringBuilder();
 		schedule.append("//div[@class='rbc-event' and contains(.,'");
 		schedule.append(name);
 		schedule.append("')]");
-		WebElement scheduleElement = page.todaysDate.findElement(By.xpath(schedule.toString()));
-		// Wait for schedule to be present
-		try {
-			wait.until(ExpectedConditions.visibilityOf(scheduleElement));
-		} catch (Exception e) {
-			return false;
-		}
-		return true;
+		List<WebElement> scheduleElement = page.todaysDate.findElements(By.xpath(schedule.toString()));
+		System.out.println(scheduleElement.size());
+		return scheduleElement.size()==2;
 	}
 
 	public boolean seeUserScheduleCreated(String name){
 		this.clickTab(SIDEBAR_TABS.viewSchedule.getTab());
+		if(!this.verifyLoaded(SIDEBAR_TABS.viewSchedule.getTab()))
+			return false;
 		ViewSchedulePage page = new ViewSchedulePage();
 		WebDriverWait wait = new WebDriverWait(driver, Constants.DEFAULT_WEBELEMENT_TIMEOUT);
 		wait.until(ExpectedConditions.elementToBeClickable(page.stylistDropdown));
@@ -457,6 +559,68 @@ public class ManagerPageFactory{
 		// Wait for schedule to be present
 		try {
 			wait.until(ExpectedConditions.visibilityOf(scheduleElement));
+		} catch (Exception e) {
+			return false;
+		}
+		return true;
+	}
+
+	public boolean verifyServiceJustCreated(){
+		try {
+			Thread.sleep(Constants.MEDIUM_TIMEOUT);
+		} catch (Exception e) {
+			System.err.println("Error sleeping");
+		}
+		// Create WebDriver wait
+	    WebDriverWait wait = new WebDriverWait(driver, Constants.DEFAULT_WEBELEMENT_TIMEOUT);
+		// Wait for user to be present
+		try {
+			wait.until(ExpectedConditions.alertIsPresent());
+			if(driver.switchTo().alert().getText().contains("Service created successfully!"))
+				driver.switchTo().alert().accept();
+			else
+				return false;
+		} catch (Exception e2){
+			e2.printStackTrace();
+			return false;
+		}
+		return true;
+	}
+
+	public void createService(String name, String duration, String description){ 
+		ManageServicePage page = new ManageServicePage();
+		// Create WebDriver wait
+	    WebDriverWait wait = new WebDriverWait(driver, Constants.DEFAULT_WEBELEMENT_TIMEOUT);
+	    // Wait for signup elements to be present
+		wait.until(ExpectedConditions.visibilityOf(page.namebox));
+		page.namebox.sendKeys(name);
+		page.descriptionbox.sendKeys(description);
+		// page.durationbox.clear();
+		System.out.println(duration);
+		System.out.println(description);
+		System.out.println(name);
+		page.durationbox.sendKeys(Keys.CONTROL + "a");
+		page.durationbox.sendKeys(duration);
+		wait.until(ExpectedConditions.elementToBeClickable(page.saveButton));
+		page.saveButton.click();
+	}
+
+	public boolean verifyServiceExists(String name, String duration, String description){
+		ManageServicePage page = new ManageServicePage();
+		StringBuilder constructedXpath = new StringBuilder(page.serviceCardXpathUnfinished);
+		constructedXpath.append(" and contains(.,'");
+		constructedXpath.append(name);
+		constructedXpath.append("') and contains(.,'");
+		constructedXpath.append(duration);
+		constructedXpath.append("') and contains(.,'");
+		constructedXpath.append(description);
+		constructedXpath.append("')]");
+		WebElement service = page.serviceCardsContainer.findElement(By.xpath(constructedXpath.toString()));
+		// Create WebDriver wait
+	    WebDriverWait wait = new WebDriverWait(driver, Constants.DEFAULT_WEBELEMENT_TIMEOUT);
+		// Wait for user to be present
+		try {
+			wait.until(ExpectedConditions.visibilityOf(service));
 		} catch (Exception e) {
 			return false;
 		}
