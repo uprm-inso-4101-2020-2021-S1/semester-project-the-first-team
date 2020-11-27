@@ -19,8 +19,8 @@ from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
 
 urlpatterns = [
-    path('api/', include('express_service.urls')),
-    path('api/admin/', admin.site.urls),
+    path('', include('express_service.urls')),
+    path('admin/', admin.site.urls),
 ]
 
 urlpatterns += staticfiles_urlpatterns()

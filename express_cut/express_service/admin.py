@@ -4,6 +4,9 @@ from .models import User, Service, StylistOfferServices, DailySchedule, Reservat
 from django.contrib import admin
 
 
+admin.site.site_header = "express cut: Admin Site"
+
+
 @admin.register(User)
 class UserAdmin(admin.ModelAdmin):
     list_display = ('id', 'first_name', 'last_name', 'role')
