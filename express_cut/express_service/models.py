@@ -18,6 +18,8 @@ class User(AbstractUser):
 
     role = models.PositiveSmallIntegerField(choices=ROLE_CHOICES, default=CUSTOMER)
 
+    def __str__(self):
+        return self.first_name + " " + self.last_name
 
 class Service(models.Model):
     serviceName = models.CharField(max_length=50)
