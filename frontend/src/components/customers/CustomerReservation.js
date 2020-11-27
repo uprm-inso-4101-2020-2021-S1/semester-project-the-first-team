@@ -7,6 +7,7 @@ import { Link, useHistory } from "react-router-dom";
 import { SlideDown } from "react-slidedown";
 import "react-slidedown/lib/slidedown.css";
 import axios from "axios";
+import { DateTime } from "luxon";
 import PropTypes from "prop-types";
 
 const numStages = 4;
@@ -144,9 +145,7 @@ function CustomerReservation(props) {
           setLoading(false);
         })
         .catch((err) => {
-          window.alert(
-            "An error has occurred. Please try again."
-          );
+          window.alert("An error has occurred. Please try again.");
           console.log(err);
           history.push("/customers/home");
         });
@@ -164,7 +163,7 @@ function CustomerReservation(props) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    let date = new Date().toISOString();
+    let date = DateTime.local().toISO();
     date = date.substr(0, date.indexOf("T"));
 
     axios

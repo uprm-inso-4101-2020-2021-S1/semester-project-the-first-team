@@ -13,6 +13,8 @@ services:
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: password
       POSTGRES_DB: test-db
+    ports:
+      - 9465:5432
 
   rest:
     image: express-cuts-rest-api:latest
@@ -23,9 +25,9 @@ services:
       test: curl http://127.0.0.1:8000/api
       interval: 5s
       timeout: 5s
-      retries: 30
+      retries: 60
     ports:
-      - 8000:8000
+      - 8082:8000
     depends_on:
       db:
         condition: service_healthy
@@ -58,7 +60,7 @@ services:
       test: curl http://127.0.0.1:80/login
       interval: 5s
       timeout: 5s
-      retries: 50
+      retries: 80
     depends_on:
       rest:
         condition: service_healthy
@@ -81,6 +83,7 @@ services:
       - REST_API_URI=http://rest:8000
       - EXPRESS_UI_URL=http://ui:80
       - SELENIUM_HUB_URL=http://selenium-hub:4444/wd/hub
+      - TZ=America/Puerto_Rico
     volumes:
       - "./docker-test-out:/output/reports/"
 

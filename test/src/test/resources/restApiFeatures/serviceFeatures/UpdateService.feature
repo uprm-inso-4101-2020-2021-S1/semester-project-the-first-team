@@ -8,7 +8,7 @@ Feature: Update Service feature
     Then the service <upKey> should be updated to <data> in the database
   Examples:
   |   user       |    pass    | upKey  |                                     data                                             |
-  |   Manager    |   Manager  |   1    |  {"serviceName": "Blower", "defaultDuration": 15, "description": "Secado de pelo"}   |
+  |   Manager    |   Manager  |   1    |  {"serviceName": "Wash", "defaultDuration": 15, "description": "Lavado de pelo"}   |
 
   Scenario Outline: Customer should not be able to update services with the rest api
     Given The user logs in as customer <user> and <pass>

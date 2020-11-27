@@ -21,8 +21,10 @@ public class StylistPageFactory{
 
 	// Elements that identify page
 	@FindBy(xpath = "//a[@class='menu-bars']")
-    WebElement sidebar;
-		
+	WebElement sidebar;
+
+	@FindBy(xpath = "//a[@data-rb-event-key='/stylists/schedule']")
+    WebElement viewScheduleTab;
 	
 	// Steps
 	public StylistPageFactory(WebDriver driver) {
@@ -32,7 +34,7 @@ public class StylistPageFactory{
 		PageFactory.initElements(driver, this);
 	}
 
-	public boolean verifyLoaded() {
+	public boolean isLoaded() {
 		// Sleep to give chance for page to load
 		try {
 			Thread.sleep(Constants.QUICK_TIMEOUT);

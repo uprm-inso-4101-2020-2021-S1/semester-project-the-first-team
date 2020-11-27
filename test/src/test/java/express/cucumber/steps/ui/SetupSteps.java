@@ -86,11 +86,8 @@ public class SetupSteps {
             // Set all logs we can get
 			LoggingPreferences logs = new LoggingPreferences();
 			logs.enable(LogType.BROWSER, Level.ALL);
-			logs.enable(LogType.CLIENT, Level.ALL);
 			logs.enable(LogType.DRIVER, Level.ALL);
 			logs.enable(LogType.PERFORMANCE, Level.ALL);
-			logs.enable(LogType.PROFILER, Level.ALL);
-            logs.enable(LogType.SERVER, Level.ALL);
             // Set capabilities to be chrome
             dc = DesiredCapabilities.chrome();
             dc.setBrowserName("chrome");
@@ -116,6 +113,7 @@ public class SetupSteps {
 		try{
 			if(scenario.isFailed()){
 				if(!localTest) {
+					
 					String timeStamp = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss").format(Calendar.getInstance().getTime());
 					try {
 						LogEntries logs = driver.manage().logs().get(LogType.BROWSER);
@@ -123,28 +121,36 @@ public class SetupSteps {
 					    BufferedWriter bw = new BufferedWriter(fw);
 					    PrintWriter out = new PrintWriter(bw);
 					    out.println("Error for "+browser+" at "+timeStamp);
-						out.println("Browser Logs");
+						out.println("Browser Logs:");
 						for (LogEntry entry : logs) {
 							out.println(new Date(entry.getTimestamp()) + " " + entry.getLevel() + " " + entry.getMessage());
-							} 
-						logs = driver.manage().logs().get(LogType.SERVER);
-						out.println("Server Logs");
+						} 
+						logs = driver.manage().logs().get(LogType.PERFORMANCE);
+						out.println("Performance Logs:");
 						for (LogEntry entry : logs) {
 							out.println(new Date(entry.getTimestamp()) + " " + entry.getLevel() + " " + entry.getMessage());
-							} 
+						}
+						// Very extensive. Should probably be outputed at the end of the tests instead on a scenario basis
+						// logs = driver.manage().logs().get(LogType.DRIVER);
+						// out.println("Driver Logs:");
+						// for (LogEntry entry : logs) {
+						// 	out.println(new Date(entry.getTimestamp()) + " " + entry.getLevel() + " " + entry.getMessage());
+						// } 
 						out.println();
 						out.println("-------------------------------------------------------------------------------------");
 						out.println("-------------------------------------------------------------------------------------");
 						out.close();
 					} catch (Exception e) {
-						System.out.println("Couldnt get logs for failure");
+						System.err.println("Couldnt get logs for failure");
+						e.printStackTrace();
 					}
 					try {
 						File screenshotFile = ((TakesScreenshot)driver).getScreenshotAs(OutputType.FILE);
 						String browser=((RemoteWebDriver) driver).getCapabilities().getBrowserName();
 						FileUtils.copyFile(screenshotFile, new File("/output/reports/"+browser+"error"+timeStamp+".png"));
 					} catch (Exception e) {
-						System.out.println("Couldnt get screenshot for failure");
+						System.err.println("Couldnt get screenshot for failure");
+						e.printStackTrace();
 					}
 				}
 			}
